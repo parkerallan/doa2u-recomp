@@ -169,7 +169,7 @@ static void update_blend_state(const DWORD *rs)
     /* D3D11 rejects the colour-only factors (SRC_COLOR, INV_SRC_COLOR,
      * DEST_COLOR, INV_DEST_COLOR) in the alpha slots: CreateBlendState
      * returned E_INVALIDARG, the state stayed NULL and the draw went out
-     * unblended. DOA3's round-start/KO messages blend with
+     * unblended. The game's round-start/KO messages blend with
      * INVDESTCOLOR/INVSRCALPHA and came out as solid white. Use the alpha
      * counterpart of each colour factor, which is what D3D8/D3D9 do. */
     bd.RenderTarget[0].SrcBlendAlpha = d3d11_blend_alpha_equiv(bd.RenderTarget[0].SrcBlend);

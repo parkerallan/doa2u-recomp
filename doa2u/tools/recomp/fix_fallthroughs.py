@@ -9,7 +9,7 @@ for f in glob.glob('src/game/recomp/gen/*.c'):
             # base name (override or gen) is callable
             addr2name[a]=m.group(1)
 
-# Game .text only (DOA2U: 0x11000-0x344164) plus D3DX. DOA3 found that
+# Game .text only (DOA2U: 0x11000-0x344164) plus D3DX. Found that
 # blanket-restoring every XDK fragment broke boot (some XDK 'ends' are not
 # real fall-throughs), so XDK fragments are added one by one to KEEP_XDK
 # once proven.

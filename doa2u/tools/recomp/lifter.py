@@ -407,7 +407,7 @@ _EFLAGS_PRESERVE = frozenset({
 
 def _sign_cast(expr):
     """C cast that reproduces the x86 sign flag for the operand width of a lifted
-    expression (DOA3 2026-09-20: `test al,al / jns` was emitted as a 32-bit
+    expression (2026-09-20: `test al,al / jns` was emitted as a 32-bit
     comparison, so bit 7 of an 8-bit result was never seen as the sign)."""
     e = expr.lstrip("(")
     if e.startswith("LO8(") or e.startswith("HI8(") or e.startswith("MEM8("):

@@ -3,7 +3,7 @@
  *
  * The pgraph translator was originally written against a title that only ever
  * used the fixed-function pipeline with pre-transformed, screen-space inline
- * vertices, so it read attribute 0 as literal pixel coordinates. DOA3 draws its
+ * vertices, so it read attribute 0 as literal pixel coordinates. The game draws its
  * 3D screens in MODE_PROGRAM: attribute 0 is an object-space position that only
  * becomes screen space after the uploaded vertex program runs. Without this the
  * geometry is submitted with meaningless coordinates and nothing is visible.

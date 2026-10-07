@@ -1,5 +1,5 @@
 /**
- * Dead or Alive 3 - Recompiled Function Dispatch
+ * Dead or Alive 2 Ultimate - Recompiled Function Dispatch
  *
  * Provides lookup from original Xbox virtual addresses to
  * translated C function pointers. Used for:

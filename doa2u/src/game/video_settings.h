@@ -1,18 +1,18 @@
 /**
  * Video settings: window type and aspect ratio, persisted to the [Video]
- * section of doa3_settings.ini next to the executable. doa3_settings.ini is the
- * general settings file; controls stay in doa3_input.ini, which
+ * section of doa2u_settings.ini next to the executable. doa2u_settings.ini is the
+ * general settings file; controls stay in doa2u_input.ini, which
  * pad_mapping_save rewrites wholesale.
  *
- * 16:9 is DOA3's own widescreen mode. The game reads XC_VIDEO_FLAGS through
+ * 16:9 is the game's own widescreen mode. The game reads XC_VIDEO_FLAGS through
  * ExQueryNonVolatileSetting (kernel ordinal 24) once, in its D3D init
  * (sub_001539C0), and from then on narrows the 3D projection horizontally
  * (hor+) while leaving the 2D layer untouched -- the Xbox output it made was
  * anamorphic 720x480 for a 16:9 set. The host renders that into a 16:9 guest
  * target instead of stretching a 4:3 one.
  */
-#ifndef DOA3_VIDEO_SETTINGS_H
-#define DOA3_VIDEO_SETTINGS_H
+#ifndef DOA2U_VIDEO_SETTINGS_H
+#define DOA2U_VIDEO_SETTINGS_H
 
 #include <windows.h>
 
@@ -26,13 +26,13 @@ extern "C" {
 #define VIDEO_ASPECT_4_3  0
 #define VIDEO_ASPECT_16_9 1
 
-/* Full path of doa3_settings.ini next to the executable. */
-const char *doa3_settings_ini_path(void);
+/* Full path of doa2u_settings.ini next to the executable. */
+const char *doa2u_settings_ini_path(void);
 
 int  video_get_window_mode(void);
 int  video_get_aspect(void);
 
-/* Load doa3_settings.ini (defaults when absent: borderless, 16:9, 3x).
+/* Load doa2u_settings.ini (defaults when absent: borderless, 16:9, 3x).
  * Returns non-zero if the file exists. */
 int  video_settings_load(void);
 /* Returns non-zero on success. */
@@ -67,4 +67,4 @@ void video_sync_guest_widescreen(void);
 }
 #endif
 
-#endif /* DOA3_VIDEO_SETTINGS_H */
+#endif /* DOA2U_VIDEO_SETTINGS_H */

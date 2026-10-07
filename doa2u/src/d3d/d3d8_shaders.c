@@ -122,7 +122,7 @@ static const char g_vs_source[] =
     "    o.specular = float4(0, 0, 0, 0);\n"
     "\n"
     "    if (Flags & FLAG_PRETRANSFORMED) {\n"
-    /* DOA3: XYZRHW carries rhw = 1/w of the original clip-space vertex.
+    /* DOA2U: XYZRHW carries rhw = 1/w of the original clip-space vertex.
      * Handing D3D11 w = 1 made the rasterizer interpolate texcoords and
      * colours linearly in screen space (affine mapping): large ground
      * polygons warped and slid as the camera moved, and the screen-linear

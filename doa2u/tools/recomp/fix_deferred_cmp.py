@@ -14,7 +14,7 @@ x86 latched the flags at the `test`, so the branch must test the value the
 operands had THERE. This tool rewrites such a site to
 
     /* test LO8(edx), LO8(edx) - flags set for next jcc */
-    _rccf = (TEST_NZ(LO8(edx), LO8(edx)));  /* DOA3: ... */
+    _rccf = (TEST_NZ(LO8(edx), LO8(edx)));  /* DOA2U: ... */
     SET_LO8(edx, MEM8(esp + 0x10));
     if (_rccf) goto loc_X;
 
@@ -36,7 +36,7 @@ be unambiguous:
     flag-writing instruction, no `call` and no branch target in between, and
     really have one of its operand registers overwritten on the way.
 
-usage (from doa3/):
+usage (from doa2u/):
     py -3 -m tools.recomp.fix_deferred_cmp                 # rewrite
     FIX_DRYRUN=1 py -3 -m tools.recomp.fix_deferred_cmp    # report only
 """
@@ -338,7 +338,7 @@ def main():
             continue
 
         out = list(lines)
-        note = ("  /* DOA3: x86 latched these flags at the compare above and the "
+        note = ("  /* DOA2U: x86 latched these flags at the compare above and the "
                 "branch below reads them, but an operand is overwritten in "
                 "between -- evaluate the condition where the guest does. */")
         for c in edits:
@@ -350,7 +350,7 @@ def main():
             while k < len(out) and out[k].strip() != "{":
                 k += 1
             if k < len(out):
-                out[k] = out[k] + "\n    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */"
+                out[k] = out[k] + "\n    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */"
         open(path, "w", encoding="utf-8", errors="surrogateescape").write("\n".join(out))
         print("patched %-22s %d site(s)" % (os.path.basename(path), len(edits)))
 

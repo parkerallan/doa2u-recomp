@@ -1,5 +1,5 @@
 /**
- * Dead or Alive 3 - Recompiled Code Runtime Support
+ * Dead or Alive 2 Ultimate - Recompiled Code Runtime Support
  *
  * Type definitions and helper macros used by mechanically
  * translated x86→C code. Each original x86 function is

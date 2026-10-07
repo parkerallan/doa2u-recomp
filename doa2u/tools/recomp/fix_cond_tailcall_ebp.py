@@ -1,4 +1,4 @@
-"""DOA3 gen fix: conditional tail-calls (jcc -> function entry) must sync g_seh_ebp.
+"""DOA2U gen fix: conditional tail-calls (jcc -> function entry) must sync g_seh_ebp.
 
 The translator emits `g_seh_ebp = ebp; sub_X(); return; /* tail jmp */` for
 unconditional tail-jumps but `if (...) { sub_X(); return; }` for conditional

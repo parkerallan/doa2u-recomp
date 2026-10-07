@@ -38,5 +38,5 @@ All 147 Xbox kernel imports are now implemented with Win32 replacements.
 
 ## KEY REFERENCE:
 - 315 kernel call sites across 87 unique functions in the game code
-- All ordinals/thunk addresses in: tools/xbe_parser/doa3_analysis.json
+- All ordinals/thunk addresses in: tools/xbe_parser/doa2u_analysis.json
 - All prototypes declared in kernel.h

@@ -2,7 +2,7 @@
 #include "xbox_fiber.h"
 #include "xbox_det.h"
 
-/* CRI watchdog thread routine that never needs a slice (DOA3: 0x0016A530); 0 = none. */
+/* CRI watchdog thread routine that never needs a slice; 0 = none. */
 uint32_t g_xbox_cri_watchdog_routine = 0;
 #include "xbox_memory_layout.h"          /* xbox_HeapAlloc */
 
@@ -28,7 +28,7 @@ extern recomp_func_t recomp_lookup_manual(uint32_t xbox_va);
 #define WORKER_STACK_SIZE  0x40000      /* 256 KB Xbox stack per worker */
 #define WORKER_NATIVE_STK  (8u << 20)   /* 8 MB native fiber stack */
 #define CORO_STACK_SIZE    0x20000      /* fallback when the caller asks for nothing */
-/* Floor for a game-task Xbox stack. DOA3 asks CreateFiber for 0x4000 (16 KB)
+/* Floor for a game-task Xbox stack. The game asks CreateFiber for 0x4000 (16 KB)
  * per task; this doubles that for headroom and is still 4x less than the
  * 128 KB we used to force. The old fixed 128 KB cost 2.6 MB across the 21
  * title-screen tasks and ran the 49 MB guest heap dry (97.9% used), which is
@@ -96,7 +96,7 @@ static void load_regs(Fiber *f)
 /* Post-movie only: the movie phase relies on the older round-robin resumption of
  * game tasks (a task waits for the movie by yielding, and the primary must run
  * in between); its verified timing is left as it was. */
-extern volatile int g_doa3_post_movie;
+extern volatile int g_doa2u_post_movie;
 static int pick_next(int from)
 {
     for (int k = 1; k <= g_nfib; k++) {
@@ -106,7 +106,7 @@ static int pick_next(int from)
          * order after a vblank wait, so the render record builder and the
          * walker interleaved in a way the game never does and the walker spun
          * on a half-rebuilt list (the intro-scene freeze). */
-        if (g_fib[i].is_coroutine && g_doa3_post_movie) continue;
+        if (g_fib[i].is_coroutine && g_doa2u_post_movie) continue;
         if (g_fib[i].state == FIB_READY) return i;
     }
     return -1;
@@ -187,7 +187,7 @@ int xbox_fiber_workers_ready(void)
 {
     int i;
     for (i = 1; i < g_nfib; i++) {
-        if (g_fib[i].is_coroutine && g_doa3_post_movie) continue;
+        if (g_fib[i].is_coroutine && g_doa2u_post_movie) continue;
         /* The CRI watchdog (sub_0016A530) is a pure yield loop and is always
          * READY; counting it meant "until idle" always ran to its cap, and
          * within that budget the file server's progress on a load depended
@@ -210,7 +210,7 @@ int xbox_fiber_spawn(uint32_t start_routine, uint32_t ctx1, uint32_t ctx2,
         fprintf(stderr, "[FIBER] CreateFiber failed for 0x%08X\n", start_routine);
         return 0;
     }
-    uint32_t base = xbox_HeapAllocHigh(WORKER_STACK_SIZE, 16); /* DOA3: CPU-only, keep the GPU-addressable low heap for the game */
+    uint32_t base = xbox_HeapAllocHigh(WORKER_STACK_SIZE, 16); /* DOA2U: CPU-only, keep the GPU-addressable low heap for the game */
     f->start_routine = start_routine;
     f->ctx1 = ctx1; f->ctx2 = ctx2;
     f->stack_top = base + WORKER_STACK_SIZE - 16;
@@ -237,7 +237,7 @@ void xbox_fiber_yield(void)
         n = g_direct_return;                  /* directed handoff: return to the caller */
         g_direct_return = -1;
         g_fib[n].state = FIB_READY;
-    } else if (g_fib[me].is_coroutine && g_doa3_post_movie) {
+    } else if (g_fib[me].is_coroutine && g_doa2u_post_movie) {
         /* Rotate through the workers. Scanning from `me` always lands on the
          * first READY worker after the task -- the CRI watchdog (#1) -- so a
          * task spinning on a CRI handshake (sub_0016A4C0, waiting for the
@@ -250,7 +250,7 @@ void xbox_fiber_yield(void)
     } else {
         n = pick_next(me);
     }
-    if (g_fib[me].is_coroutine && g_doa3_post_movie) {
+    if (g_fib[me].is_coroutine && g_doa2u_post_movie) {
         /* A game task yielding (vblank wait, sleep): let one worker run and
          * come straight back here -- the task is not schedulable by anyone
          * else (see pick_next). */
@@ -322,7 +322,7 @@ static DWORD WINAPI fib_slice_timer(LPVOID p)
 }
 void xbox_fiber_timeslice(void)
 {
-    extern int doa3_workers_may_run(void);
+    extern int doa2u_workers_may_run(void);
     static HANDLE s_timer;
     if (!g_active) return;
     if (g_cur != 0) {
@@ -336,7 +336,7 @@ void xbox_fiber_timeslice(void)
     }
     if (!s_timer) s_timer = CreateThread(NULL, 0, fib_slice_timer, NULL, 0, NULL);
     if (!g_fib_slice_due) return;
-    if (!doa3_workers_may_run()) return;
+    if (!doa2u_workers_may_run()) return;
     g_fib_slice_due = 0;
     {   /* One lap per 4 ms tick that elapsed since the last slice, capped.
          * While a scene loads the game thread sits in host D3D11 calls for
@@ -461,7 +461,7 @@ void xbox_fiber_exit(void)
  * plain wake when no matching fiber is parked. Returns 1 if a switch
  * happened. Only intended for the primary fiber (NtResumeThread bridge). */
 /* Is a spawned (non-coroutine) thread whose start context is ctx1 still
- * running? DOA3 joins exactly one such thread: its cache-install worker
+ * running? the game joins exactly one such thread: its cache-install worker
  * (routine 0x0009D440), see bridge_NtWaitForSingleObject. */
 int xbox_fiber_thread_alive(uint32_t ctx1)
 {
@@ -576,7 +576,7 @@ int xbox_fiber_create_dormant(uint32_t routine_va, uint32_t param,
          * 0x1FFF0 -- inside the XBE image -- so the task silently shredded
          * the game's own code and the process died with no exception to
          * catch. Fail the create instead, loudly. */
-        uint32_t base = xbox_HeapAllocHigh(stack_size, 16); /* DOA3: CPU-only stack -> high heap */
+        uint32_t base = xbox_HeapAllocHigh(stack_size, 16); /* DOA2U: CPU-only stack -> high heap */
         if (!base) {
             fprintf(stderr, "[FIBER] OUT OF GUEST HEAP: cannot allocate %u-byte "
                             "Xbox stack for task routine 0x%08X (slot %d)\n",

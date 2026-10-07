@@ -6,12 +6,12 @@
  *   host window + D3D8->D3D11 device + APU/DirectSound -> fibers ->
  *   call recompiled entry point (xbe_entry_point = mainCRTStartup @ 0x002BBB93).
  *
- * Ported from the DOA3 port's main.c (same runtime libraries). The XDK 5849
+ * Shared runtime libraries with the other compatibility layers. The XDK 5849
  * CRT startup (mainXapiStartup @ 0x002BBB1F) runs _rtinit/_cinit itself, so
- * unlike DOA3 the static initializer tables are not walked here.
+ * the static initializer tables are not walked here.
  *
  * The VEH decoders (veh_skip_faulting_read / _write) come from the burnout3
- * reference via DOA3: they decode a faulting x86-64 instruction, return 0 for
+ * reference: they decode a faulting x86-64 instruction, return 0 for
  * reads (and skip stores), and advance RIP so wild guest pointers do not kill
  * the process.
  */
@@ -32,6 +32,7 @@
 #include "recomp/recomp_dispatch.h"
 #include "video_settings.h"
 #include "log_settings.h"
+#include "ui/doa2u_ui.h"
 
 #define DOA2U_ENTRY_POINT  0x002BBB93
 /* Game files live in assets next to the exe (the disc root); D: maps to assets. */
@@ -46,6 +47,9 @@ static LRESULT CALLBACK doa2u_wndproc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     if (m == WM_CLOSE)   { DestroyWindow(h); return 0; }
     if (m == WM_DESTROY) { PostQuitMessage(0); return 0; }
+    /* The Esc overlay gets first refusal on input: it opens/closes itself and,
+     * while visible, keeps keyboard and mouse out of the game. */
+    if (doa2u_ui_wndproc(h, m, w, l)) return 0;
     return DefWindowProcA(h, m, w, l);
 }
 
@@ -105,7 +109,7 @@ static int doa2u_init_graphics(void)
 }
 
 /* Service the window's message queue without presenting (load spins). */
-void doa3_pump_messages(void)
+void doa2u_pump_messages(void)
 {
     MSG msg;
     while (PeekMessageA(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -121,10 +125,10 @@ void doa3_pump_messages(void)
 
 /* ── Hang watchdog ────────────────────────────────────────────────────────
  * Non-faulting hangs leave nothing to catch, so sample the guest thread:
- * g_doa3_heartbeat is bumped once per present; if it stops moving, read the
+ * g_doa2u_heartbeat is bumped once per present; if it stops moving, read the
  * guest thread's RIP and the recompiler registers. Resolve the RIP against
  * build/debug/DOA2U.map ("Rva+Base"). */
-volatile LONG g_doa3_heartbeat = 0;
+volatile LONG g_doa2u_heartbeat = 0;
 static HANDLE g_guest_thread;
 
 static DWORD WINAPI doa2u_watchdog(LPVOID unused)
@@ -134,7 +138,7 @@ static DWORD WINAPI doa2u_watchdog(LPVOID unused)
     for (;;) {
         LONG now;
         Sleep(2000);
-        now = g_doa3_heartbeat;
+        now = g_doa2u_heartbeat;
         if (now != last) { last = now; stalled = 0; continue; }
         if (++stalled < 3 || reports >= 10) continue;   /* ~6s of no progress */
         reports++;
@@ -200,14 +204,14 @@ static void doa2u_watchdog_start(void)
 
 /* Present the host swap chain once per guest frame (called from the
  * D3DDevice_Swap override in recomp_manual.c) and pump the window. */
-void doa3_present_frame(void)
+void doa2u_present_frame(void)
 {
-    InterlockedIncrement(&g_doa3_heartbeat);
-    { extern void doa3_apu_deliver_irq(void); doa3_apu_deliver_irq(); }
-    doa3_pump_messages();
+    InterlockedIncrement(&g_doa2u_heartbeat);
+    { extern void doa2u_apu_deliver_irq(void); doa2u_apu_deliver_irq(); }
+    doa2u_pump_messages();
     {
-        extern int doa3_movie_host_owns_screen(void);
-        if (doa3_movie_host_owns_screen())
+        extern int doa2u_movie_host_owns_screen(void);
+        if (doa2u_movie_host_owns_screen())
             return;   /* the movie presenter owns the swap chain */
     }
     if (g_d3d_device)
@@ -218,7 +222,7 @@ extern volatile uint32_t g_icall_trace[16];
 extern volatile uint32_t g_icall_trace_idx;
 extern volatile uint64_t g_icall_count;
 
-/* ── Fault-skip decoders (burnout3 via DOA3, verbatim) ── */
+/* ── Fault-skip decoders (from burnout3, verbatim) ── */
 /* ── Fault-skip decoders (ported verbatim from burnout3/src/game/main.c) ── */
 static BOOL veh_skip_faulting_read(PCONTEXT ctx)
 {
@@ -855,7 +859,7 @@ int main(int argc, char **argv)
         }
     }
     setvbuf(stdout, NULL, _IONBF, 0);
-    doa3_log_init();   /* stderr -> doa2u_log.txt (Logging=1 in doa2u_settings.ini) */
+    doa2u_log_init();   /* stderr -> doa2u_log.txt (Logging=1 in doa2u_settings.ini) */
 
     atexit(doa2u_atexit);
     SetUnhandledExceptionFilter(doa2u_unhandled);

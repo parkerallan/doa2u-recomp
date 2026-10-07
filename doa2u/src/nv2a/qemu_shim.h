@@ -7,8 +7,8 @@
  * This file is included instead of the real QEMU headers.
  */
 
-#ifndef DOA3_QEMU_SHIM_H
-#define DOA3_QEMU_SHIM_H
+#ifndef DOA2U_QEMU_SHIM_H
+#define DOA2U_QEMU_SHIM_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -396,4 +396,4 @@ typedef struct Error { char msg[256]; } Error;
 /* Config stubs */
 static inline bool xemu_is_xbe_loaded(void) { return true; }
 
-#endif /* DOA3_QEMU_SHIM_H */
+#endif /* DOA2U_QEMU_SHIM_H */

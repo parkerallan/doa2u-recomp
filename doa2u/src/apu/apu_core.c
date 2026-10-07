@@ -61,7 +61,7 @@ void mcpx_debug_end_frame(void) {}
 /* Standalone interrupt delivery: the chip cannot raise a PCI IRQ here, so
  * assert -> set a flag; the game thread polls it once per frame and runs
  * the DirectSound driver's KINTERRUPT service routine + queued DPC
- * (doa3_apu_deliver_irq in recomp_manual.c). Without this the driver's own
+ * (doa2u_apu_deliver_irq in recomp_manual.c). Without this the driver's own
  * "trap the FE when a voice goes idle" request left the front end trapped
  * forever after the first idle voice, and no frame was ever mixed again. */
 volatile LONG g_apu_irq_pending = 0;
@@ -385,7 +385,7 @@ static void throttle(MCPXAPUState *d)
 
     int64_t now_us = qemu_clock_get_us(QEMU_CLOCK_REALTIME);
 
-    /* DOA3: only resync when hopelessly late (>150 ms). Resetting on any
+    /* DOA2U: only resync when hopelessly late (>150 ms). Resetting on any
      * lateness > one period (the original rule) threw away real time every
      * time the 5 ms wait overslept (15.6 ms Windows timer ticks), so the
      * chip ran at ~90% of 48 kHz and the output queue starved (clicks).
@@ -411,7 +411,7 @@ static void throttle(MCPXAPUState *d)
     d->sleep_acc_us += (int)(qemu_clock_get_us(QEMU_CLOCK_REALTIME) - now_us);
 }
 
-/* DOA3 diag: one status line per call (the present hook calls it every
+/* DOA2U diag: one status line per call (the present hook calls it every
  * ~2 s). Answers "does the game program the APU, and does the APU run". */
 static unsigned g_apu_frames_total;
 void apu_debug_stats_line(void)
@@ -697,13 +697,13 @@ MCPXAPUState *mcpx_apu_init_standalone(uint8_t *ram_ptr)
     }
 
     /* Start background frame thread */
-    /* DOA3 diagnostic: the APU frame thread has been faulting inside
+    /* DOA2U diagnostic: the APU frame thread has been faulting inside
      * SleepConditionVariableCS, which means its state has been trashed --
      * most likely collateral from the recompiled code writing through
      * native-looking pointers that land in the host address space rather
      * than the guest mapping. Audio is not needed to reach the title
      * screen, so allow the thread to be skipped to isolate that. */
-    if (getenv("DOA3_NOAPUTHREAD")) {
+    if (getenv("DOA2U_NOAPUTHREAD")) {
         d->is_idle = true;
     } else {
         qemu_thread_create(&d->apu_thread, "mcpx.apu_thread",

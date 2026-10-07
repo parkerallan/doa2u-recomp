@@ -1,5 +1,5 @@
 """
-Dead or Alive 3 - x86 → C Static Recompiler
+Dead or Alive 2 Ultimate - x86 → C Static Recompiler
 
 Usage:
     py -3 -m tools.recomp <xbe_path> [options]
@@ -63,7 +63,7 @@ def list_categories(translator):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Dead or Alive 3: x86 → C Static Recompiler")
+        description="Dead or Alive 2 Ultimate: x86 → C Static Recompiler")
     parser.add_argument("xbe_path", help="Path to default.xbe")
     parser.add_argument("-o", "--output-dir",
                         help="Output directory")

@@ -1,5 +1,5 @@
 /**
- * Dead or Alive 3 - Recompiled code chunk 2
+ * Dead or Alive 2 Ultimate - Recompiled code chunk 2
  * Functions: 1000 (0x0006B690 - 0x00098BB3)
  */
 
@@ -261,7 +261,7 @@ loc_0006B7F0: ;
  */
 void sub_0006B840(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -270,7 +270,7 @@ loc_0006B840: ;
     SET_LO8(ecx, MEM8(0x87CFA0));
     edx = 0; /* xor self */
     /* cmp LO8(ecx), 7 - flags set for next jcc */
-    _rccf = (CMP_EQ(LO8(ecx), 7));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(LO8(ecx), 7));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     SET_LO8(ecx, MEM8(0x8800F7));
     SET_LO8(edx, (_rccf) ? 1 : 0); /* sete */
     edx--;
@@ -284,7 +284,7 @@ loc_0006B860: ;
     esi = MEM32(eax * 4 + 0x87F700);
     eax = eax * 4 + 0x87F700;
     /* cmp esi, 6 - flags set for next jcc */
-    _rccf = (CMP_EQ(esi, 6));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(esi, 6));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     POP32(esp, esi);
     if (_rccf) goto loc_0006B894; /* je: equal / zero */
 
@@ -3914,7 +3914,7 @@ loc_0006D5DC: ;
  */
 void sub_0006D5DE(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
@@ -3927,7 +3927,7 @@ loc_0006D5DE: ;
 loc_0006D5E4: ;
     SET_LO8(eax, MEM8(0x87AE02));
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_NZ(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     SET_LO8(eax, MEM8(0x87AB48));
     if (_rccf) goto loc_0006D6BD; /* jne: not equal / not zero */
 
@@ -16357,7 +16357,7 @@ loc_00073CAB: ;
  */
 void sub_00073CB0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
@@ -16384,7 +16384,7 @@ loc_00073CCD: ;
     eax = (uint32_t)(-(int32_t)eax);
     MEM32(ebx + 0x38) = eax;
     /* cmp eax, 1 - flags set for next jcc */
-    _rccf = (CMP_NE(eax, 1));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(eax, 1));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(0xE658E8);
     xmm_store_ss(ebx + 0x1F0, xmm0); /* movss */
     MEM16(ebx + 0x20E) = 0x21;
@@ -16435,7 +16435,7 @@ loc_00073D23: ;
  */
 void sub_00073D39(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0, xmm1, xmm2;
@@ -16632,7 +16632,7 @@ loc_00073F4D: ;
     esp = esp + 4;
     ecx = ecx + 6;
     /* test LO16(ebp), LO16(ebp) - flags set for next jcc */
-    _rccf = (TEST_NZ(LO16(ebp), LO16(ebp)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(LO16(ebp), LO16(ebp)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     ebp = MEM32(0xE658E8);
     eax = ebp;
     edx = ((int32_t)eax < 0) ? 0xFFFFFFFF : 0; /* cdq */
@@ -16893,7 +16893,7 @@ loc_0007420D: ;
     esp = esp + 4;
     ecx = ecx + 6;
     /* test LO16(ebp), LO16(ebp) - flags set for next jcc */
-    _rccf = (TEST_NZ(LO16(ebp), LO16(ebp)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(LO16(ebp), LO16(ebp)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     ebp = MEM32(0xE658E8);
     eax = ebp;
     edx = ((int32_t)eax < 0) ? 0xFFFFFFFF : 0; /* cdq */
@@ -18729,7 +18729,7 @@ loc_00075538: ;
  */
 void sub_000755A0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
@@ -18753,7 +18753,7 @@ loc_000755B0: ;
     eax = eax + eax * 4;
     MEM16(esi + eax * 8 + 0x58) = MEM16(esi + eax * 8 + 0x58) - 1;
     /* cmp MEM16(esi + eax * 8 + 0x58), 0 - flags set for next jcc */
-    _rccf = (CMP_G(MEM16(esi + eax * 8 + 0x58), 0));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_G(MEM16(esi + eax * 8 + 0x58), 0));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = esi + eax * 8 + 0x38;
     if (_rccf) goto loc_000755DD; /* jg: greater (signed >) */
 
@@ -19708,7 +19708,7 @@ loc_00075C90: ;
  */
 void sub_00075CA0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -19747,7 +19747,7 @@ loc_00075D0E: ;
 
 loc_00075D1D: ;
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_NZ(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     MEM16(0x883730) = LO16(ebx);
     eax = 1;
     MEM16(0x679A00) = 0x14;
@@ -19788,7 +19788,7 @@ loc_00075D40: ;
  */
 void sub_00075D60(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -19814,7 +19814,7 @@ loc_00075DA9: ;
 
 loc_00075DB3: ;
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_NZ(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     MEM16(0x883730) = LO16(ebx);
     eax = 1;
     MEM16(0x679A00) = 0x14;
@@ -21533,7 +21533,7 @@ loc_00076720: ;
  */
 void sub_00076730(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -21560,7 +21560,7 @@ loc_0007677F: ;
 
 loc_00076789: ;
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_NZ(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     MEM16(0x883730) = LO16(ebx);
     eax = 1;
     MEM16(0x679A00) = 0x14;
@@ -21617,7 +21617,7 @@ loc_000767D0: ;
  */
 void sub_000767E0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -21645,7 +21645,7 @@ loc_0007680E: ;
 
 loc_00076818: ;
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_NZ(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     MEM16(0x883730) = 0;
     eax = 1;
     MEM16(0x679A00) = 0x14;
@@ -26263,7 +26263,7 @@ loc_00078414: ;
  */
 void sub_00078430(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0, xmm1;
@@ -26312,7 +26312,7 @@ loc_00078475: ;
     xmm0.f[0] = xmm0.f[0] * MEMF(0x41457C); /* mulss */
     eax = eax | 0x1000;
     /* cmp edi, 1 - flags set for next jcc */
-    _rccf = (CMP_NE(edi, 1));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(edi, 1));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     POP32(esp, edi);
     ecx = (int32_t)(xmm0.f[0]); /* cvttss2si */
     xmm_store_ss(esp + 0x20, xmm1); /* movss */
@@ -26410,7 +26410,7 @@ loc_00078515: ;
  */
 void sub_00078520(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -26536,7 +26536,7 @@ loc_0007862F: ;
 loc_00078638: ;
     eax = (uint32_t)(int32_t)SMEM8(esp + 0x5C);
     /* cmp esi, eax - flags set for next jcc */
-    _rccf = (CMP_GE(esi, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_GE(esi, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = 0xFFFFFF;
     if (_rccf) goto loc_0007864B; /* jge: greater or equal (signed >=) */
 
@@ -27338,7 +27338,7 @@ loc_00078E79: ;
  */
 void sub_00078E80(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -27395,7 +27395,7 @@ loc_00078EFA: ;
     MEM32(esp + 0x18) = edi;
     POP32(esp, edi);
     /* cmp esi, 1 - flags set for next jcc */
-    _rccf = (CMP_NE(esi, 1));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(esi, 1));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     MEM32(esp + 0x10) = eax;
     POP32(esp, esi);
     if (_rccf) goto loc_00078F26; /* jne: not equal / not zero */
@@ -32596,7 +32596,7 @@ loc_0007BC9E: ;
  */
 void sub_0007BCB0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
@@ -32608,7 +32608,7 @@ void sub_0007BCB0(void)
 
 loc_0007BCB0: ;
     /* cmp MEM32(esp + 0x1C), 0x20 - flags set for next jcc */
-    _rccf = (CMP_EQ(MEM32(esp + 0x1C), 0x20));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(MEM32(esp + 0x1C), 0x20));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     PUSH32(esp, ebp);
     ebp = MEM32(esp + 0x10);
     PUSH32(esp, esi);
@@ -33060,7 +33060,7 @@ loc_0007C135: ;
  */
 void sub_0007C150(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -33068,7 +33068,7 @@ void sub_0007C150(void)
 loc_0007C150: ;
     eax = MEM32(0x88251C);
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_NZ(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_NZ(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(esp + 4);
     MEM32(0x88251C) = eax;
     if (_rccf) goto loc_0007C16D; /* jne: not equal / not zero */
@@ -36144,7 +36144,7 @@ loc_0007D6A1: ;
  */
 void sub_0007D6B0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -36152,7 +36152,7 @@ void sub_0007D6B0(void)
 loc_0007D6B0: ;
     esp = esp - 0xC8;
     /* cmp MEM16(esp + 0xD8), 0 - flags set for next jcc */
-    _rccf = (CMP_EQ(MEM16(esp + 0xD8), 0));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(MEM16(esp + 0xD8), 0));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     SET_LO8(eax, MEM8(0xE65A98));
     PUSH32(esp, ebx);
     PUSH32(esp, edi);
@@ -36772,7 +36772,7 @@ loc_0007DC7C: ;
  */
 void sub_0007DC80(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -36783,7 +36783,7 @@ loc_0007DC80: ;
     PUSH32(esp, ebp);
     PUSH32(esp, esi);
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_Z(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(esp + 0x1C);
     PUSH32(esp, edi);
     esi = ecx;
@@ -36911,7 +36911,7 @@ loc_0007DD6F: ;
  */
 void sub_0007DD80(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -36981,7 +36981,7 @@ loc_0007DE10: ;
     edx = MEM32(esp + 0x68);
     PUSH32(esp, ecx);
     /* test LO8(ecx), 8 - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(ecx), 8));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(ecx), 8));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     ecx = MEM32(esp + 0x70);
     xmm_store_ss(esp, xmm0); /* movss */
     PUSH32(esp, ecx);
@@ -37147,7 +37147,7 @@ loc_0007DF8F: ;
     edx = 0; /* xor self */
     ebp = SX16(LO16(eax));
     /* cmp MEM32(esp + 0x68), ebp - flags set for next jcc */
-    _rccf = (CMP_NE(MEM32(esp + 0x68), ebp));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(MEM32(esp + 0x68), ebp));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     ebp = MEM32(esp + 0x68);
     SET_LO8(edx, (_rccf) ? 1 : 0); /* setne */
     edx--;
@@ -37172,7 +37172,7 @@ loc_0007DFCF: ;
     eax = 0; /* xor self */
     edx = SX8(LO8(ebx));
     /* cmp edx, edi - flags set for next jcc */
-    _rccf = (CMP_G(edx, edi));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_G(edx, edi));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     edi = MEM32(esp + 0x1C);
     SET_LO8(eax, (_rccf) ? 1 : 0); /* setg */
     eax--;
@@ -38156,7 +38156,7 @@ loc_0007E9C9: ;
  */
 void sub_0007E9D0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -38334,7 +38334,7 @@ loc_0007EB49: ;
 
 loc_0007EB50: ;
     /* cmp LO16(eax), 4 - flags set for next jcc */
-    _rccf = (CMP_NE(LO16(eax), 4));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(LO16(eax), 4));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(0xE658E8);
     edx = ((int32_t)eax < 0) ? 0xFFFFFFFF : 0; /* cdq */
     if (_rccf) goto loc_0007EBC5; /* jne: not equal / not zero */
@@ -46878,7 +46878,7 @@ loc_000835C6: ;
  */
 void sub_000835E0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
@@ -47274,7 +47274,7 @@ loc_000839F2: ;
     /* cmp edx, 3 - flags set for next jcc */
     SET_LO8(edx, (CMP_EQ(edx, 3)) ? 1 : 0); /* sete */
     /* cmp LO16(ecx), MEM16(esp + 0x88) - flags set for next jcc */
-    _rccf = (CMP_NE(LO16(ecx), MEM16(esp + 0x88)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(LO16(ecx), MEM16(esp + 0x88)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     PUSH32(esp, 0);
     MEM8(esp + 0x24) = LO8(eax);
     MEM8(esp + 0x34) = LO8(edx);
@@ -47546,7 +47546,7 @@ loc_00083C5F: ;
 loc_00083C84: ;
     edx = (uint32_t)(int32_t)SMEM16(ebp + 0x3E);
     /* cmp edx, edi - flags set for next jcc */
-    _rccf = (CMP_LE(edx, edi));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_LE(edx, edi));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     POP32(esp, edi);
     POP32(esp, esi);
     POP32(esp, ebx);
@@ -49272,7 +49272,7 @@ loc_00084C58: ;
  */
 void sub_00084CD0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
@@ -49552,7 +49552,7 @@ loc_00084F37: ;
 loc_00084F4A: ;
     esp = esp + 8;
     /* cmp eax, 2 - flags set for next jcc */
-    _rccf = (CMP_NE(eax, 2));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(eax, 2));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(0xE658E8);
     PUSH32(esp, 0);
     PUSH32(esp, 5);
@@ -51941,7 +51941,7 @@ loc_0008663D: ;
  */
 void sub_00086650(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0, xmm1;
@@ -51997,7 +51997,7 @@ loc_000866BE: ;
 loc_000866C6: ;
     edx = 0; /* xor self */
     /* cmp eax, esi - flags set for next jcc */
-    _rccf = (CMP_NE(eax, esi));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(eax, esi));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     esi = (uint32_t)(int32_t)SMEM16(esp + 0x6C);
     SET_LO8(edx, (_rccf) ? 1 : 0); /* setne */
     xmm_store_ss(esp + 0x10, xmm0); /* movss */
@@ -52193,7 +52193,7 @@ loc_0008693F: ;
     PUSH32(esp, 1);
     ecx = 0; /* xor self */
     /* cmp LO8(eax), 1 - flags set for next jcc */
-    _rccf = (CMP_NE(LO8(eax), 1));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(LO8(eax), 1));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(esp + 0x24);
     PUSH32(esp, eax);
     PUSH32(esp, eax);
@@ -53921,7 +53921,7 @@ loc_0008762F: ;
  */
 void sub_00087640(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -53941,7 +53941,7 @@ loc_00087640: ;
     SET_LO8(eax, MEM8(esi + 0x38));
     PUSH32(esp, edi);
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(0xE658E8);
     PUSH32(esp, 1);
     PUSH32(esp, 0x36);
@@ -54565,7 +54565,7 @@ loc_00087C69: ;
  */
 void sub_00087C80(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -55137,7 +55137,7 @@ loc_00088353: ;
     ecx = MEM32(esp + 0x14);
     PUSH32(esp, 4);
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(esp + 0x6C);
     PUSH32(esp, esi);
     PUSH32(esp, eax);
@@ -60135,7 +60135,7 @@ loc_0008B856: ;
  */
 void sub_0008B910(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
@@ -60300,7 +60300,7 @@ loc_0008BA86: ;
     edx = MEM32(eax + 0x40);
     ecx = ecx + 8;
     /* cmp ecx, edx - flags set for next jcc */
-    _rccf = (CMP_GE(ecx, edx));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_GE(ecx, edx));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     ecx = eax;
     if (_rccf) goto loc_0008BAA4; /* jge: greater or equal (signed >=) */
 
@@ -61127,7 +61127,7 @@ loc_0008C1D6: ;
  */
 void sub_0008C200(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -61227,7 +61227,7 @@ loc_0008C2E3: ;
     SET_LO8(eax, MEM8(esp + 0x13));
     ecx = MEM32(0xE658E8);
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = ecx;
     edx = ((int32_t)eax < 0) ? 0xFFFFFFFF : 0; /* cdq */
     if (_rccf) goto loc_0008C30E; /* je: equal / zero */
@@ -61274,7 +61274,7 @@ loc_0008C338: ;
     esp = esp + 4;
     ecx = ecx + 6;
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = SX16(LO16(ecx));
     esi = eax + 8;
     ecx = esi;
@@ -61529,7 +61529,7 @@ loc_0008C5E2: ;
  */
 void sub_0008C24B(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -61601,7 +61601,7 @@ loc_0008C2E3: ;
     SET_LO8(eax, MEM8(esp + 0x13));
     ecx = MEM32(0xE658E8);
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = ecx;
     edx = ((int32_t)eax < 0) ? 0xFFFFFFFF : 0; /* cdq */
     if (_rccf) goto loc_0008C30E; /* je: equal / zero */
@@ -61648,7 +61648,7 @@ loc_0008C338: ;
     esp = esp + 4;
     ecx = ecx + 6;
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = SX16(LO16(ecx));
     esi = eax + 8;
     ecx = esi;
@@ -62093,7 +62093,7 @@ loc_0008C721: ;
  */
 void sub_0008C730(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
@@ -62505,7 +62505,7 @@ loc_0008CB8D: ;
     ecx = eax;
     ecx = (uint32_t)((int32_t)ecx * (int32_t)MEM32(esp + 0x14));
     /* cmp eax, 2 - flags set for next jcc */
-    _rccf = (CMP_L(eax, 2));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_L(eax, 2));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(ebx);
     SET_LO8(edx, (_rccf) ? 1 : 0); /* setl */
     edx--;
@@ -62781,7 +62781,7 @@ loc_0008CE7D: ;
     ecx = eax;
     ecx = (uint32_t)((int32_t)ecx * (int32_t)MEM32(esp + 0x14));
     /* cmp eax, 2 - flags set for next jcc */
-    _rccf = (CMP_L(eax, 2));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_L(eax, 2));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(ebp);
     SET_LO8(edx, (_rccf) ? 1 : 0); /* setl */
     edx--;
@@ -64563,7 +64563,7 @@ loc_0008DDDE: ;
  */
 void sub_0008DDF0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
@@ -65105,7 +65105,7 @@ loc_0008E2AE: ;
 loc_0008E2DF: ;
     eax = MEM32(esp + 0x30);
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_Z(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(0xE65A84);
     edx = ((int32_t)eax < 0) ? 0xFFFFFFFF : 0; /* cdq */
     if (_rccf) goto loc_0008E316; /* je: equal / zero */
@@ -65332,7 +65332,7 @@ loc_0008E4CF: ;
     PUSH32(esp, 0x3F800000);
     PUSH32(esp, ecx);
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_Z(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(0xE65A84);
     xmm_store_ss(esp, xmm0); /* movss */
     ecx = ebp;
@@ -66352,7 +66352,7 @@ loc_0008EF46: ;
     SET_LO16(edx, (uint32_t)(int32_t)SMEM8(ebp + 0x9D6));
     eax = 0; /* xor self */
     /* cmp MEM16(esp + 0x20), LO16(edx) - flags set for next jcc */
-    _rccf = (CMP_EQ(MEM16(esp + 0x20), LO16(edx)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(MEM16(esp + 0x20), LO16(edx)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     edx = 5;
     SET_LO8(eax, (_rccf) ? 1 : 0); /* sete */
     MEM32(esp + 0x14) = eax;
@@ -67779,7 +67779,7 @@ loc_0008FDA3: ;
     SET_LO8(eax, MEM8(ebp + 0x80C));
     ecx = MEM32(esp + 0x2C);
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(esp + 0x14);
     PUSH32(esp, eax);
     eax = (uint32_t)(int32_t)SMEM16(esp + 0x14);
@@ -68395,7 +68395,7 @@ loc_00090375: ;
  */
 void sub_0008EE50(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
@@ -68482,7 +68482,7 @@ loc_0008EF46: ;
     SET_LO16(edx, (uint32_t)(int32_t)SMEM8(ebp + 0x9D6));
     eax = 0; /* xor self */
     /* cmp MEM16(esp + 0x20), LO16(edx) - flags set for next jcc */
-    _rccf = (CMP_EQ(MEM16(esp + 0x20), LO16(edx)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(MEM16(esp + 0x20), LO16(edx)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     edx = 5;
     SET_LO8(eax, (_rccf) ? 1 : 0); /* sete */
     MEM32(esp + 0x14) = eax;
@@ -69909,7 +69909,7 @@ loc_0008FDA3: ;
     SET_LO8(eax, MEM8(ebp + 0x80C));
     ecx = MEM32(esp + 0x2C);
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO8(eax), LO8(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(esp + 0x14);
     PUSH32(esp, eax);
     eax = (uint32_t)(int32_t)SMEM16(esp + 0x14);
@@ -72222,7 +72222,7 @@ loc_00090EF2: ;
  */
 void sub_00090F00(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -72248,7 +72248,7 @@ loc_00090F1A: ;
 loc_00090F20: ;
     ecx = MEM32(esp + 0x2C);
     /* cmp LO16(ebx), MEM16(esp + 0x24) - flags set for next jcc */
-    _rccf = (CMP_EQ(LO16(ebx), MEM16(esp + 0x24)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(LO16(ebx), MEM16(esp + 0x24)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     edx = MEM32(esp + 0x18);
     PUSH32(esp, ecx);
     PUSH32(esp, ebx);
@@ -76530,7 +76530,7 @@ loc_00093006: ;
  */
 void sub_00093010(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
@@ -76729,7 +76729,7 @@ loc_000931D5: ;
     esi = esi + 0x400;
     PUSH32(esp, 0x3F800000);
     /* test eax, eax - flags set for next jcc */
-    _rccf = (TEST_Z(eax, eax));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(eax, eax));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     eax = MEM32(0xE658E8);
     PUSH32(esp, 0xFFFFFF);
     if (_rccf) goto loc_0009322C; /* je: equal / zero */
@@ -77056,7 +77056,7 @@ loc_00093488: ;
  */
 void sub_00093490(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -77143,7 +77143,7 @@ loc_0009352B: ;
 loc_0009354A: ;
     esp = esp + 0x10;
     /* cmp LO16(eax), 3 - flags set for next jcc */
-    _rccf = (CMP_EQ(LO16(eax), 3));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(LO16(eax), 3));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     SET_LO8(eax, MEM8(0x884764));
     if (_rccf) goto loc_00093560; /* je: equal / zero */
 
@@ -77369,7 +77369,7 @@ loc_00093792: ;
  */
 void sub_000937A0(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -77456,7 +77456,7 @@ loc_0009383D: ;
 loc_0009385C: ;
     esp = esp + 0x10;
     /* cmp LO16(eax), 3 - flags set for next jcc */
-    _rccf = (CMP_EQ(LO16(eax), 3));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_EQ(LO16(eax), 3));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     SET_LO8(eax, MEM8(0x884764));
     if (_rccf) goto loc_00093872; /* je: equal / zero */
 
@@ -82044,7 +82044,7 @@ loc_00095F06: ;
  */
 void sub_00095F0D(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0, xmm1;
@@ -82061,7 +82061,7 @@ loc_00095F0D: ;
 
 loc_00095F19: ;
     /* test LO16(eax), LO16(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO16(eax), LO16(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO16(eax), LO16(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     SET_LO8(eax, MEM8(0x884764));
     if (_rccf) goto loc_00095F2B; /* je: equal / zero */
 
@@ -82213,7 +82213,7 @@ loc_00096087: ;
  */
 void sub_00095F14(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0, xmm1;
@@ -82229,7 +82229,7 @@ loc_00095F14: ;
 
 loc_00095F19: ;
     /* test LO16(eax), LO16(eax) - flags set for next jcc */
-    _rccf = (TEST_Z(LO16(eax), LO16(eax)));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (TEST_Z(LO16(eax), LO16(eax)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     SET_LO8(eax, MEM8(0x884764));
     if (_rccf) goto loc_00095F2B; /* je: equal / zero */
 
@@ -84700,7 +84700,7 @@ loc_0009797F: ;
  */
 void sub_00097990(void)
 {
-    int _rccf = 0; /* DOA3: deferred condition evaluated at the compare */
+    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     xmm128_t xmm0;
@@ -84749,7 +84749,7 @@ loc_000979D5: ;
     MEM16(esp + 0x18) = LO16(eax);
     eax = MEM32(esp + 0x14);
     /* cmp esi, 1 - flags set for next jcc */
-    _rccf = (CMP_NE(esi, 1));  /* DOA3: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rccf = (CMP_NE(esi, 1));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
     xmm_store_ss(esp + 0x20, xmm0); /* movss */
     POP32(esp, esi);
     if (_rccf) goto loc_00097A19; /* jne: not equal / not zero */

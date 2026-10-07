@@ -177,12 +177,12 @@ const char *pad_mapping_default_path(void)
     char *slash;
     if (path[0]) return path;
     if (!GetModuleFileNameA(NULL, path, MAX_PATH)) {
-        strcpy_s(path, sizeof(path), "doa3_input.ini");
+        strcpy_s(path, sizeof(path), "doa2u_input.ini");
         return path;
     }
     slash = strrchr(path, '\\');
     if (slash) slash[1] = 0; else path[0] = 0;
-    strcat_s(path, sizeof(path), "doa3_input.ini");
+    strcat_s(path, sizeof(path), "doa2u_input.ini");
     return path;
 }
 
@@ -193,7 +193,7 @@ int pad_mapping_save(const char *path)
     PadMapping *m = pad_mapping_get();
     if (!path) path = pad_mapping_default_path();
     if (fopen_s(&f, path, "wb") != 0 || !f) return 0;
-    fprintf(f, "# DOA3 pad mapping. Control = kind:code\n");
+    fprintf(f, "# DOA2U pad mapping. Control = kind:code\n");
     fprintf(f, "# kind 0=unbound 1=pad button 2=pad trigger 3=pad axis 4=key(VK)\n");
     for (i = 0; i < PADCTL_COUNT; i++)
         fprintf(f, "%s=%d:%d\n", pad_ctl_key(i), m->b[i].kind, m->b[i].code);

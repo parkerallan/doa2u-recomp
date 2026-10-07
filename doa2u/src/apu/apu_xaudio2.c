@@ -144,10 +144,10 @@ int xa2_submit_samples(const int16_t *samples, int num_samples)
     xbuf.pAudioData = (const BYTE *)g_xa2_bufs[idx];
 
     IXAudio2SourceVoice_SubmitSourceBuffer(g_xa2_source, &xbuf, NULL);
-    {   /* DOA3 DIAG: DOA3_WAVCAP=<path> appends the submitted 48 kHz s16 stereo
+    {   /* DOA2U DIAG: DOA2U_WAVCAP=<path> appends the submitted 48 kHz s16 stereo
          * stream to a raw file (first 60 s) so the output can be inspected. */
         static FILE *s_cap = NULL; static int s_cap_tried = 0; static unsigned s_cap_samples = 0;
-        if (!s_cap_tried) { const char *cp = getenv("DOA3_WAVCAP"); s_cap_tried = 1; if (cp) s_cap = fopen(cp, "wb"); }
+        if (!s_cap_tried) { const char *cp = getenv("DOA2U_WAVCAP"); s_cap_tried = 1; if (cp) s_cap = fopen(cp, "wb"); }
         if (s_cap && s_cap_samples < 48000u * 130u) {
             fwrite(samples, XA2_CHANNELS * sizeof(int16_t), copy_samples, s_cap); fflush(s_cap);
             s_cap_samples += copy_samples;

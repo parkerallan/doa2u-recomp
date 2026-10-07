@@ -103587,350 +103587,350 @@
   },
   {
     "address": "0x004310E0",
-    "name": "str_Ddoa2datchar_doa3samA0cat",
+    "name": "str_Ddoa2datchar_doa2usamA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431100",
-    "name": "str_Ddoa2datchar_doa3samA0xpr",
+    "name": "str_Ddoa2datchar_doa2usamA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431120",
-    "name": "str_Ddoa2datchar_doa3gokA1cat",
+    "name": "str_Ddoa2datchar_doa2ugokA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431140",
-    "name": "str_Ddoa2datchar_doa3gokA1xpr",
+    "name": "str_Ddoa2datchar_doa2ugokA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431160",
-    "name": "str_Ddoa2datchar_doa3gokA0cat",
+    "name": "str_Ddoa2datchar_doa2ugokA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431180",
-    "name": "str_Ddoa2datchar_doa3gokA0xpr",
+    "name": "str_Ddoa2datchar_doa2ugokA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004311A0",
-    "name": "str_Ddoa2datchar_doa3suiA1cat",
+    "name": "str_Ddoa2datchar_doa2usuiA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004311C0",
-    "name": "str_Ddoa2datchar_doa3suiA1xpr",
+    "name": "str_Ddoa2datchar_doa2usuiA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004311E0",
-    "name": "str_Ddoa2datchar_doa3suiA0cat",
+    "name": "str_Ddoa2datchar_doa2usuiA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431200",
-    "name": "str_Ddoa2datchar_doa3suiA0xpr",
+    "name": "str_Ddoa2datchar_doa2usuiA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431220",
-    "name": "str_Ddoa2datchar_doa3korA2cat",
+    "name": "str_Ddoa2datchar_doa2ukorA2cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431240",
-    "name": "str_Ddoa2datchar_doa3korA2xpr",
+    "name": "str_Ddoa2datchar_doa2ukorA2xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431260",
-    "name": "str_Ddoa2datchar_doa3korA1cat",
+    "name": "str_Ddoa2datchar_doa2ukorA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431280",
-    "name": "str_Ddoa2datchar_doa3korA1xpr",
+    "name": "str_Ddoa2datchar_doa2ukorA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004312A0",
-    "name": "str_Ddoa2datchar_doa3korA0cat",
+    "name": "str_Ddoa2datchar_doa2ukorA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004312C0",
-    "name": "str_Ddoa2datchar_doa3korA0xpr",
+    "name": "str_Ddoa2datchar_doa2ukorA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004312E0",
-    "name": "str_Ddoa2datchar_doa3ayaA1cat",
+    "name": "str_Ddoa2datchar_doa2uayaA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431300",
-    "name": "str_Ddoa2datchar_doa3ayaA1xpr",
+    "name": "str_Ddoa2datchar_doa2uayaA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431320",
-    "name": "str_Ddoa2datchar_doa3ayaA0cat",
+    "name": "str_Ddoa2datchar_doa2uayaA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431340",
-    "name": "str_Ddoa2datchar_doa3ayaA0xpr",
+    "name": "str_Ddoa2datchar_doa2uayaA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431360",
-    "name": "str_Ddoa2datchar_doa3leiA1cat",
+    "name": "str_Ddoa2datchar_doa2uleiA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431380",
-    "name": "str_Ddoa2datchar_doa3leiA1xpr",
+    "name": "str_Ddoa2datchar_doa2uleiA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004313A0",
-    "name": "str_Ddoa2datchar_doa3leiA0cat",
+    "name": "str_Ddoa2datchar_doa2uleiA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004313C0",
-    "name": "str_Ddoa2datchar_doa3leiA0xpr",
+    "name": "str_Ddoa2datchar_doa2uleiA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004313E0",
-    "name": "str_Ddoa2datchar_doa3ninA0cat",
+    "name": "str_Ddoa2datchar_doa2uninA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431400",
-    "name": "str_Ddoa2datchar_doa3ninA0xpr",
+    "name": "str_Ddoa2datchar_doa2uninA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431420",
-    "name": "str_Ddoa2datchar_doa3basA0cat",
+    "name": "str_Ddoa2datchar_doa2ubasA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431440",
-    "name": "str_Ddoa2datchar_doa3basA0xpr",
+    "name": "str_Ddoa2datchar_doa2ubasA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431460",
-    "name": "str_Ddoa2datchar_doa3bayA1cat",
+    "name": "str_Ddoa2datchar_doa2ubayA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431480",
-    "name": "str_Ddoa2datchar_doa3bayA1xpr",
+    "name": "str_Ddoa2datchar_doa2ubayA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004314A0",
-    "name": "str_Ddoa2datchar_doa3bayA0cat",
+    "name": "str_Ddoa2datchar_doa2ubayA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004314C0",
-    "name": "str_Ddoa2datchar_doa3bayA0xpr",
+    "name": "str_Ddoa2datchar_doa2ubayA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004314E0",
-    "name": "str_Ddoa2datchar_doa3hikA0cat",
+    "name": "str_Ddoa2datchar_doa2uhikA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431500",
-    "name": "str_Ddoa2datchar_doa3hikA0xpr",
+    "name": "str_Ddoa2datchar_doa2uhikA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431520",
-    "name": "str_Ddoa2datchar_doa3genA1cat",
+    "name": "str_Ddoa2datchar_doa2ugenA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431540",
-    "name": "str_Ddoa2datchar_doa3genA1xpr",
+    "name": "str_Ddoa2datchar_doa2ugenA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431560",
-    "name": "str_Ddoa2datchar_doa3genA0cat",
+    "name": "str_Ddoa2datchar_doa2ugenA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431580",
-    "name": "str_Ddoa2datchar_doa3genA0xpr",
+    "name": "str_Ddoa2datchar_doa2ugenA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004315A0",
-    "name": "str_Ddoa2datchar_doa3kasA1cat",
+    "name": "str_Ddoa2datchar_doa2ukasA1cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004315C0",
-    "name": "str_Ddoa2datchar_doa3kasA1xpr",
+    "name": "str_Ddoa2datchar_doa2ukasA1xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004315E0",
-    "name": "str_Ddoa2datchar_doa3kasA0cat",
+    "name": "str_Ddoa2datchar_doa2ukasA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431600",
-    "name": "str_Ddoa2datchar_doa3kasA0xpr",
+    "name": "str_Ddoa2datchar_doa2ukasA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431620",
-    "name": "str_Ddoa2datchar_doa3ryuA0cat",
+    "name": "str_Ddoa2datchar_doa2uryuA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431640",
-    "name": "str_Ddoa2datchar_doa3ryuA0xpr",
+    "name": "str_Ddoa2datchar_doa2uryuA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431660",
-    "name": "str_Ddoa2datchar_doa3janA0cat",
+    "name": "str_Ddoa2datchar_doa2ujanA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431680",
-    "name": "str_Ddoa2datchar_doa3janA0xpr",
+    "name": "str_Ddoa2datchar_doa2ujanA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004316A0",
-    "name": "str_Ddoa2datchar_doa3tinA0cat",
+    "name": "str_Ddoa2datchar_doa2utinA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004316C0",
-    "name": "str_Ddoa2datchar_doa3tinA0xpr",
+    "name": "str_Ddoa2datchar_doa2utinA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x004316E0",
-    "name": "str_Ddoa2datchar_doa3zacA0cat",
+    "name": "str_Ddoa2datchar_doa2uzacA0cat",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
   },
   {
     "address": "0x00431700",
-    "name": "str_Ddoa2datchar_doa3zacA0xpr",
+    "name": "str_Ddoa2datchar_doa2uzacA0xpr",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
@@ -115942,7 +115942,7 @@
   },
   {
     "address": "0x00440578",
-    "name": "str_DOA3SAVEDAT",
+    "name": "str_DOA2USAVEDAT",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8
@@ -116138,7 +116138,7 @@
   },
   {
     "address": "0x00441F28",
-    "name": "str_sd__ERROR_Doa3AppendCostume",
+    "name": "str_sd__ERROR_Doa2uAppendCostume",
     "type": "string_ref",
     "section": ".rdata",
     "confidence": 0.8

@@ -292,7 +292,7 @@ static void bridge_PsCreateSystemThreadEx(void)
                 fn();
                 g_esp += 12;
             } else {
-                /* Worker thread: spawn a cooperative fiber. DOA3's CRI relies on
+                /* Worker thread: spawn a cooperative fiber. The game's CRI relies on
                  * its I/O worker threads actually running (they pump the file-load
                  * queue), so we give each one its own fiber + Xbox stack and let
                  * the cooperative scheduler (yield points: KeWaitForSingleObject and
@@ -316,7 +316,7 @@ static void bridge_PsCreateSystemThreadEx(void)
  *                                PLARGE_INTEGER Timeout)
  *
  * Was unbridged, i.e. every wait returned 0 = STATUS_WAIT_0 at once. The
- * one place DOA3 joins a thread is the first-boot cache install: the boot
+ * one place the game joins a thread is the first-boot cache install: the boot
  * spawns the copy worker (routine 0x0009D440, sub_0009D6C0) and polls it
  * with WaitForSingleObject(hThread, 0) from sub_0009D713 before it loads
  * the partitions from z:\. "Signaled" on the first poll meant the boot
@@ -359,7 +359,7 @@ static void bridge_NtWaitForSingleObject(void)
  * The DirectSound driver's interrupt path. KeInitializeInterrupt records
  * the KINTERRUPT's service routine + context; KeInsertQueueDpc queues the
  * DPC (routine/context live in the KDPC written by KeInitializeDpc). The
- * game thread drains both from doa3_apu_deliver_irq once per frame. */
+ * game thread drains both from doa2u_apu_deliver_irq once per frame. */
 typedef struct { uint32_t obj, routine, ctx; } XboxIsr;
 static XboxIsr  s_isr[4];
 static int      s_isr_n;
@@ -657,7 +657,7 @@ static void bridge_RtlInitAnsiString(void)
 /* ── KeQueryPerformanceCounter / Frequency (ordinals 126, 127) ─ */
 static void bridge_KeQueryPerformanceCounter(void)
 {
-    /* Tight-poll detector: DOA3's DSOUND stream service loops on QPC waiting
+    /* Tight-poll detector: the game's DSOUND stream service loops on QPC waiting
      * for APU voice positions our emulation never advances (stalled the boot
      * after the warning screen for minutes). When polled in a hot loop,
      * fast-forward the returned time and yield to keep the CRI/render fibers
@@ -814,7 +814,7 @@ static void bridge_NtCreateEvent(void)
  * BOOLEAN KeSynchronizeExecution(PKINTERRUPT, PKSYNCHRONIZE_ROUTINE, PVOID ctx):
  * runs the routine with the interrupt masked and returns its result. The
  * interrupt service routine here only ever runs from the game thread
- * (doa3_apu_deliver_irq), so nothing can preempt the routine and a plain guest
+ * (doa2u_apu_deliver_irq), so nothing can preempt the routine and a plain guest
  * call is the whole job. DirectSound's completion DPC (0x1C8D05) uses this to
  * collect the ISR's status bits (0x1C8478); with no bridge it got 0 and never
  * drained a finished buffer, so every one-shot sound effect kept its slot. */
@@ -850,7 +850,7 @@ static void bridge_KeSetEvent(void)
 }
 
 /* ── KeWaitForSingleObject (ordinal 159) ───────────────────
- * Fiber-cooperative, event-accurate wait. cxbx shows DOA3's CRI worker thread
+ * Fiber-cooperative, event-accurate wait. cxbx shows the game's CRI worker thread
  * BLOCKS here on a KEVENT until the main thread signals it with KeSetEvent, then
  * wakes and opens loadfile.afs. We model that: block the current fiber on the event
  * VA until its DISPATCHER_HEADER signal-state (obj+4) goes positive (set by
@@ -1010,7 +1010,7 @@ static void bridge_PsTerminateSystemThread(void)
 
 /* ── NtSuspendThread (ordinal 231) ─────────────────────────
  * NTSTATUS NtSuspendThread(HANDLE Thread, PULONG PreviousSuspendCount)
- * DOA3's CRI worker self-suspends (NtSuspendThread on its own handle) at the end
+ * The game's CRI worker self-suspends (NtSuspendThread on its own handle) at the end
  * of each loop iteration to wait for the next I/O request; the main thread later
  * NtResumeThread's it. The real call blocks; modeled here by parking this fiber on
  * its thread handle until xbox_fiber_wake(handle) (NtResumeThread). */
@@ -1065,7 +1065,7 @@ static void bridge_NtResumeThread(void)
          *    the per-frame server pump resumes the parked CRI server thread
          *    and retries; without running that fiber the retry loop spun
          *    2+ billion kernel calls in interactive launches (evidence:
-         *    user's doa3_log.txt). A GENERAL yield here regressed playback
+         *    user's doa2u_log.txt). A GENERAL yield here regressed playback
          *    (other fibers re-entered CRI code mid-pump) — do not widen.
          *  - CRI worker fibers: no scheduling point — a yield here deadlocks
          *    the boot-time master<->worker handshake (bisected). */
@@ -1147,7 +1147,7 @@ static void bridge_KeSetTimer(void)
 }
 
 /* ── Ordinal 24 ───────────────────────────────────────────
- * Named ExQueryPoolBlockSize in this table, but every DOA3 caller pushes the
+ * Named ExQueryPoolBlockSize in this table, but every game caller pushes the
  * five arguments of ExQueryNonVolatileSetting(ValueIndex, &Type, &Value,
  * ValueLength, &ResultLength) -- sub_00163C84/CB1/CDA/D05/D49 are XAPI's
  * XGetLanguage / XGetAVPack / XGetVideoFlags / XGetAudioFlags / parental
@@ -1376,7 +1376,7 @@ static HANDLE bridge_read_handle(uint32_t va)
 /* Translate Xbox path and open file via Win32 CreateFileW */
 /* z:\ cache copies of the game archives: cache MISS -> the d:\ original.
  *
- * DOA3's wxCi installer copies loadfile/bgm/voice.afs to Z: in the background
+ * The game's wxCi installer copies loadfile/bgm/voice.afs to Z: in the background
  * and the boot keeps going meanwhile. On the console a copy that is not there
  * yet is a plain cache miss and the CRI reads the disc instead. Here that
  * miss was fatal: with an empty cache the installer was still on voice.afs
@@ -1481,7 +1481,7 @@ static NTSTATUS bridge_create_file_impl(
     bridge_cache_archive_fallback(xbox_path, win_path, win_access, "open");
 
     /* Share mode: always grant full sharing. The Xbox kernel's FATX driver
-     * was permissive within a title; DOA3's wxCi cache installer holds a
+     * was permissive within a title; the game's wxCi cache installer holds a
      * WRITE handle to z:\voice.afs while its streamer re-opens the same file
      * for READ — with host share semantics that read open died with
      * ERROR_SHARING_VIOLATION and the whole ADXSTM voice stream failed. */
@@ -1502,7 +1502,7 @@ static NTSTATUS bridge_create_file_impl(
     /* Handle directory requests */
     {
         /* Xbox FATX also lets a title open a DIRECTORY without
-         * FILE_DIRECTORY_FILE (DOA3's wxCi cache scanner opens 'z:\.' to
+         * FILE_DIRECTORY_FILE (the game's wxCi cache scanner opens 'z:\.' to
          * enumerate the cache). Host CreateFileW needs BACKUP_SEMANTICS for
          * that or it fails with ACCESS_DENIED — which made the cache scan
          * fail, the cache table stay empty, and the game re-copy its AFS
@@ -1702,7 +1702,7 @@ static void bridge_NtReadFile(void)
 
     if (g_kernel_ptinfo_hook) g_kernel_ptinfo_hook("ntread");
     {
-        /* DOA3 DIAG: the first 16 reads cover boot; g_kernel_trace_reads is
+        /* DOA2U DIAG: the first 16 reads cover boot; g_kernel_trace_reads is
          * raised by the game once the intro movie is over so the post-movie
          * resource loads (few, and the ones that arrive empty) are visible. */
         static int s_read_log = 0;
@@ -1802,7 +1802,7 @@ static void bridge_NtWriteFile(void)
 /* ── NtQueryInformationFile (ordinal 211, 5 args = 20 bytes) */
 /* File times handed to the guest are ALL the host LastWriteTime.
  *
- * DOA3's CRI cache validator (sub_00162F85 -> sub_0009D9B8) compares the
+ * The game's CRI cache validator compares the
  * times of d:\<file> against its z:\ cache copy with a 60 s tolerance and
  * re-installs the cache on a mismatch. Reporting the host CreationTime and
  * LastAccessTime made that decision depend on the launch: NTFS last-access
@@ -2104,7 +2104,7 @@ static struct { HANDLE dir; HANDLE find; } s_qdir_enum[QDIR_MAX_ENUM];
 
 /* FATX has no "." or ".." entries, so the Xbox kernel never reports them.
  * Win32 FindFirstFile/FindNextFile do, and handing them to the guest broke
- * DOA3's wxCi cache scanner: it registered "." as the one and only file in
+ * the game's wxCi cache scanner: it registered "." as the one and only file in
  * z:\ (the registry at 0xC057C0 showed n=1, f0='.'), so every later
  * wxCiOpen/wxCiGetFileSize of z:\loadfile.afs reported "not in cache" even
  * though the file opens fine by name. That failed the post-movie load in a
@@ -2529,9 +2529,9 @@ static void bridge_DbgPrint(void)
     g_eax = 0;
 }
 
-/* ── KeConnectInterrupt (DOA3 ordinal 98) ────────────────
+/* ── KeConnectInterrupt (ordinal 98) ────────────────
  * BOOLEAN KeConnectInterrupt(PKINTERRUPT InterruptObject)
- * NOTE: DOA3 (XDK 3911) imports KeConnectInterrupt at ordinal 98 (our kernel's
+ * NOTE: older XDK titles import KeConnectInterrupt at ordinal 98 (our kernel's
  * later-XDK table calls 98 "KeBugCheckEx" — wrong for this title). Confirmed by
  * the cxbx trace: ord-98 call takes one InterruptObject and returns 0x01.
  * We have no real interrupts (single-threaded, no GPU IRQ), so just report
@@ -2541,9 +2541,9 @@ static void bridge_KeConnectInterrupt_98(void)
     g_eax = 1; /* TRUE */
 }
 
-/* ── HalGetInterruptVector (DOA3 ordinal 44) ─────────────
+/* ── HalGetInterruptVector (ordinal 44) ─────────────
  * ULONG HalGetInterruptVector(ULONG BusInterruptLevel, OUT PKIRQL Irql, ...)
- * cxbx returns 33 for DOA3. Return a non-zero vector and write an IRQL out. */
+ * cxbx returns 33. Return a non-zero vector and write an IRQL out. */
 static void bridge_HalGetInterruptVector_44(void)
 {
     uint32_t irql_ptr = STACK_ARG(1);

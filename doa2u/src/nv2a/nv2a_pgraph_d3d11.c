@@ -186,12 +186,12 @@ static struct {
     uint32_t inline_data[MAX_INLINE_VERTS * INLINE_VERT_DWORDS];
     uint32_t inline_count; /* Number of dwords accumulated */
     uint32_t vert_stride;  /* Dwords per vertex (auto-detected) */
-    /* DOA3: inline vertex LAYOUT supplied by the recompiled D3D draw wrapper
+    /* DOA2U: inline vertex LAYOUT supplied by the recompiled D3D draw wrapper
      * (sub_001B3760 in recomp_manual.c). The XDK never emits
      * SET_VERTEX_DATA_ARRAY_FORMAT on this path, so the pgraph can't derive
      * it from methods; the CPU-side FVF object holds the truth. Offsets are
      * DWORD indices within a vertex; -1 = attribute absent. */
-    /* DOA3: the vertex count the guest passed to DrawVerticesUP, plus the
+    /* DOA2U: the vertex count the guest passed to DrawVerticesUP, plus the
      * dword count its shader object declares. The push buffer carries the
      * attributes the DEVICE is set up to copy, which for the D3DX sprite path
      * is neither the API stride nor what the shader object lists (position +
@@ -226,7 +226,7 @@ static struct {
     uint32_t alpha_ref;    /* NV097_SET_ALPHA_REF, 0..255 */
     uint32_t color_mask;
     uint32_t comb_factor0[8];
-    /* from doa3_pb_tss_marker: 0xA3<<24 | stage1-off<<17 | op<<12 | arg1<<6 | arg2 */
+    /* from doa2u_pb_tss_marker: 0xA3<<24 | stage1-off<<17 | op<<12 | arg1<<6 | arg2 */
     uint32_t gtss;
     int      gtss_valid;
     uint32_t comb_control;  /* NV097_SET_COMBINER_CONTROL: bits 7:0 = stage count */
@@ -236,7 +236,7 @@ static struct {
      * SET_POINT_SIZE 0x043C in 1/8 pixel units, SET_POINT_PARAMS 0x0A30. */
     uint32_t point_params_en, point_smooth, point_size;
     float    point_params[8];
-    /* Stage-3 texture ops from the guest's TSS table (doa3_pb_tss_marker
+    /* Stage-3 texture ops from the guest's TSS table (doa2u_pb_tss_marker
      * 0xA4 = colour, 0xA5 = alpha: op<<12 | arg1<<6 | arg2). */
     uint32_t tss3_color, tss3_alpha;
     int      tss3_valid;
@@ -255,14 +255,14 @@ static struct {
     float vp_offset[4];
     float vp_scale[4];
     /* NV097_SET_WINDOW_CLIP_* (0x02B4/0x02C0/0x02E0): the hardware scissor.
-     * DOA3 programs it ~18.8k times per 2 s and it is what confines the
+     * The game programs it ~18.8k times per 2 s and it is what confines the
      * character-select portrait to its window. */
     uint32_t window_clip_type;
     uint32_t window_clip_h[8];
     uint32_t window_clip_v[8];
     uint32_t surface_clip_h;
     uint32_t surface_clip_v;
-    /* DOA3: depth range the fixed-function output is normalised with.
+    /* DOA2U: depth range the fixed-function output is normalised with.
      * SET_CLIP_MIN/MAX (0x0394/0x0398) are what the hardware clips z
      * against; the zeta format (SET_SURFACE_FORMAT bits 7:4) gives the
      * z-buffer range: Z16 = 65535, Z24S8 = 16777215. */
@@ -285,7 +285,7 @@ static struct {
         int enabled;         /* Decoded from control0 bit 30 */
     } tex[4];
 
-    /* DOA3: dynamic texture created from guest RAM (the movie frame surface
+    /* DOA2U: dynamic texture created from guest RAM (the movie frame surface
      * and other linear textures the game renders from memory). Re-uploaded
      * every draw; recreated when offset/dims/format change. */
     IDirect3DTexture8 *dyn_tex;   /* the binding the last draw resolved to */
@@ -332,7 +332,7 @@ static struct {
 
     /* Transform program state.
      *
-     * DOA3 draws its 3D screens with MODE_PROGRAM, so attribute 0 is an
+     * The game draws its 3D screens with MODE_PROGRAM, so attribute 0 is an
      * object-space position that only becomes screen space after the uploaded
      * program runs. `attr_fmt` is the authoritative inline vertex layout from
      * SET_VERTEX_DATA_ARRAY_FORMAT, which this title does emit (the previous
@@ -425,12 +425,12 @@ void pgraph_d3d11_shutdown(void)
  * Draw Submission
  * ══════════════════════════════════════════════════════════════════════ */
 
-/* Build/refresh a D3D8 texture from guest RAM for the formats DOA3 uses.
+/* Build/refresh a D3D8 texture from guest RAM for the formats the game uses.
  *
  * This previously handled only the four LIN_* formats, so every swizzled or
  * DXT-compressed texture returned NULL and the draw fell through to
  * vertex-colour only -- with alpha blending forced on, that is invisible. The
- * DOA3 title screen binds swizzled and compressed textures, so none of it
+ * the title screen binds swizzled and compressed textures, so none of it
  * appeared on screen.
  *
  * Two things the linear-only path got wrong for those formats:
@@ -465,8 +465,8 @@ static int nv_texture_format(uint32_t nvfmt, D3DFORMAT *out_fmt,
      * palette named by SET_TEXTURE_PALETTE holds A8R8G8B8 entries, so the
      * upload expands to a 32-bit surface. bpp stays 1 here because every
      * source-side calculation (pitch, level sizes, bounds) is in source
-     * bytes; the destination width is handled at upload time. DOA3's corner
-     * "DEAD OR ALIVE 3" logo is 0x0B, and with no case here the whole draw
+     * bytes; the destination width is handled at upload time. Paletted
+     * 8-bit textures use 0x0B, and with no case here the whole draw
      * was silently dropped. */
     case 0x0B: f = D3DFMT_A8R8G8B8;     bpp = 1; pal = 1; break;  /* SZ_I8_A8R8G8B8 */
     case 0x0C: f = D3DFMT_DXT1;         bpp = 0; comp = 1; break;
@@ -560,27 +560,27 @@ static void nv_apply_tex_address(IDirect3DDevice8 *dev, int stage)
     uint32_t a = g_pg.tex[stage].address;
     {   uint32_t f = g_pg.tex[stage].filter;
         DWORD mn = nv_d3d_minfilter(f >> 16), mg = nv_d3d_magfilter(f >> 24);
-        {   /* DOA3 DIAG: what the game asks for, and what we were doing
+        {   /* DOA2U DIAG: what the game asks for, and what we were doing
              * before this (the stage states were never written at all, so the
              * shim's mapper fell through to MIN_MAG_MIP_POINT). */
-            extern volatile int g_doa3_post_movie;
+            extern volatile int g_doa2u_post_movie;
             static DWORD s_next = 0; static uint32_t s_n[3][4];
             s_n[0][mn & 3]++; s_n[1][mg & 3]++; s_n[2][(f == 0) ? 0 : 1]++;
-            if (g_doa3_post_movie && GetTickCount() >= s_next) {
+            if (g_doa2u_post_movie && GetTickCount() >= s_next) {
                 s_next = GetTickCount() + 2000;
                  memset(s_n, 0, sizeof s_n);
             }
         }
-        {   /* DOA3 DIAG: mip levels the source declares, and how many stages
+        {   /* DOA2U DIAG: mip levels the source declares, and how many stages
              * the game actually enables -- the two texture features this
              * translator still does not implement. */
-            extern volatile int g_doa3_post_movie;
+            extern volatile int g_doa2u_post_movie;
             static DWORD s_nx = 0; static uint32_t s_mip[16], s_stg[5];
             int k, n = 0;
             s_mip[(g_pg.tex[stage].format >> 16) & 0xF]++;
             for (k = 0; k < 4; k++) if (g_pg.tex[k].enabled) n++;
             s_stg[n & 4]++;
-            if (g_doa3_post_movie && GetTickCount() >= s_nx) {
+            if (g_doa2u_post_movie && GetTickCount() >= s_nx) {
                 s_nx = GetTickCount() + 2000;
                 memset(s_mip, 0, sizeof s_mip); memset(s_stg, 0, sizeof s_stg);
             }
@@ -598,11 +598,11 @@ static void nv_apply_tex_address(IDirect3DDevice8 *dev, int stage)
         dev->lpVtbl->SetTextureStageState(dev, stage, 18 /*MIPFILTER*/,
                                           g_pg.dyn_levels > 1 ? nv_d3d_mipfilter(f >> 16) : 0);
     }
-    {   /* DOA3 DIAG: what the game actually asks for, per 2 s. */
-        extern volatile int g_doa3_post_movie;
+    {   /* DOA2U DIAG: what the game actually asks for, per 2 s. */
+        extern volatile int g_doa2u_post_movie;
         static DWORD s_next = 0; static uint32_t s_u[16], s_v[16];
         s_u[a & 0xF]++; s_v[(a >> 8) & 0xF]++;
-        if (g_doa3_post_movie && GetTickCount() >= s_next) {
+        if (g_doa2u_post_movie && GetTickCount() >= s_next) {
             int i; s_next = GetTickCount() + 2000;
             memset(s_u, 0, sizeof s_u); memset(s_v, 0, sizeof s_v);
         }
@@ -733,8 +733,8 @@ static IDirect3DTexture8 *get_dynamic_texture(IDirect3DDevice8 *dev)
     uint32_t sig;
     D3DFORMAT d3dfmt;
 
-    if (!off || off >= 0x08000000u) return NULL; /* DOA3: guest RAM to 128 MB */
-    {   /* DOA3 DIAG: why textures do or do not materialise. */
+    if (!off || off >= 0x08000000u) return NULL; /* DOA2U: guest RAM to 128 MB */
+    {   /* DOA2U DIAG: why textures do or do not materialise. */
         extern uint32_t g_texfmt[64], g_texnull[4];
         g_texfmt[nvfmt & 63]++;
         if (!off || off >= 0x08000000u) g_texnull[0]++;
@@ -1006,7 +1006,7 @@ void pgraph_d3d11_set_vertex_layout(uint32_t stride_dw, int pos_dw,
     }
 }
 
-/* DOA3 DIAG counters */
+/* DOA2U DIAG counters */
 uint32_t g_mhist[0x800];
 uint32_t g_xmode, g_xmode_n[4];
 uint32_t g_dstat[16][3];
@@ -1114,7 +1114,7 @@ static void nv_transform_clip(const float in[4], OutputVertex *v,
     if (apply_composite) {
         /* NV2A convention: SET_COMPOSITE_MATRIX row i holds the coefficients
          * of output component i (the D3D runtime uploads the row-vector
-         * matrix transposed), so c[i] = dot(in, row i). DOA3's row 3 is the
+         * matrix transposed), so c[i] = dot(in, row i). The game's row 3 is the
          * camera forward axis plus distance -- w = view-space z -- which
          * only reads correctly this way round; dotting the columns instead
          * put the 2^24 z-scale into w and collapsed every draw to a point. */
@@ -1127,11 +1127,11 @@ static void nv_transform_clip(const float in[4], OutputVertex *v,
         c[0] = in[0]; c[1] = in[1]; c[2] = in[2]; c[3] = in[3];
     }
 
-    {   /* DOA3 DIAG: DOA3_FLIPW=1 negates the homogeneous position (same
+    {   /* DOA2U DIAG: DOA2U_FLIPW=1 negates the homogeneous position (same
          * screen point, opposite w) to test which side the composite's w
          * row puts the intended scene on. */
         static int s_flip = -1;
-        if (s_flip < 0) { const char *e = getenv("DOA3_FLIPW"); s_flip = (e && *e == '1'); }
+        if (s_flip < 0) { const char *e = getenv("DOA2U_FLIPW"); s_flip = (e && *e == '1'); }
         if (s_flip && apply_composite) { c[0] = -c[0]; c[1] = -c[1]; c[2] = -c[2]; c[3] = -c[3]; }
     }
     w = c[3];
@@ -1140,14 +1140,14 @@ static void nv_transform_clip(const float in[4], OutputVertex *v,
     if (apply_composite) {
         /* Fixed-function path. The Xbox D3D runtime folds the viewport
          * (w/2, -h/2, x0+w/2, y0+h/2 and the z-buffer range) into the
-         * composite matrix itself -- DOA3's [MATMUL] shows proj x viewport
+         * composite matrix itself -- the game's [MATMUL] shows proj x viewport
          * being multiplied before upload -- so c.xy/w is already the pixel
          * position and c.z/w is already in z-buffer units. Only z needs
          * normalising to D3D's [0,1], by the zeta format's range.
          *
          * SET_VIEWPORT_SCALE/OFFSET are deliberately NOT consulted here.
          * They are the transform constants c[58]/c[59], which the fixed
-         * pipeline never reads, and DOA3 overwrites them mid-scene (zeros,
+         * pipeline never reads, and the game overwrites them mid-scene (zeros,
          * then unit vectors). Dividing z by scale.z = 0 made every vertex
          * z = inf, and the "no viewport" fallback below rescaled pixel
          * coordinates as NDC (x ~ 340,000): that was the black screen after
@@ -1162,7 +1162,7 @@ static void nv_transform_clip(const float in[4], OutputVertex *v,
          * offset register reading (95,155). Scale was already correct: the
          * face measures 0.380 of the window in both the port and cxbx.
          *
-         * Guarded, because DOA3 overwrites these registers mid-scene with
+         * Guarded, because the game overwrites these registers mid-scene with
          * zeros and unit vectors -- only a plausible on-surface origin is
          * applied, and (0,0) costs nothing. */
         {   float ox = g_pg.vp_offset[0], oy = g_pg.vp_offset[1];
@@ -1191,7 +1191,7 @@ static void nv_transform_clip(const float in[4], OutputVertex *v,
     }
 
     /* The Xbox D3D runtime folds the viewport (w/2, -h/2, x0+w/2, y0+h/2,
-     * and the 2^24-1 z range) into the composite matrix itself -- DOA3's
+     * and the 2^24-1 z range) into the composite matrix itself -- the game's
      * [MATMUL] shows proj x viewport being multiplied before upload -- so the
      * transform output divided by w is already the screen position. The
      * SET_VIEWPORT_SCALE/OFFSET registers describe that mapping for the
@@ -1206,7 +1206,7 @@ static void nv_transform_clip(const float in[4], OutputVertex *v,
 }
 
 /* Build one OutputVertex from the bound vertex arrays. */
-/* DOA3 DIAG: did the transform-program path actually run for the last vertex,
+/* DOA2U DIAG: did the transform-program path actually run for the last vertex,
  * and what did it produce? Reported on the [PG-ARRAY] line. */
 int   g_vp_used, g_vpn;
 float g_mv[16];
@@ -1246,7 +1246,7 @@ static uint32_t nv_pack_color(const float c[4])
  * The runtime uploads light directions/positions already in eye space and
  * folds the material colours into the per-light colours. Eye-space position
  * and normal come from the model-view matrix (wire row i = coefficients of
- * output i, the same convention as the composite). DOA3's world matrices are
+ * output i, the same convention as the composite). The game's world matrices are
  * rigid (|row| = 1 in every model-view matrix the game uploads), so the normal can use the same
  * rows as the position. Output: D0 = clamp(sceneAmbient + emission +
  * sum_i att_i * (amb_i + dif_i * max(0, N.L_i))), alpha = material alpha.
@@ -1345,7 +1345,7 @@ static void nv_build_array_vertex(uint32_t index, OutputVertex *v,
     v->rhw = 1.0f;
 
     /* MODE_PROGRAM: attribute 0 is an object-space position that only becomes
-     * clip space after the uploaded transform program runs. DOA3 draws every
+     * clip space after the uploaded transform program runs. The game draws every
      * post-movie screen this way. Treating those positions as fixed-function
      * input multiplied them by a composite matrix the game never set, which
      * collapsed every batch onto the viewport centre -- ~500 draws a frame,
@@ -1450,12 +1450,12 @@ static void nv_build_array_vertex(uint32_t index, OutputVertex *v,
  * same state; it previously existed only on the inline path. */
 /* Does the draw in front of us have a texcoord attribute at all? An inline
  * vertex whose SET_VERTEX_DATA_ARRAY_FORMAT declares no texcoord slot cannot
- * be textured: DOA3's character-select panel borders, window backing quad and
+ * be textured: the game's character-select panel borders, window backing quad and
  * background gradient are position+diffuse only (5 dwords), and binding the
  * stale dynamic texture for them sampled texel (0,0) and multiplied them away.
  * The array path leaves this set, so only the inline path can clear it. */
 static int g_nv_draw_has_uv = 1;
-/* DOA3: 1 while submit_draw (the inline 2D path) is applying state. */
+/* DOA2U: 1 while submit_draw (the inline 2D path) is applying state. */
 static int g_nv_draw_inline = 0;
 /* Stage 1 from the guest's texture-stage table when it is CURRENT x TFACTOR
  * with no texture of its own (the beach's palm shadow is 0x99FFFFFF, the
@@ -1536,7 +1536,7 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
     int diffuse_all_zero = sum->all_zero;
 
     /* Alpha blending stays on for the 2D menu path. Depth follows the
-     * guest: DOA3's 3D screens draw with SET_DEPTH_TEST_ENABLE and rely on
+     * guest: the game's 3D screens draw with SET_DEPTH_TEST_ENABLE and rely on
      * the z-buffer for ordering -- with the test forced off, whatever the
      * camera-facing stage wall drawn last covered the characters and the
      * frame went black seconds after the title appeared. The XYZRHW z is the
@@ -1547,11 +1547,11 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
         DWORD zf = (g_pg.depth_func >= 0x200 && g_pg.depth_func <= 0x207)
                  ? (g_pg.depth_func - 0x200) + 1 : 4 /*LESSEQUAL*/;
         dev->lpVtbl->SetRenderState(dev, D3DRS_ZFUNC, zf);
-        {   extern volatile int g_doa3_post_movie;
+        {   extern volatile int g_doa2u_post_movie;
             static DWORD s_nx = 0; static uint32_t s_t, s_nt, s_m, s_nm;
             if (g_pg.depth_test) s_t++; else s_nt++;
             if (g_pg.depth_mask) s_m++; else s_nm++;
-            if (g_doa3_post_movie && GetTickCount() >= s_nx) {
+            if (g_doa2u_post_movie && GetTickCount() >= s_nx) {
                 s_nx = GetTickCount() + 2000;
                  s_t = s_nt = s_m = s_nm = 0;
             }
@@ -1571,10 +1571,10 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
             cm = (front_cw == cull_front) ? 2 /*CW*/ : 3 /*CCW*/;
         }
         dev->lpVtbl->SetRenderState(dev, D3DRS_CULLMODE, cm);
-        {   extern volatile int g_doa3_post_movie;
+        {   extern volatile int g_doa2u_post_movie;
             static DWORD s_nx = 0; static uint32_t s_on, s_off;
             if (cm != 1) s_on++; else s_off++;
-            if (g_doa3_post_movie && GetTickCount() >= s_nx) {
+            if (g_doa2u_post_movie && GetTickCount() >= s_nx) {
                 s_nx = GetTickCount() + 2000;
                  s_on = s_off = 0;
             }
@@ -1603,10 +1603,10 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
         dev->lpVtbl->SetRenderState(dev, D3DRS_STENCILFAIL, nv_d3d_stencil_op(g_pg.stencil_fail));
         dev->lpVtbl->SetRenderState(dev, D3DRS_STENCILZFAIL, nv_d3d_stencil_op(g_pg.stencil_zfail));
         dev->lpVtbl->SetRenderState(dev, D3DRS_STENCILPASS, nv_d3d_stencil_op(g_pg.stencil_zpass));
-        {   extern volatile int g_doa3_post_movie;
+        {   extern volatile int g_doa2u_post_movie;
             static DWORD s_nx = 0; static uint32_t s_on, s_off;
             if (g_pg.stencil_enable) s_on++; else s_off++;
-            if (g_doa3_post_movie && GetTickCount() >= s_nx) {
+            if (g_doa2u_post_movie && GetTickCount() >= s_nx) {
                 s_nx = GetTickCount() + 2000;
                  s_on = s_off = 0;
             }
@@ -1644,7 +1644,7 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
         }
     }
 
-    /* Alpha test. DOA3 drives it hard -- SET_ALPHA_FUNC arrives ~785,000
+    /* Alpha test. The game drives it hard -- SET_ALPHA_FUNC arrives ~785,000
      * times in a couple of minutes -- and without it the punch-through
      * texels of a DXT1 decal or foliage quad are drawn as opaque black
      * instead of being discarded. */
@@ -1654,10 +1654,10 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
         dev->lpVtbl->SetRenderState(dev, D3DRS_ALPHATESTENABLE, g_pg.alpha_test ? TRUE : FALSE);
         dev->lpVtbl->SetRenderState(dev, D3DRS_ALPHAFUNC, func);
         dev->lpVtbl->SetRenderState(dev, D3DRS_ALPHAREF, g_pg.alpha_ref & 0xFF);
-        {   extern volatile int g_doa3_post_movie;
+        {   extern volatile int g_doa2u_post_movie;
             static DWORD s_nx = 0; static uint32_t s_on, s_off;
             if (g_pg.alpha_test) s_on++; else s_off++;
-            if (g_doa3_post_movie && GetTickCount() >= s_nx) {
+            if (g_doa2u_post_movie && GetTickCount() >= s_nx) {
                 s_nx = GetTickCount() + 2000;
                  s_on = s_off = 0;
             }
@@ -1733,7 +1733,7 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
             dev->lpVtbl->SetTextureStageState(dev, 0, 5 /*ALPHAARG1*/, 0 /*DIFFUSE*/);
         }
     } else {
-        /* DOA3 (no Global.txd): bind a dynamic texture built from the guest
+        /* No Global.txd: bind a dynamic texture built from the guest
          * memory the game pointed SET_TEXTURE_OFFSET at (the movie frame
          * surface, loading screens, etc.). Vertex-color-only when absent. */
         IDirect3DTexture8 *dtex;
@@ -1816,7 +1816,7 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
             }
         }
         dtex = get_dynamic_texture(dev);
-        /* DOA3: a 2D draw whose texture stage is DISABLED is flat colour,
+        /* DOA2U: a 2D draw whose texture stage is DISABLED is flat colour,
          * whatever its vertex layout carries. The fight UI submits its
          * health-bar fills, the pause menu's highlight bar and title box
          * and the button backings as 13-dword vertices (a texcoord slot
@@ -1830,11 +1830,11 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
          * (The 2D path had this rule already, see the health bars above.) */
         if (!g_pg.tex[0].enabled) dtex = NULL;
         if (dtex) {
-            /* DOA3 configures the pixel pipeline through the register
+            /* The game configures the pixel pipeline through the register
              * combiners, which this translator does not implement; it
              * substitutes the fixed-function equivalent. Modulating by the
              * diffuse register is only valid when the game actually supplies
-             * one. DOA3 leaves vertex attribute 3 at zero for these draws and
+             * one. The game leaves vertex attribute 3 at zero for these draws and
              * sources colour from the combiners instead, so modulating turned
              * every textured pixel into transparent black -- the whole screen.
              * When the diffuse register is degenerate, take the texture
@@ -1973,7 +1973,7 @@ static void nv_apply_draw_state_cpu(IDirect3DDevice8 *dev, OutputVertex *out,
  * The NV2A clips in clip space before the divide; the D3D8 layer only takes
  * pre-transformed XYZRHW, which cannot represent a vertex behind the eye
  * (w <= 0): its screen position is mirrored and a triangle straddling the
- * near plane sweeps across the frame. DOA3's title/attract camera sits inside
+ * near plane sweeps across the frame. The game's title/attract camera sits inside
  * the stage, so most batches straddle. Rebuild each triangle in clip space
  * from the XYZRHW output (W = 1/rhw, X = x*W, ...), clip it against the D3D
  * near plane Zc >= 0 (Sutherland-Hodgman, attributes interpolated in clip
@@ -2052,7 +2052,7 @@ static int nv_clip_triangle(const ClipVert in[3], OutputVertex *dst)
      * producing clipped outputs at x = 3.7e6.
      *
      * W here is view-space z (the composite's row 3 is the camera forward axis
-     * plus distance), and DOA3's projection carries a near plane of ~0.3, so
+     * plus distance), and the game's projection carries a near plane of ~0.3, so
      * anything nearer than this epsilon is already behind the near plane and
      * must not survive the divide. Kept well under the real near distance so
      * only genuinely degenerate vertices are removed. */
@@ -2123,7 +2123,7 @@ static uint32_t nv_clip_batch(const OutputVertex *out, uint32_t n, int prim, Out
     }
     return o;
 }
-/* DOA3: follow the guest's colour surface. The Xbox D3D renders a 256x256
+/* DOA2U: follow the guest's colour surface. The Xbox D3D renders a 256x256
  * reflection/shadow pass into a texture every frame, then switches back to
  * one of its two frame buffers for the scene. The surface pitch
  * (NV097_SET_SURFACE_PITCH, always programmed before the colour offset)
@@ -2139,7 +2139,7 @@ extern int  d3d8_OffscreenTargetActive(void);
 /* Map guest screen coordinates onto the host backbuffer.
  *
  * Everything this module emits is in the guest's framebuffer space, which
- * DOA3 sets to 720x480 through SET_SURFACE_CLIP. The D3D8 layer's
+ * the game sets to 720x480 through SET_SURFACE_CLIP. The D3D8 layer's
  * pre-transformed path divides by the HOST backbuffer size, so with a 640-wide
  * window every guest x was scaled by 720/640 and the right 11% of the picture
  * fell off the screen -- which is why the "3" of the corner logo was missing.
@@ -2182,7 +2182,7 @@ static uint32_t nv_inline_layout_from_attrs(int *pos_dw, int *uv_off, int *color
 
 /* Hand NV097_SET_WINDOW_CLIP to the host as a scissor rectangle.
  *
- * This is the NV2A's hardware scissor and DOA3 leans on it: character select
+ * This is the NV2A's hardware scissor and the game leans on it: character select
  * programs 94,154-701,625 for the portrait pass and 0,0-1439,959 for the 2D
  * layer. The rect is in SURFACE pixels -- 1440x960 while the 2x2 supersampled
  * frame buffer is bound -- so it maps onto the back buffer exactly the way
@@ -2238,9 +2238,9 @@ static void nv_fit_to_backbuffer(OutputVertex *out, uint32_t n, int screen_space
     /* Only for the swap chain: an offscreen target really is the size of the
      * clip that made it, so its draws must keep using the clip. */
     if (screen_space && !d3d8_OffscreenTargetActive()) {
-        extern int doa3_guest_display_size(unsigned *w, unsigned *h);
+        extern int doa2u_guest_display_size(unsigned *w, unsigned *h);
         unsigned dw, dh;
-        if (doa3_guest_display_size(&dw, &dh)) { gw = dw; gh = dh; }
+        if (doa2u_guest_display_size(&dw, &dh)) { gw = dw; gh = dh; }
     }
 
     if (!gw || !gh || !bw || !bh) return;
@@ -2262,9 +2262,9 @@ static void nv_sync_render_target(void)
      * surface and then classed the frame buffer itself as offscreen. */
     unsigned pw = (g_pg_surf_pitch & 0xFFFF) / 4;
     unsigned h  = (g_pg.surface_clip_v >> 16) & 0xFFFF;
-    extern uint32_t g_doa3_offrt_offs[8]; extern int g_doa3_offrt_n;
+    extern uint32_t g_doa2u_offrt_offs[8]; extern int g_doa2u_offrt_n;
     if (pw < 16 || pw > 2048) return;             /* pitch not programmed yet */
-    if (g_doa3_offrt_n) {
+    if (g_doa2u_offrt_n) {
         /* Colour-offset routing: the SetRenderTarget wrapper records every
          * texture surface the game renders into (the reflection target in
          * stage 0x3F is 720x480 with the frame buffer's pitch, which the
@@ -2272,7 +2272,7 @@ static void nv_sync_render_target(void)
          * including both flip buffers, which rotate at Swap without a
          * SetRenderTarget call -- is the swap chain. */
         int k, is_fb = 1;
-        for (k = 0; k < g_doa3_offrt_n; k++) if (g_doa3_offrt_offs[k] == g_pg_surf_coff) is_fb = 0;
+        for (k = 0; k < g_doa2u_offrt_n; k++) if (g_doa2u_offrt_offs[k] == g_pg_surf_coff) is_fb = 0;
         if (is_fb) {
             /* remember the flip buffers (see nv_samples_framebuffer) */
             int seen = 0;
@@ -2340,7 +2340,7 @@ static uint32_t nv_xbox_texop(uint32_t x)
  * or SET_POINT_SIZE / 8 when the params are off. Sizes are in guest
  * render-target pixels; nv_fit_to_backbuffer scales the corners with
  * everything else. The hardware feeds the sprite's 0..1 coordinates to
- * texture unit 3 only, which is why DOA3 binds the flake / ember there.
+ * texture unit 3 only, which is why the game binds the flake / ember there.
  * A point behind the eye (w <= 0) or outside the depth range has no XYZRHW
  * form and is dropped (returns 0). `pos` is the object-space position for
  * the distance term, or NULL when the draw has none to offer. */
@@ -2379,7 +2379,7 @@ static int nv_point_quad(const OutputVertex *v, const float *pos, OutputVertex *
 
 /* Render state for a point-sprite batch. Sprite texture: texture unit 3,
  * combined by the guest's stage-3 ops. Bound on host stage 0 the way cxbx
- * does it. The unit's control0 enable bit is not consulted: DOA3 never sets
+ * does it. The unit's control0 enable bit is not consulted: the game never sets
  * it for any unit but 0 (measured), cxbx's HLE never reads it, and the
  * sprite is textured on the real console. */
 static void nv_apply_point_state(IDirect3DDevice8 *dev, const OutputVertex *out, uint32_t out_n)
@@ -2544,7 +2544,7 @@ static int nv_gpu_ff_submit(IDirect3DDevice8 *dev, const NvBatchCtx *ctx, int pr
     NvDrawSummary sum;
     NvPostOps post;
     static int s_flip = -1;
-    if (s_flip < 0) { const char *e = getenv("DOA3_FLIPW"); s_flip = (e && *e == '1'); }
+    if (s_flip < 0) { const char *e = getenv("DOA2U_FLIPW"); s_flip = (e && *e == '1'); }
 
     if (ctx->run_program || !g_pg.composite_seen || s_flip) return 0;
     if (prim != D3DPT_TRIANGLELIST && prim != D3DPT_TRIANGLESTRIP && prim != D3DPT_TRIANGLEFAN) return 0;
@@ -2730,7 +2730,7 @@ static void submit_array_draw(void)
          * or SET_POINT_SIZE / 8 when the params are off. Sizes are in guest
          * render-target pixels; nv_fit_to_backbuffer scales the corners with
          * everything else. The hardware feeds the sprite's 0..1 coordinates
-         * to texture unit 3 only, which is why DOA3 binds the flake there
+         * to texture unit 3 only, which is why the game binds the flake there
          * (cxbx remaps stage 3 onto its host stage 0 for the same reason).
          * A point behind the eye (w <= 0) or outside the depth range has no
          * XYZRHW form and is dropped, so the batch never needs the near-plane
@@ -2787,14 +2787,14 @@ static void submit_array_draw(void)
              * window stays black. pos0 alone cannot separate a degenerate batch
              * (every vertex on one point) from a shading problem, so report the
              * screen bounding box, the colour range and the bound texture. */
-            extern volatile int g_doa3_post_movie;
+            extern volatile int g_doa2u_post_movie;
             static int s_n = 0, s_pm = 0;
             static DWORD s_next = 0;
             static int s_burst = 0;
             int want = (s_n < 8);
             /* Post-movie: a burst of draws every couple of seconds rather than the
              * first 20 in a row, so the sample spans different batches. */
-            if (!want && g_doa3_post_movie && s_pm < 80) {
+            if (!want && g_doa2u_post_movie && s_pm < 80) {
                 DWORD now = GetTickCount();
                 if (now >= s_next) { s_next = now + 2000; s_burst = 0; }
                 if (s_burst < 4) { s_burst++; s_pm++; want = 1; }
@@ -2849,7 +2849,7 @@ static void submit_array_draw(void)
         OutputVertex *cl = nv_scratch_verts(1, ntri * 9);
         if (!cl) { g_pg.idx_count = 0; g_pg.idx_dropped = 0; return; }
         uint32_t cn = nv_clip_batch(out, out_n, prim, cl);
-        {   /* DOA3 DIAG: clip statistics, one line every ~2 s. */
+        {   /* DOA2U DIAG: clip statistics, one line every ~2 s. */
             static DWORD s_next = 0; static uint32_t s_b = 0, s_ti = 0, s_to = 0, s_empty = 0;
             s_b++; s_ti += ntri; s_to += cn / 3; if (cn < 3) s_empty++;
             if (GetTickCount() >= s_next) {
@@ -2857,7 +2857,7 @@ static void submit_array_draw(void)
                 s_b = s_ti = s_to = s_empty = 0;
             }
         }
-        if (!getenv("DOA3_NOCLIP")) {
+        if (!getenv("DOA2U_NOCLIP")) {
             if (cn < 3) { g_pg.idx_count = 0; return; }
             out = cl; out_n = cn; prim = D3DPT_TRIANGLELIST; prim_count = cn / 3;
         }
@@ -2886,7 +2886,7 @@ uint32_t g_dbail_lastic, g_dbail_lastst;
 /* Screen-space z for the inline 2D layer, clamped just inside the clip range.
  *
  * These vertices are pre-transformed, so the shader emits them as
- * (z, w) = (z, 1) and D3D11 clips anything outside 0 <= z <= w. DOA3
+ * (z, w) = (z, 1) and D3D11 clips anything outside 0 <= z <= w. The game
  * submits its character-select backing quad and panel borders at exactly
  * z = 1.0 -- the far plane -- and every one of them was being discarded on
  * that boundary. The NV2A clamps here rather than clipping, so nudge the
@@ -2912,7 +2912,7 @@ static void submit_draw(void)
     }
     g_pg.idx_count = 0;
 
-    /* DOA3 DIAG: why are ~89k of 90k BEGIN/END blocks dropped? */
+    /* DOA2U DIAG: why are ~89k of 90k BEGIN/END blocks dropped? */
     g_dbail[0]++;
     if (g_pg.inline_count == 0) { g_dbail[1]++; return; }
     if (g_pg.vert_stride == 0)  { g_dbail[2]++; return; }
@@ -2924,8 +2924,8 @@ static void submit_draw(void)
      * movie and compositing it produces flashing shapes over the video, so
      * hold it back until the presenter hands the screen over. */
     {
-        extern int doa3_movie_host_owns_screen(void);
-        if (doa3_movie_host_owns_screen()) {
+        extern int doa2u_movie_host_owns_screen(void);
+        if (doa2u_movie_host_owns_screen()) {
             g_dbail[5]++;
             g_pg.inline_count = 0;
             return;
@@ -2960,7 +2960,7 @@ static void submit_draw(void)
         /* No hint, and the stride in force does not divide the payload, so it
          * provably is not this draw's -- it is whatever the last draw left.
          * SET_VERTEX_DATA_ARRAY_FORMAT is what the hardware itself unpacks an
-         * INLINE_ARRAY with, and DOA3 does emit it (all 16 slots).
+         * INLINE_ARRAY with, and the game does emit it (all 16 slots).
          *
          * Measured against cxbx at character select: of 2180 DrawVerticesUP
          * calls, 1672 are 2-vertex LINELIST at a 20-byte (5-dword) stride --
@@ -3010,7 +3010,7 @@ static void submit_draw(void)
     }
     g_dbail[4]++;
 
-    {   /* DOA3 DIAG: per-draw-mode tally (count, last vert count, stride). */
+    {   /* DOA2U DIAG: per-draw-mode tally (count, last vert count, stride). */
             int dm = g_pg.draw_mode & 15;
         g_dstat[dm][0]++; g_dstat[dm][1] = num_verts; g_dstat[dm][2] = stride;
     }
@@ -3023,7 +3023,7 @@ static void submit_draw(void)
     }
 
 
-    {   /* DOA3 DIAG: census of post-FMV draws -- what is actually being
+    {   /* DOA2U DIAG: census of post-FMV draws -- what is actually being
          * submitted, and why none of it reaches the screen. */
         extern uint32_t g_census[12];
         if (g_pg.stats.draw_calls > 150000) {
@@ -3134,7 +3134,7 @@ static void submit_draw(void)
     for (uint32_t i = 0; i < out_vert_count; i++)
         if (out[i].color != 0) { diffuse_all_zero = 0; break; }
 
-    /* DOA3 interim: the movie quad's UVs are never written by the game-side
+    /* DOA2U interim: the movie quad's UVs are never written by the game-side
      * builder (all zeros). When a draw has NO usable texcoords but positions
      * span an area, derive full-range UVs from the position bounding box so
      * the bound dynamic texture (movie frame) maps across the quad. */
@@ -3214,23 +3214,23 @@ static void submit_draw(void)
     /* Begin scene if needed */
     dev->lpVtbl->BeginScene(dev);
 
-    {   /* DOA3 DIAG: the D3D11 state the draw actually lands in.
+    {   /* DOA2U DIAG: the D3D11 state the draw actually lands in.
          * movie_present.c binds its own RTV and viewport for the intro
          * movie and never restores the D3D8 layer's, so a post-movie
          * draw can be perfectly valid and still rasterise nowhere. */
-        extern volatile int g_doa3_post_movie;
+        extern volatile int g_doa2u_post_movie;
         extern void d3d8_DebugDumpTargetState(void);
         static int s_n = 0;
-        (void)g_doa3_post_movie;
+        (void)g_doa2u_post_movie;
         /* Sampled unconditionally: the same wiring question applies to the
          * draws issued while the movie is still playing. */
-        if (s_n < 3 || (g_doa3_post_movie && s_n < 6)) { s_n++; d3d8_DebugDumpTargetState(); }
+        if (s_n < 3 || (g_doa2u_post_movie && s_n < 6)) { s_n++; d3d8_DebugDumpTargetState(); }
     }
     /* Draw.
      *
      * OutputVertex is PRE-TRANSFORMED (XYZRHW screen space, diffuse, one
      * texcoord), so it must go through the fixed-function pipeline. If the
-     * game currently has a programmable vertex shader bound -- and DOA3 always
+     * game currently has a programmable vertex shader bound -- and the game always
      * does on its 3D screens -- the D3D8 layer would otherwise bind that
      * shader plus its own input layout (d3d8_vsh_prepare_draw) and run our
      * screen-space quads through the game's object-space vertex program with
@@ -3258,11 +3258,11 @@ static void submit_draw(void)
     g_pg.stats.draw_calls++;
     g_pg.stats.vertices_submitted += num_verts;
 
-    {   /* DOA3 DIAG: what the post-movie screen actually submits --
+    {   /* DOA2U DIAG: what the post-movie screen actually submits --
          * which texture, where on screen, and with what colour. */
-        extern volatile int g_doa3_post_movie;
+        extern volatile int g_doa2u_post_movie;
         static int s_n = 0;
-        if (g_doa3_post_movie && s_n < 24) {
+        if (g_doa2u_post_movie && s_n < 24) {
             float mnx = 1e9f, mxx = -1e9f, mny = 1e9f, mxy = -1e9f;
             uint32_t i;
             s_n++;
@@ -3290,11 +3290,11 @@ static void submit_draw(void)
  * Method Handler
  * ══════════════════════════════════════════════════════════════════════ */
 
-/* DOA3 DIAG: which program slots the game loads and runs after the movie. */
+/* DOA2U DIAG: which program slots the game loads and runs after the movie. */
 #define DIAG_VP_PTR(what, val) do { \
-    extern volatile int g_doa3_post_movie; \
+    extern volatile int g_doa2u_post_movie; \
     static int s_dn = 0; \
-    if (g_doa3_post_movie && s_dn < 40) { s_dn++; \
+    if (g_doa2u_post_movie && s_dn < 40) { s_dn++; \
          \
          } \
 } while (0)
@@ -3494,7 +3494,7 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
 
     g_pg.stats.methods_handled++;
 
-    {   /* DOA3 DIAG: exact per-method histogram + transform mode. */
+    {   /* DOA2U DIAG: exact per-method histogram + transform mode. */
         extern uint32_t g_mhist[0x800];
         extern uint32_t g_xmode, g_xmode_n[4];
         g_mhist[method >> 2]++;
@@ -3641,12 +3641,12 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
             if (param & 0x01) flags |= 2;  /* D3DCLEAR_ZBUFFER */
             if (param & 0x02) flags |= 4;  /* D3DCLEAR_STENCIL */
             dev->lpVtbl->Clear(dev, 0, NULL, flags, g_pg.clear_color, 1.0f, 0);
-            {   /* DOA3 DIAG: clear trace alongside [RTT] SETRT lines. */
-                extern volatile int g_doa3_post_movie; extern volatile LONG g_doa3_heartbeat;
+            {   /* DOA2U DIAG: clear trace alongside [RTT] SETRT lines. */
+                extern volatile int g_doa2u_post_movie; extern volatile LONG g_doa2u_heartbeat;
                 static int s_t = 0; static uint32_t s_lp, s_lc, s_k;
                 int changed = (s_lp != g_pg_surf_pitch || s_lc != g_pg_surf_coff);
                 s_k++;
-                if (g_doa3_post_movie && s_t < 1500 && (changed || (s_k & 31) == 0)) { s_t++;
+                if (g_doa2u_post_movie && s_t < 1500 && (changed || (s_k & 31) == 0)) { s_t++;
                     s_lp = g_pg_surf_pitch; s_lc = g_pg_surf_coff;
                       }
             }
@@ -3756,9 +3756,9 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
     {
         int idx = (method - NV097_SET_VIEWPORT_OFFSET) / 4;
         g_pg.vp_offset[idx] = u2f(param);
-        {   extern volatile int g_doa3_post_movie;
+        {   extern volatile int g_doa2u_post_movie;
             static int s_n = 0;
-            if (g_doa3_post_movie && idx == 3 && s_n < 6) { s_n++;
+            if (g_doa2u_post_movie && idx == 3 && s_n < 6) { s_n++;
                  } }
         return 1;
     }
@@ -3770,11 +3770,11 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
     {
         int idx = (method - NV097_SET_VIEWPORT_SCALE) / 4;
         g_pg.vp_scale[idx] = u2f(param);
-        {   /* DOA3 DIAG: the game rewrites this register mid-scene; log each
+        {   /* DOA2U DIAG: the game rewrites this register mid-scene; log each
              * change so the sequence can be read against the draws. */
-            extern volatile int g_doa3_post_movie; extern volatile LONG g_doa3_heartbeat;
+            extern volatile int g_doa2u_post_movie; extern volatile LONG g_doa2u_heartbeat;
             static float s_last[4]; static int s_n = 0;
-            if (g_doa3_post_movie && idx == 3 && s_n < 60 &&
+            if (g_doa2u_post_movie && idx == 3 && s_n < 60 &&
                 memcmp(s_last, g_pg.vp_scale, sizeof s_last) != 0) { s_n++;
                 memcpy(s_last, g_pg.vp_scale, sizeof s_last);
                  }
@@ -3788,9 +3788,9 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
     {
         if (method == NV097_SET_CLIP_MIN) g_pg.clip_min = u2f(param);
         else                              g_pg.clip_max = u2f(param);
-        {   extern volatile int g_doa3_post_movie; extern volatile LONG g_doa3_heartbeat;
+        {   extern volatile int g_doa2u_post_movie; extern volatile LONG g_doa2u_heartbeat;
             static float s_last[2]; static int s_n = 0;
-            if (g_doa3_post_movie && method == NV097_SET_CLIP_MAX && s_n < 40 &&
+            if (g_doa2u_post_movie && method == NV097_SET_CLIP_MAX && s_n < 40 &&
                 (s_last[0] != g_pg.clip_min || s_last[1] != g_pg.clip_max)) { s_n++;
                 s_last[0] = g_pg.clip_min; s_last[1] = g_pg.clip_max;
                  }
@@ -3860,14 +3860,14 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
         g_pg.surface_clip_v = param;
         return 1;
 
-    /* DOA3 DIAG: colour surface offset/format/pitch (0x0210/0x0208/0x020C),
+    /* DOA2U DIAG: colour surface offset/format/pitch (0x0210/0x0208/0x020C),
      * traced with the [RTT] lines to see the per-frame render-target switch. */
     case 0x0208: case 0x020C: case 0x0210:
     {
-        extern volatile int g_doa3_post_movie; extern volatile LONG g_doa3_heartbeat;
+        extern volatile int g_doa2u_post_movie; extern volatile LONG g_doa2u_heartbeat;
         static uint32_t s_last[3]; static int s_t = 0;
         int k = (method - 0x0208) / 4;
-        if (g_doa3_post_movie && s_last[k] != param && s_t < 300) { s_t++;
+        if (g_doa2u_post_movie && s_last[k] != param && s_t < 300) { s_t++;
              }
         s_last[k] = param;
         if (k == 0) g_pg.surface_fmt = param;
@@ -3913,11 +3913,11 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
         int stage = (method - NV097_SET_TEXTURE_CONTROL0) / 0x40;
         g_pg.tex[stage].control0 = param;
         g_pg.tex[stage].enabled = (param >> 30) & 1;
-        {   extern volatile int g_doa3_post_movie;
+        {   extern volatile int g_doa2u_post_movie;
             static DWORD s_nx = 0; static uint32_t s_w[4], s_en[4], s_last[4];
             s_w[stage & 3]++; if ((param >> 30) & 1) s_en[stage & 3]++;
             s_last[stage & 3] = param;
-            if (g_doa3_post_movie && GetTickCount() >= s_nx) {
+            if (g_doa2u_post_movie && GetTickCount() >= s_nx) {
                 s_nx = GetTickCount() + 2000;
                  memset(s_w, 0, sizeof s_w); memset(s_en, 0, sizeof s_en);
             }

@@ -11,8 +11,8 @@
  * - Device enumeration
  */
 
-#ifndef DOA3_XINPUT_XBOX_H
-#define DOA3_XINPUT_XBOX_H
+#ifndef DOA2U_XINPUT_XBOX_H
+#define DOA2U_XINPUT_XBOX_H
 
 #include <stdint.h>
 #include <windows.h>
@@ -120,4 +120,4 @@ DWORD xbox_InputGetCapabilities(DWORD dwPort, DWORD dwFlags, XBOX_INPUT_CAPABILI
 }
 #endif
 
-#endif /* DOA3_XINPUT_XBOX_H */
+#endif /* DOA2U_XINPUT_XBOX_H */

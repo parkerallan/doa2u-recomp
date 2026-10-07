@@ -10,7 +10,7 @@
  * 640x480 window), and presents.
  *
  * DOA2U: the movie is selected when the guest opens a .sfd file
- * (doa3_movie_select, from the kernel file-open notification) and presented
+ * (doa2u_movie_select, from the kernel file-open notification) and presented
  * once per guest frame by doa2u_movie_tick (D3DDevice_Swap / vblank wait).
  * The picture and the ADX track are decoded here, on the host, from the same
  * file the guest's Sofdec player reads.
@@ -51,9 +51,9 @@ static ID3D11SamplerState       *s_smp;
 static int s_w, s_h, s_failed;
 static int s_host_stopped;
 /* Set once the bundled decoder runs out of frames: the movie file is over.
- * doa3_pump_cri_servers uses it to complete the movie through the game's own
+ * doa2u_pump_cri_servers uses it to complete the movie through the game's own
  * PLAYEND path when the guest Sofdec stalls and never publishes one. */
-int g_doa3_host_movie_ended = 0;
+int g_doa2u_host_movie_ended = 0;
 static plm_video_t *s_host_video;
 static unsigned char *s_host_frame;
 static unsigned s_host_frames;
@@ -140,7 +140,7 @@ static LARGE_INTEGER s_host_start, s_host_frequency;
 /* The .sfd the game is starting (file name only, from sub_0009DF60's index)
  * and whether the presenter still has to be re-armed for it. The presenter used to be one-shot and
  * hardcoded to ninja.sfd: after the intro it stayed stopped, and the intro's
- * g_doa3_host_movie_ended made doa3_pump_cri_servers force PLAYEND on the
+ * g_doa2u_host_movie_ended made doa2u_pump_cri_servers force PLAYEND on the
  * story ending the moment it reached PLAYING -- the ending was skipped and
  * the game went straight back to the title. */
 static char s_movie_name[MAX_PATH] = "";
@@ -149,7 +149,7 @@ static int  s_movie_active;           /* a movie is selected and not finished */
 
 /* guest_path is the Xbox path the game opened ("d:\doa2\doa2_op.sfd"); the
  * presenter reads assets\<path after the drive>. */
-void doa3_movie_select(const char *guest_path)
+void doa2u_movie_select(const char *guest_path)
 {
     const char *name = guest_path, *p;
     for (p = guest_path; *p; p++)
@@ -161,7 +161,7 @@ void doa3_movie_select(const char *guest_path)
     snprintf(s_movie_name, sizeof s_movie_name, "%s", name);
     s_movie_pending = 1;
     s_movie_active = 1;
-    g_doa3_host_movie_ended = 0;      /* the previous movie's end is not this one's */
+    g_doa2u_host_movie_ended = 0;      /* the previous movie's end is not this one's */
     movie_prep_start(s_movie_name);   /* read + decode in the background now */
     fprintf(stderr, "[HOSTFMV] selected %s\n", s_movie_name);
     fflush(stderr);
@@ -171,7 +171,7 @@ void doa3_movie_select(const char *guest_path)
  * since the last one finished, restart the presenter on it. Done here rather
  * than at start time so a movie that never reaches PLAYING cannot leave the
  * presenter owning (blanking) the screen. */
-void doa3_movie_arm(void)
+void doa2u_movie_arm(void)
 {
     if (!s_movie_pending) return;
     s_movie_pending = 0;
@@ -188,7 +188,7 @@ void doa3_movie_arm(void)
     s_host_audio_active = 0;
     s_host_audio_done = 0; s_host_audio_last_played = 0;
     s_host_frames = 0;
-    g_doa3_host_movie_ended = 0;
+    g_doa2u_host_movie_ended = 0;
     s_host_stopped = 0;
 }
 
@@ -461,7 +461,7 @@ static void movie_queue_audio(void)
 /* Movie preparation off the game thread. Reading a 150-245 MB ending,
  * demuxing it and decoding its whole ADX track used to happen inside the
  * first movie_host_frame call, on the game thread -- the stall at the start
- * of every story ending. doa3_movie_select starts it the moment the game
+ * of every story ending. doa2u_movie_select starts it the moment the game
  * calls its movie starter; by PLAYING it is done or nearly so. */
 static struct {
     HANDLE   thread;
@@ -618,7 +618,7 @@ static const void *movie_host_frame(void)
                 fflush(stderr);
                 movie_decoder_stop();
                 s_host_stopped = 1;
-                g_doa3_host_movie_ended = 1;
+                g_doa2u_host_movie_ended = 1;
             }
         }
     }
@@ -652,7 +652,7 @@ static void movie_upload(ID3D11DeviceContext *ctx, const void *src, int pitch)
 /* True while the host presenter still owns the screen (the intro movie is
  * being played by this module, not by the guest's own draws). Guest geometry
  * submitted in that window must not be composited over the movie. */
-int doa3_movie_host_owns_screen(void)
+int doa2u_movie_host_owns_screen(void)
 {
     return s_movie_active && !s_host_stopped;
 }
@@ -703,12 +703,12 @@ static void movie_restore_guest_viewport(ID3D11DeviceContext *ctx)
  * has not finished: the game leaving the movie early (START during the
  * intro) must stop it, but the same game path runs before any movie exists
  * and must not pre-stop a presenter that has not begun. */
-int doa3_movie_presenter_active(void)
+int doa2u_movie_presenter_active(void)
 {
     return s_tex != NULL && !s_host_stopped;
 }
 
-void doa3_movie_present_finish(void)
+void doa2u_movie_present_finish(void)
 {
     ID3D11DeviceContext *ctx = d3d8_GetD3D11Context();
     ID3D11RenderTargetView *rtv = d3d8_GetDefaultRTV();
@@ -732,7 +732,7 @@ void doa3_movie_present_finish(void)
     fflush(stderr);
 }
 
-void doa3_capture_backbuffer(const char *path)
+void doa2u_capture_backbuffer(const char *path)
 {
     ID3D11Device *dev = d3d8_GetD3D11Device();
     ID3D11DeviceContext *ctx = d3d8_GetD3D11Context();
@@ -800,7 +800,7 @@ void doa3_capture_backbuffer(const char *path)
     ID3D11Texture2D_Release(bb);
 }
 
-void doa3_movie_repaint(void)
+void doa2u_movie_repaint(void)
 {
     ID3D11DeviceContext *ctx = d3d8_GetD3D11Context();
     if (s_host_stopped || !ctx || !s_tex || s_failed || !s_frames)
@@ -808,7 +808,7 @@ void doa3_movie_repaint(void)
     {
         const void *host = movie_host_frame();
         if (s_host_stopped) {
-            doa3_movie_present_finish();
+            doa2u_movie_present_finish();
             return;
         }
         if (host)
@@ -827,7 +827,7 @@ void doa3_movie_repaint(void)
     d3d8_RestoreDefaultTarget();
 }
 
-void doa3_present_movie_surface(const void *src, int w, int h, int pitch)
+void doa2u_present_movie_surface(const void *src, int w, int h, int pitch)
 {
     ID3D11Device *dev = d3d8_GetD3D11Device();
     ID3D11DeviceContext *ctx = d3d8_GetD3D11Context();
@@ -847,7 +847,7 @@ void doa3_present_movie_surface(const void *src, int w, int h, int pitch)
     {
         const void *host = movie_host_frame();
         if (s_host_stopped) {
-            doa3_movie_present_finish();
+            doa2u_movie_present_finish();
             return;
         }
         if (host) {
@@ -860,7 +860,7 @@ void doa3_present_movie_surface(const void *src, int w, int h, int pitch)
     movie_draw_to_guest(ctx);
     d3d8_PresentFrame();                   /* message pump + vsync present */
     movie_restore_guest_viewport(ctx);
-    d3d8_RestoreDefaultTarget();           /* see doa3_present_movie_frame */
+    d3d8_RestoreDefaultTarget();           /* see doa2u_present_movie_frame */
 
     s_frames++;
 }
@@ -894,7 +894,7 @@ void doa2u_movie_tick(void)
     }
     host = movie_host_frame();
     if (s_host_stopped) {
-        doa3_movie_present_finish();
+        doa2u_movie_present_finish();
         return;
     }
     if (!host)
@@ -913,7 +913,7 @@ void doa2u_movie_stop(void)
     if (!s_movie_active)
         return;
     xa2_movie_stop();
-    doa3_movie_present_finish();
+    doa2u_movie_present_finish();
 }
 
 int doa2u_movie_active(void)

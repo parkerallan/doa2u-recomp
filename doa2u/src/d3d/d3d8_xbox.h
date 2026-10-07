@@ -15,8 +15,8 @@
  * game/RW code can compile against our D3D11-backed implementation.
  */
 
-#ifndef DOA3_D3D8_XBOX_H
-#define DOA3_D3D8_XBOX_H
+#ifndef DOA2U_D3D8_XBOX_H
+#define DOA2U_D3D8_XBOX_H
 
 #include <stdint.h>
 #include <windows.h>
@@ -788,4 +788,4 @@ void d3d8_PresentFrame(void);
 }
 #endif
 
-#endif /* DOA3_D3D8_XBOX_H */
+#endif /* DOA2U_D3D8_XBOX_H */

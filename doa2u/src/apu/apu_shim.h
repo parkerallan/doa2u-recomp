@@ -4,7 +4,7 @@
  * Replaces QEMU types, SDL audio, and libsamplerate functions with
  * minimal Win32 equivalents so that xemu's APU code can compile standalone.
  *
- * Copyright (c) 2026 Dead or Alive 3 Static Recompilation Project
+ * Copyright (c) 2026 Dead or Alive 2 Ultimate Static Recompilation Project
  * Based on xemu code: Copyright (c) 2012 espes, 2018-2025 Matt Borgerson et al.
  *
  * This library is free software; you can redistribute it and/or

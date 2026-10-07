@@ -152,16 +152,16 @@ GARBAGE_TARGET(E970EB1C)
 GARBAGE_TARGET(EE2A2E3C)
 
 /* ── Runtime symbols the shared libraries expect from the game layer ── */
-volatile int g_doa3_post_movie = 0;      /* fiber timeslicing gate (kept off) */
+volatile int g_doa2u_post_movie = 0;      /* fiber timeslicing gate (kept off) */
 void (*g_kernel_ptinfo_hook)(const char *where);   /* NtReadFile diagnostic hook (unused) */
-uint32_t g_doa3_offrt_offs[8]; int g_doa3_offrt_n;
+uint32_t g_doa2u_offrt_offs[8]; int g_doa2u_offrt_n;
 /* Worker timeslice: every 4 ms the game thread hands the CRI server fibers a slice,
  * standing in for preemption (the game's load waits never block). */
-int doa3_workers_may_run(void) { return 1; }
-int doa3_guest_display_size(unsigned *w, unsigned *h) { (void)w; (void)h; return 0; }
+int doa2u_workers_may_run(void) { return 1; }
+int doa2u_guest_display_size(unsigned *w, unsigned *h) { (void)w; (void)h; return 0; }
 
 /* APU interrupt delivery: run the DirectSound ISR and its DPCs as guest calls. */
-void doa3_apu_deliver_irq(void)
+void doa2u_apu_deliver_irq(void)
 {
     typedef struct MCPXAPUState MCPXAPUState;
     extern int mcpx_apu_take_irq(void);
@@ -228,7 +228,7 @@ void game_on_file_open(const char *xbox_path)
 void sub_0031BBB0(void)
 {
     extern void sub_0031BBB0_gen(void);
-    extern void doa3_movie_select(const char *guest_path);
+    extern void doa2u_movie_select(const char *guest_path);
     uint32_t fname = MEM32(esp + 8);
     if (fname) {
         char name[MAX_PATH];
@@ -237,9 +237,21 @@ void sub_0031BBB0(void)
         name[i] = 0;
         fprintf(stderr, "[MOVIE] mwPlyStartFname(0x%08X, \"%s\")\n", MEM32(esp + 4), name);
         fflush(stderr);
-        doa3_movie_select(name);
+        doa2u_movie_select(name);
     }
     sub_0031BBB0_gen();
+}
+
+/* Movie teardown (0x000F9A10): stops and destroys the mwPly handle at 0xA942D8, on
+ * both end of stream and START pressed. The host presenter runs on its own clock and
+ * only stops at end of file, so on a skip it kept owning the screen (guest frames are
+ * not presented while it is active) and played on. Hand the screen back here. */
+void sub_000F9A10(void)
+{
+    extern void sub_000F9A10_gen(void);
+    extern void doa2u_movie_stop(void);
+    doa2u_movie_stop();
+    sub_000F9A10_gen();
 }
 
 /* Modelled vblank: the game may wait on vblank during movies without calling Swap,
@@ -248,7 +260,7 @@ void game_pump_vblank_servers(void)
 {
     extern void doa2u_movie_tick(void);
     extern int doa2u_movie_active(void);
-    extern volatile LONG g_doa3_heartbeat;
+    extern volatile LONG g_doa2u_heartbeat;
     static LARGE_INTEGER s_last, s_freq;
     LARGE_INTEGER now;
     if (!doa2u_movie_active()) return;
@@ -257,12 +269,12 @@ void game_pump_vblank_servers(void)
     QueryPerformanceCounter(&now);
     if (s_last.QuadPart && (now.QuadPart - s_last.QuadPart) * 60 < s_freq.QuadPart) return;
     s_last = now;
-    InterlockedIncrement(&g_doa3_heartbeat);
+    InterlockedIncrement(&g_doa2u_heartbeat);
     doa2u_movie_tick();
 }
 
 /* ── XAPI fibers -> host cooperative fibers ─────────────────────────── */
-/* XAPI fibers backed by host coroutines (xbox_fiber.c), as in DOA3; handles are
+/* XAPI fibers backed by host coroutines (xbox_fiber.c), handles are
  * 0xF1BE0000|index, anything else means back to the dispatcher. */
 extern int  xbox_fiber_create_dormant(uint32_t routine_va, uint32_t param, uint32_t stack_size);
 extern void xbox_fiber_destroy(int idx);
@@ -407,7 +419,7 @@ void sub_0034AF80(void)
 {
     extern void sub_0034AF80_gen(void);
     extern void pgraph_d3d11_flush(void);
-    extern void doa3_present_frame(void);
+    extern void doa2u_present_frame(void);
     extern void doa2u_movie_tick(void);
     extern int  doa2u_movie_active(void);
     uint32_t sv_esi = esi, sv_edi = edi, sv_ebx = ebx;
@@ -431,11 +443,11 @@ void sub_0034AF80(void)
         uint32_t ret_eax = eax, ret_esp = esp;
         dev = MEM32(D3D_G_PDEVICE);
         d3d_publish_vblank(dev);
-        {   /* DOA3 host-EOF trigger: the guest Sofdec parks in PLAYING at a movie's end, so once
+        {   /* Host-EOF trigger: the guest Sofdec parks in PLAYING at a movie's end, so once
              * the presenter hits EOF set SFD state 6 / mwPly state 3 (PLAYEND). */
-            extern int g_doa3_host_movie_ended;
+            extern int g_doa2u_host_movie_ended;
             uint32_t mp = MEM32(0xA942D8);                 /* mwPly handle */
-            if (g_doa3_host_movie_ended && mp >= 0x1000 && mp < 0x8000000u &&
+            if (g_doa2u_host_movie_ended && mp >= 0x1000 && mp < 0x8000000u &&
                 MEM32(mp + 8) == 2) {
                 uint32_t sfd = MEM32(mp + 0x40);
                 if (sfd >= 0x1000 && sfd < 0x8000000u && MEM32(sfd + 0x48) == 4) {
@@ -445,12 +457,12 @@ void sub_0034AF80(void)
             }
         }
         if (doa2u_movie_active()) {
-            extern volatile LONG g_doa3_heartbeat;
-            InterlockedIncrement(&g_doa3_heartbeat);
+            extern volatile LONG g_doa2u_heartbeat;
+            InterlockedIncrement(&g_doa2u_heartbeat);
             doa2u_movie_tick();
         } else {
             pgraph_d3d11_flush();
-            doa3_present_frame();
+            doa2u_present_frame();
         }
         if (dev) {
             uint32_t ev = dev + DEV_VBLANK_EVENT_OFS;
@@ -521,7 +533,7 @@ void sub_002BD44C(void)
     esp += 4;   /* ret */
 }
 
-/* ADXF_GetPtStat (0x2FBAE0, DOA3 sub_00169150): the post-install mount spins on it
+/* ADXF_GetPtStat (0x2FBAE0): the post-install mount spins on it
  * without yielding; pulse vblank and yield to the CRI workers until it's done. */
 void sub_002FBAE0(void)
 {
@@ -535,13 +547,139 @@ void sub_002FBAE0(void)
         }
         {   /* no presents happen during this spin -- service the window so it
              * doesn't go "Not Responding" under the user's clicks */
-            extern void doa3_pump_messages(void);
+            extern void doa2u_pump_messages(void);
             static unsigned s_mp2 = 0;
-            if ((++s_mp2 & 63) == 0) doa3_pump_messages();
+            if ((++s_mp2 & 63) == 0) doa2u_pump_messages();
         }
         if (xbox_fiber_active())
             xbox_fiber_yield();
     }
+}
+
+/* ── XPP (Xbox Peripheral Port) input overrides — host-backed pads ─────────
+ * There is no USB stack behind the XAPI pad calls, so the
+ * gamepad ones are served from the host (src/input xbox_InputGetState: XInput
+ * pads plus the Esc-menu keyboard mapping on port 0). Names from
+ * tools/recomp/doa2u_cxbx_symbols.ini.
+ *
+ * The game's pad structs: base 0xA94838, stride 0x80. +0x00 caps blob
+ * (XInputGetCapabilities), +0x19 XINPUT_STATE (XInputGetState), +0x2F
+ * XINPUT_FEEDBACK (rumble motors at +0x71/+0x73), +0x78 XInputOpen handle.
+ * Opened/polled by sub_000FA5D0 (boot) and sub_000FA6C0 (every frame).
+ * Other device types (memory units, 0x3B83E0) keep the generated bodies. */
+#define XPP_TYPE_GAMEPAD  0x003B845Cu
+#define XPP_HANDLE_BASE   0x0AD00001u   /* fake but consistent nonzero handles */
+
+static uint32_t s_xpp_prev_mask;   /* XGetDeviceChanges baseline (real XAPI PreviousConnected) */
+
+static int xpp_handle_port(uint32_t h)
+{
+    return (h >= XPP_HANDLE_BASE && h < XPP_HANDLE_BASE + 4) ? (int)(h - XPP_HANDLE_BASE) : -1;
+}
+
+void sub_003B9913_gen(void);
+void sub_003B9913(void)   /* XGetDevices(type) -> connected mask, stdcall ret 4 */
+{
+    extern DWORD xbox_InputHostMask(void);
+    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003B9913_gen(); return; }
+    /* Real XAPI semantics (cxbx Xapi.cpp): reporting the connected set also
+     * resets the change baseline, so XGetDeviceChanges does not re-report
+     * these pads as insertions. */
+    s_xpp_prev_mask = xbox_InputHostMask();
+    eax = s_xpp_prev_mask;
+    esp += 8;
+}
+
+void sub_003B9935_gen(void);
+void sub_003B9935(void)   /* XGetDeviceChanges(type, &ins, &rem), stdcall ret 12 */
+{
+    extern DWORD xbox_InputHostMask(void);
+    uint32_t p_ins, p_rem, cur, ins, rem;
+    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003B9935_gen(); return; }
+    /* Both outputs are written on every call -- zero when nothing changed. */
+    p_ins = MEM32(esp + 8);
+    p_rem = MEM32(esp + 12);
+    cur = xbox_InputHostMask();
+    ins = cur & ~s_xpp_prev_mask;
+    rem = s_xpp_prev_mask & ~cur;
+    s_xpp_prev_mask = cur;
+    if (p_ins) MEM32(p_ins) = ins;
+    if (p_rem) MEM32(p_rem) = rem;
+    eax = (ins | rem) ? 1u : 0u;
+    esp += 16;
+}
+
+void sub_003B9E12_gen(void);
+void sub_003B9E12(void)   /* XInputOpen(type, port, slot, params) -> handle, stdcall ret 16 */
+{
+    uint32_t port = MEM32(esp + 8);
+    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003B9E12_gen(); return; }
+    eax = port < 4 ? XPP_HANDLE_BASE + port : 0;
+    esp += 20;
+}
+
+void sub_003B9E68_gen(void);
+void sub_003B9E68(void)   /* XInputClose(handle), stdcall ret 4 */
+{
+    if (xpp_handle_port(MEM32(esp + 4)) < 0) { sub_003B9E68_gen(); return; }
+    eax = 0;
+    esp += 8;
+}
+
+void sub_003B9E74_gen(void);
+void sub_003B9E74(void)   /* XInputGetCapabilities(handle, caps), stdcall ret 8 */
+{
+    uint32_t caps = MEM32(esp + 8), i;
+    if (xpp_handle_port(MEM32(esp + 4)) < 0) { sub_003B9E74_gen(); return; }
+    if (caps) {
+        for (i = 0; i < 0x19; i++) MEM8(caps + i) = 0;
+        MEM8(caps) = 1;   /* XINPUT_DEVSUBTYPE_GC_GAMEPAD */
+    }
+    eax = 0;
+    esp += 12;
+}
+
+void sub_003BA04C_gen(void);
+void sub_003BA04C(void)   /* XInputGetState(handle, state), stdcall ret 8 */
+{
+    extern DWORD xbox_InputGetState(DWORD, void *);
+    static uint32_t s_packet = 0x1000;
+    uint32_t st = MEM32(esp + 8);
+    int port = xpp_handle_port(MEM32(esp + 4)), i;
+    uint8_t raw[24] = {0};   /* XBOX_INPUT_STATE: packet, wButtons, 8 analog, 4 thumbs */
+    if (port < 0) { sub_003BA04C_gen(); return; }
+    if (xbox_InputGetState((DWORD)port, raw) != 0) {
+        eax = 0x48F;   /* ERROR_DEVICE_NOT_CONNECTED */
+        esp += 12;
+        return;
+    }
+    if (st) {
+        MEM32(st) = ++s_packet;                       /* dwPacketNumber */
+        for (i = 0; i < 18; i++) MEM8(st + 4 + i) = raw[4 + i];   /* XINPUT_GAMEPAD */
+    }
+    eax = 0;
+    esp += 12;
+}
+
+void sub_003BA0BF_gen(void);
+void sub_003BA0BF(void)   /* XInputSetState(handle, feedback), stdcall ret 8 */
+{
+    extern DWORD xbox_InputSetState(DWORD, const void *);
+    uint32_t fb = MEM32(esp + 8);
+    int port = xpp_handle_port(MEM32(esp + 4));
+    if (port < 0) { sub_003BA0BF_gen(); return; }
+    if (fb) {
+        /* XINPUT_FEEDBACK: Status at +0, rumble motors after the 0x42-byte
+         * header. The real call completes asynchronously (Status 0x3E5 until
+         * then); this one completes at once. */
+        uint16_t motors[2];
+        motors[0] = MEM16(fb + 0x42);
+        motors[1] = MEM16(fb + 0x44);
+        xbox_InputSetState((DWORD)port, motors);
+        MEM32(fb) = 0;
+    }
+    eax = 0;
+    esp += 12;
 }
 
 /* ── Startup hook (main.c, before the entry point) ──────────────────── */
@@ -568,7 +706,7 @@ void doa2u_game_init(void)
     extern uint32_t g_xbox_cache_install_routine;
     extern volatile int g_fib_slice_due;
     g_xbox_vblank_event_va = 0x00355500u + DEV_VBLANK_EVENT_OFS;
-    /* First-boot HDD cache copy worker (DOA3: 0x0009D440), started by sub_000F7390. */
+    /* First-boot HDD cache copy worker, started by sub_000F7390. */
     g_xbox_cache_install_routine = 0x000F70C0u;
     g_fib_slice_due = 1;   /* first slice check starts the 4 ms slice timer */
 }

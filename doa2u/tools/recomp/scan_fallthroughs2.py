@@ -58,10 +58,10 @@ for f in sorted(glob.glob('src/game/recomp/gen/*.c')):
                     tgt = addr2name[end]
                     if has_ebp:
                         ins = ('    g_seh_ebp = ebp; %s(); return; '
-                               '/* DOA3: restored dropped fall-through to %s */' % (tgt, tgt))
+                               '/* DOA2U: restored dropped fall-through to %s */' % (tgt, tgt))
                     else:
                         ins = ('    %s(); return; '
-                               '/* DOA3: restored dropped fall-through to %s */' % (tgt, tgt))
+                               '/* DOA2U: restored dropped fall-through to %s */' % (tgt, tgt))
                     if DRY:
                         print('%-18s sub_%08X -> %s | %s' %
                               (os.path.basename(f), cur, tgt, last[:70]))

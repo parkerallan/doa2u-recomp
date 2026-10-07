@@ -11,8 +11,8 @@
  * keyboard/mouse only, here a source may also be a real controller input.
  */
 
-#ifndef DOA3_PAD_MAPPING_H
-#define DOA3_PAD_MAPPING_H
+#ifndef DOA2U_PAD_MAPPING_H
+#define DOA2U_PAD_MAPPING_H
 
 #include "xinput_xbox.h"
 
@@ -70,11 +70,11 @@ PadMapping *pad_mapping_get(void);
  * before it was made remappable. */
 void pad_mapping_reset_defaults(void);
 
-/* `doa3_input.ini` next to the executable. Load is best-effort: a missing or
+/* `doa2u_input.ini` next to the executable. Load is best-effort: a missing or
  * malformed file leaves the defaults in place. */
 int  pad_mapping_load(const char *path);
 int  pad_mapping_save(const char *path);
-/* Default path (static buffer): <exe dir>\doa3_input.ini */
+/* Default path (static buffer): <exe dir>\doa2u_input.ini */
 const char *pad_mapping_default_path(void);
 
 /* Human-readable source label ("A", "Left Trigger", "LS Left", "Key W", "-"). */
@@ -102,4 +102,4 @@ void pad_mapping_apply_port(const void *xinput_state, XBOX_GAMEPAD *out, int use
 }
 #endif
 
-#endif /* DOA3_PAD_MAPPING_H */
+#endif /* DOA2U_PAD_MAPPING_H */

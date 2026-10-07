@@ -2,7 +2,7 @@
  * Cooperative fiber scheduler for Xbox threads.
  *
  * The recompiler is single-threaded: the x86 registers are global variables
- * (g_eax, g_esp, ...). DOA3's CRI ADXF middleware, however, is built around
+ * (g_eax, g_esp, ...). The game's CRI ADXF middleware, however, is built around
  * worker threads (it spawns I/O server threads that block on events and process
  * a file-load queue). To run that faithfully we give each Xbox thread its own
  * Windows fiber (own native C stack) and round-robin between them cooperatively.
@@ -69,7 +69,7 @@ void xbox_fiber_dump_states(void);
 
 
 /* ── Direct-switched (XAPI CreateFiber/SwitchToFiber) coroutine support ──
- * DOA3's game tasks are XAPI fibers switched explicitly (symmetric coroutines),
+ * The game's tasks are XAPI fibers switched explicitly (symmetric coroutines),
  * not scheduled threads. Dormant fibers are excluded from the round-robin
  * scheduler; they run only via xbox_fiber_switch_direct and park again when
  * they switch away. */

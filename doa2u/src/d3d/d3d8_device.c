@@ -19,7 +19,7 @@
 #include "d3d8_nv2aff.h"
 static ID3D11Buffer *g_nv2aff_idx_ring;   /* NV2A FF index ring, see d3d8_DrawNv2aFF */
 static UINT          g_nv2aff_idx_off;
-#include "ui/doa3_ui.h"
+#include "ui/doa2u_ui.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -103,7 +103,7 @@ static void up_ring_shutdown(void);
 /* ================================================================
  * Public frame pump (called from recompiled game code)
  * ================================================================ */
-/* DOA3 DIAG: report the render target and viewport a draw would land in.
+/* DOA2U DIAG: report the render target and viewport a draw would land in.
  * The intro movie is presented by movie_present.c, which binds its own
  * RTV/viewport and never restores this layer's, so post-movie geometry
  * can be valid yet rasterise nowhere. */
@@ -574,7 +574,7 @@ static DWORD g_d3d_draw_count = 0;
 static DWORD g_d3d_settransform_count = 0;
 static DWORD g_d3d_setrs_count = 0;
 static DWORD g_d3d_settexture_count = 0;
-static DWORD g_d3d_draw_off = 0, g_d3d_clear_def = 0, g_d3d_clear_off = 0;   /* DOA3 DIAG: target split */
+static DWORD g_d3d_draw_off = 0, g_d3d_clear_def = 0, g_d3d_clear_off = 0;   /* DOA2U DIAG: target split */
 static int g_off_active;
 
 /* ================================================================
@@ -768,7 +768,7 @@ static HRESULT d3d8_compose_and_present(void)
 
         /* Overlay last, at window resolution. It draws nothing at all unless
          * the user has opened it, so a normal frame costs one predicate. */
-        doa3_ui_render();
+        doa2u_ui_render();
 
         /* restore */
         ID3D11DeviceContext_IASetInputLayout(ctx, il);
@@ -828,18 +828,18 @@ static HRESULT __stdcall dev_Present(IDirect3DDevice8 *self, const RECT *src, co
         last_tick = now;
     }
 
-    /* DOA3 DIAG: dump what is actually presented once the intro movie hands
+    /* DOA2U DIAG: dump what is actually presented once the intro movie hands
      * the screen back, on a wall clock -- the draw-count triggers in the
      * pgraph translator fire during the movie and never again, so the
      * post-FMV screen was never captured. Buffer 0 is read before Present,
-     * so this is the frame the user sees. Opt in with DOA3_PMSHOTS=1. */
+     * so this is the frame the user sees. Opt in with DOA2U_PMSHOTS=1. */
     {
-        extern volatile int g_doa3_post_movie;
+        extern volatile int g_doa2u_post_movie;
         void d3d8_DumpBackbufferBMP(const char *path);
         static int s_on = -1, s_n = 0;
         static DWORD s_next = 0;
-        if (s_on < 0) s_on = getenv("DOA3_PMSHOTS") ? 1 : 0;
-        if (s_on && g_doa3_post_movie && s_n < 40) {
+        if (s_on < 0) s_on = getenv("DOA2U_PMSHOTS") ? 1 : 0;
+        if (s_on && g_doa2u_post_movie && s_n < 40) {
             DWORD now = GetTickCount();
             if (!s_next) s_next = now;
             if (now >= s_next) {
@@ -878,8 +878,8 @@ static HRESULT __stdcall dev_Present(IDirect3DDevice8 *self, const RECT *src, co
      * frame the movie never wrote, which is the flicker. Count it and drop
      * it until the presenter hands the screen over. */
     {
-        extern int doa3_movie_host_owns_screen(void);
-        if (doa3_movie_host_owns_screen()) {
+        extern int doa2u_movie_host_owns_screen(void);
+        if (doa2u_movie_host_owns_screen()) {
             g_flip_blocked++;
             return S_OK;
         }
@@ -912,7 +912,7 @@ static HRESULT __stdcall dev_EndScene(IDirect3DDevice8 *self)
     return S_OK;
 }
 
-/* DOA3: offscreen colour target for the guest's render-to-texture passes.
+/* DOA2U: offscreen colour target for the guest's render-to-texture passes.
  *
  * The guest D3D switches its colour surface every frame (a 256x256 texture
  * for a reflection/shadow pass, then the back buffer); the pgraph translator
@@ -920,12 +920,12 @@ static HRESULT __stdcall dev_EndScene(IDirect3DDevice8 *self)
  * of the surface-clip size while a non-backbuffer surface is bound. Until
  * this existed every such pass -- including its clear -- landed on the swap
  * chain and wiped the scene drawn just before it. */
-/* DOA3: one host colour target PER GUEST OFFSCREEN SURFACE.
+/* DOA2U: one host colour target PER GUEST OFFSCREEN SURFACE.
  *
  * There used to be a single g_off_tex shared by every render-to-texture pass,
  * and nv_apply_draw_state bound it to any draw whose texture offset matched
  * whichever surface the game had rendered into MOST RECENTLY.
- * DOA3 uses four of these (0x01728980 is the floor's reflection; the attract
+ * The game uses several of these (e.g. the floor's reflection; the attract
  * sequence adds 0x01847680, 0x019D8F80 and 0x03D25000), so a fullscreen quad
  * sampling its own captured frame at 0x03D25000 was handed the reflection
  * pass instead and rasterised the stage -- palm fronds and all -- across the
@@ -1048,7 +1048,7 @@ void d3d8_RestoreDefaultTarget(void)
 
 int d3d8_OffscreenTargetActive(void) { return g_off_active; }
 
-/* DOA3: sample the offscreen target from a later draw (the reflective floor
+/* DOA2U: sample the offscreen target from a later draw (the reflective floor
  * binds the reflection surface as its texture). The texture is created with
  * BIND_SHADER_RESOURCE above; the view is made on first use and dropped when
  * the target is recreated. Refuses while the target is still bound for
@@ -1202,8 +1202,8 @@ static HRESULT __stdcall dev_Clear(IDirect3DDevice8 *self, DWORD Count, const D3
      * SetRenderTarget started working the movie flickered on every guest
      * frame. Gate it on the same predicate the translator uses. */
     {
-        extern int doa3_movie_host_owns_screen(void);
-        if (doa3_movie_host_owns_screen())
+        extern int doa2u_movie_host_owns_screen(void);
+        if (doa2u_movie_host_owns_screen())
             Flags &= ~(DWORD)D3DCLEAR_TARGET;
     }
     if (Flags & D3DCLEAR_TARGET) {

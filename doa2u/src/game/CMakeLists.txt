@@ -27,7 +27,7 @@ set(GAME_SOURCES
     movie_present.c
     video_settings.c
     log_settings.c
-    host_stubs.c             # inert stand-ins for the DOA3 overlay/online hooks in d3d8
+    host_stubs.c             # inert stand-ins for the online hooks
     recomp/recomp_manual.c
     burnout_compat_stubs.c   # inert stubs for burnout-only symbols the nv2a srcs need
     ${NV2A_SOURCES}
@@ -42,6 +42,7 @@ target_link_libraries(doa2u PRIVATE
     dsound_compat
     input_compat
     apu_emu
+    doa2u_ui
     kernel32
     user32
     gdi32

@@ -13,8 +13,8 @@
  * This layer translates those calls to XAudio2.
  */
 
-#ifndef DOA3_DSOUND_XBOX_H
-#define DOA3_DSOUND_XBOX_H
+#ifndef DOA2U_DSOUND_XBOX_H
+#define DOA2U_DSOUND_XBOX_H
 
 #include <stdint.h>
 #include <windows.h>
@@ -186,4 +186,4 @@ HRESULT xbox_DirectSoundCreate(void *pGuid, IDirectSound8 **ppDS, void *pUnkOute
 }
 #endif
 
-#endif /* DOA3_DSOUND_XBOX_H */
+#endif /* DOA2U_DSOUND_XBOX_H */

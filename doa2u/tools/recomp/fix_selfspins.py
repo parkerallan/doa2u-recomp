@@ -1,4 +1,4 @@
-"""DOA3 gen fix: force hardware busy-wait self-spins through.
+"""DOA2U gen fix: force hardware busy-wait self-spins through.
 
 The XDK D3D/DSOUND/XPP libraries poll GPU/APU registers with single-instruction
 self-loops (`loc_X: if (MEM...) goto loc_X;`). Our port has no live hardware

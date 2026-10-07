@@ -121,7 +121,7 @@ class BinaryImage:
     def get_code_sections(self) -> List[SectionInfo]:
         """Return sections suitable for disassembly (executable, have raw data).
 
-        DOA3's XBE marks .rdata and .data with the executable (X) flag even
+        The game's XBE marks .rdata and .data with the executable (X) flag even
         though they are data; disassembling them as code produces megabytes of
         garbage functions. Exclude known data sections by name so a full
         (non --text-only) sweep only covers real code sections (.text + XDK libs).

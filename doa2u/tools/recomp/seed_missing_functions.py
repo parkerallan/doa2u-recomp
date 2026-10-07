@@ -8,14 +8,14 @@ The function detector under-detects call targets (functions reachable only via
 appends each as a `link_seed` function whose end snaps to the next known
 boundary, so `tools.recomp` emits a real body for it.
 
-Workflow (run from the doa3/ root):
+Workflow (run from the doa2u/ root):
   1. Build once; capture unresolved symbols:
        cmake --build build --config Release 2>&1 \
          | grep -oE "unresolved external symbol sub_[0-9A-Fa-f]+" \
          | sed 's/unresolved external symbol //' | sort -u > unresolved.txt
   2. py -3 -m tools.recomp.seed_missing_functions unresolved.txt
-  3. py -3 -m tools.func_id  ../doa3gamefiles/default.xbe
-  4. py -3 -m tools.recomp   ../doa3gamefiles/default.xbe --all --split 1000
+  3. py -3 -m tools.func_id  ../doa2ugamefiles/DOA2.xbe
+  4. py -3 -m tools.recomp   ../doa2ugamefiles/DOA2.xbe --all --split 1000
   5. cmake -S . -B build && cmake --build build --config Release
 
 Re-apply after any fresh `tools.disasm` run (which overwrites functions.json).

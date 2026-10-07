@@ -218,7 +218,7 @@ static int voice_list_remove(MCPXAPUState *d, uint16_t handle)
  * Front-End method dispatch
  * ============================================================ */
 
-/* DOA3 diag counters (read by apu_debug_stats_line) */
+/* DOA2U diag counters (read by apu_debug_stats_line) */
 unsigned g_apu_fe_methods, g_apu_voice_on_calls, g_apu_voices_active_last;
 
 static void fe_method(MCPXAPUState *d, uint32_t method, uint32_t argument)
@@ -936,7 +936,7 @@ static int voice_get_samples(MCPXAPUState *d, uint32_t v, float samples[][2],
                 uint32_t linear_addr = ba + cbo * (uint32_t)block_size;
                 addr = get_data_ptr(d->regs[NV_PAPU_VPSGEADDR], 0xFFFFFFFF,
                                     linear_addr);
-                {   /* DOA3 DIAG: first fetches per voice: where does the SGE table send us? */
+                {   /* DOA2U DIAG: first fetches per voice: where does the SGE table send us? */
                     static unsigned s_cnt[MCPX_HW_MAX_VOICES];
                     if (v < MCPX_HW_MAX_VOICES && s_cnt[v] < 4 && (sample_count == 0)) { unsigned e = linear_addr / TARGET_PAGE_SIZE; s_cnt[v]++;
                          }

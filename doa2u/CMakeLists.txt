@@ -20,12 +20,13 @@ add_compile_definitions(
     NOMINMAX
 )
 
-# Compatibility layers (static libraries), shared with the DOA3 port
+# Compatibility layers (static libraries)
 add_subdirectory(src/kernel)   # Xbox kernel imports -> Win32, memory layout, fibers
 add_subdirectory(src/d3d)      # D3D8 -> D3D11
 add_subdirectory(src/audio)    # DirectSound host backend
 add_subdirectory(src/input)    # Xbox input -> XInput / keyboard
 add_subdirectory(src/apu)      # MCPX APU emulation (from xemu)
+add_subdirectory(src/ui)       # Overlay menu (Esc key)
 
 # Recompiled game executable
 add_subdirectory(src/game)

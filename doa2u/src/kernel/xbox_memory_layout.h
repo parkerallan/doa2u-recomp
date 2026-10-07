@@ -44,7 +44,7 @@ extern "C" {
  * game code reads from addresses like 0x20 and 0x28 (Xbox kernel structures). */
 #define XBOX_MAP_START          0x00000000
 
-/* .text section (DOA3) */
+/* .text section */
 /* DOA2U (DOA2.xbe): the image, including .data BSS, zressect, DOLBY, .data1,
  * XON_RD and the $$XTIMAGE/$$XSIMAGE/.XTLID tails, ends at 0x0106DAE0
  * (base 0x10000 + image size 0x105DAE0). Section contents are copied from
@@ -182,7 +182,7 @@ ptrdiff_t xbox_GetMemoryOffset(void);
                                                  * a surface it computed as one pixel wide. */
 
 /** Base VA of the stack area (above last XBE section and the runtime pages).
- *  DOA2U's image extends to 0x0106DAE0 (DOA3's ended at ~0x00C31500).
+ *  DOA2U's image extends to 0x0106DAE0.
  *
  *  Sits directly above the fake TLS/RW-data pages (xbox_memory_layout.c) with
  *  no padding, because everything below XBOX_HEAP_BASE is low-heap space the
@@ -209,7 +209,7 @@ ptrdiff_t xbox_GetMemoryOffset(void);
  *  must equal 64 MB so the RenderWare engine's memory probing stops at the
  *  correct boundary. On a real Xbox, probing past 64 MB causes a page fault
  *  that the engine catches via SEH to determine available memory. */
-/* DOA3: the low (GPU/APU-addressable) heap runs to 80 MB, not 64. The
+/* DOA2U: the low (GPU/APU-addressable) heap runs to 80 MB, not 64. The
  * console had ~50 MB for the title; cxbx grants the same game ~62 MB and the
  * story fight + Continue needs ~53 MB (measured 2026-09-19: the port sat
  * 40 KB from its cap and any extra voice buffer hung the Continue). Every
@@ -224,7 +224,7 @@ ptrdiff_t xbox_GetMemoryOffset(void);
 #define XBOX_GUARD_SIZE     0
 
 /* ================================================================
- * High heap (above the console's 64 MB) — DOA3 port extension.
+ * High heap (above the console's 64 MB) — port extension.
  *
  * The port needs more RAM than the console: the CRT small-block heap is
  * served by 8 MB arena chunks (no SBH bookkeeping) and several runtime
