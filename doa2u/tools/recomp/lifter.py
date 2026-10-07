@@ -2031,6 +2031,16 @@ def lift_basic_block(lifter, bb, flag_state=None):
             if cf_expr is not None:
                 stmts.append(f"_cf = {cf_expr}; /* CF from {last_flag_setter} */")
 
+        # lahf after a float compare: rebuild AH (ZF=0x40, CF=0x01) from
+        # _fpu_cmp, as fnstsw does, so the following `test ah; jp` works.
+        if curr.mnemonic == "lahf" and last_flag_setter in (
+                "comiss", "ucomiss", "fcomi", "fcomip", "fucomi",
+                "fucomip", "fcompi", "fucompi"):
+            stmts.append("SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | "
+                         "(_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */")
+            i += 1
+            continue
+
         # Lift the instruction normally
         results = lifter.lift_instruction(insns[i])
         stmts.extend(results)

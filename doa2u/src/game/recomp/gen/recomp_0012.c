@@ -155,7 +155,6 @@ void sub_0025D1B0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -679,7 +678,6 @@ void sub_0025D720(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -2753,7 +2751,6 @@ loc_0025EE04: ;
 void sub_0025EE10(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0025EE10: ;
@@ -2796,7 +2793,6 @@ loc_0025EE93: ;
 void sub_0025EEA2(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0025EEA2: ;
@@ -2818,7 +2814,6 @@ void sub_0025EEB0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0025EEB0: ;
@@ -3004,7 +2999,6 @@ loc_0025F011: ;
 void sub_0025F01E(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0025F01E: ;
@@ -3061,7 +3055,6 @@ loc_0025F098: ;
 void sub_0025F050(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0025F050: ;
@@ -3155,7 +3148,6 @@ void sub_0025F110(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -3824,7 +3816,6 @@ void sub_0025F560(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -4051,7 +4042,6 @@ void sub_0025F760(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -4335,7 +4325,6 @@ void sub_0025F9B0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -4475,7 +4464,6 @@ loc_0025FB04: ;
 void sub_0025FB10(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0025FB10: ;
@@ -4498,7 +4486,6 @@ void sub_0025FB30(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_0025FB30: ;
     SET_LO8(ecx, MEM8(eax + 0x20));
@@ -4667,7 +4654,6 @@ void sub_0025FC90(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -5196,7 +5182,6 @@ void sub_002600F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -5212,19 +5197,19 @@ loc_002600F0: ;
     _fpu_cmp = (xmm0.f[0] < MEMF(esi + 0x10)) ? -1 : (xmm0.f[0] > MEMF(esi + 0x10)) ? 1 : 0; /* ucomiss */
     PUSH32(esp, edi);
     edi = esi + 0x10;
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_00260130; /* jp: parity */
 
 loc_0026010E: ;
     xmm0 = xmm_load_ss(esi + 4); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(esi + 0x14)) ? -1 : (xmm0.f[0] > MEMF(esi + 0x14)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_00260130; /* jp: parity */
 
 loc_0026011D: ;
     xmm0 = xmm_load_ss(esi + 8); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(esi + 0x18)) ? -1 : (xmm0.f[0] > MEMF(esi + 0x18)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00260335; /* jnp: not parity */
 
 loc_00260130: ;
@@ -5471,7 +5456,6 @@ loc_002603A8: ;
 void sub_002603B0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -5522,7 +5506,6 @@ void sub_00260410(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00260410: ;
@@ -5957,7 +5940,6 @@ void sub_00260740(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -6138,7 +6120,6 @@ void sub_00260900(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -6926,7 +6907,6 @@ void sub_00260F40(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -7140,7 +7120,6 @@ loc_002610C5: ;
 void sub_002610C7(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_002610C7: ;
     ecx = MEM32(ebx + 4);
@@ -7207,7 +7186,6 @@ loc_00261120: ;
 void sub_00261140(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -7305,7 +7283,6 @@ void sub_00261270(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -7460,7 +7437,6 @@ void sub_002613B0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -7652,7 +7628,6 @@ loc_00261550: ;
 void sub_00261560(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -7752,7 +7727,6 @@ void sub_00261650(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -7906,7 +7880,6 @@ void sub_00261840(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -8292,7 +8265,6 @@ void sub_00261C9C(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -8501,7 +8473,6 @@ void sub_00261EE0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00261EE0: ;
@@ -8563,7 +8534,6 @@ void sub_00261F80(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -8688,7 +8658,6 @@ void sub_002620D0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -8806,7 +8775,6 @@ loc_002621EE: ;
 void sub_00262180(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -8876,7 +8844,6 @@ void sub_00262200(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -9021,7 +8988,6 @@ void sub_00262370(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -9180,7 +9146,6 @@ void sub_002624C0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -9345,7 +9310,6 @@ void sub_002626B0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -9427,7 +9391,6 @@ void sub_0026275D(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026275D: ;
@@ -9796,7 +9759,6 @@ void sub_00262DE0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -10027,7 +9989,6 @@ loc_0026300F: ;
 void sub_00263020(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00263020: ;
@@ -10060,7 +10021,6 @@ void sub_00263060(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -10301,7 +10261,6 @@ void sub_00263250(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -10393,7 +10352,6 @@ void sub_00263300(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -11261,7 +11219,6 @@ void sub_00263AF0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -11694,7 +11651,6 @@ void sub_00263EC0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00263EC0: ;
@@ -11898,7 +11854,6 @@ void sub_0026405D(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026405D: ;
@@ -12335,7 +12290,7 @@ loc_002644EC: ;
     eax = MEM32(esp + 0x1C);
     xmm0 = xmm_load_ss(eax); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2E54)) ? -1 : (xmm0.f[0] > MEMF(0x3C2E54)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_002646B2; /* jnp: not parity */
 
 loc_0026462E: ;
@@ -12379,7 +12334,7 @@ loc_00264691: ;
     eax = eax + 0x10;
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2E54)) ? -1 : (xmm0.f[0] > MEMF(0x3C2E54)) ? 1 : 0; /* ucomiss */
     MEM32(esp + 0x1C) = eax;
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) { RECOMP_SLICE_POINT(); goto loc_00264630; } /* jp: parity */
 
 loc_002646AE: ;
@@ -12444,7 +12399,6 @@ void sub_00264720(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_00264720: ;
     PUSH32(esp, ebp);
@@ -12491,7 +12445,6 @@ loc_00264768: ;
 void sub_00264770(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
 
 loc_00264770: ;
     PUSH32(esp, ebp);
@@ -12528,7 +12481,6 @@ void sub_002647B0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002647B0: ;
@@ -12671,7 +12623,6 @@ void sub_002648F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002648F0: ;
@@ -12958,7 +12909,6 @@ loc_00264B70: ;
  */
 void sub_00264B90(void)
 {
-    xmm128_t xmm0;
 
 loc_00264B90: ;
     eax = MEM32(esp + 4);
@@ -13148,7 +13098,6 @@ void sub_00264C90(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
 
 loc_00264C90: ;
     PUSH32(esp, ebp);
@@ -13337,7 +13286,6 @@ void sub_00264E30(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -13834,7 +13782,6 @@ void sub_002650F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002650F0: ;
@@ -13854,7 +13801,7 @@ loc_00265109: ;
     eax = MEM32(esi);
     xmm0 = xmm_load_ss(eax + 0x30); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C1A44)) ? -1 : (xmm0.f[0] > MEMF(0x3C1A44)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_00265151; /* jp: parity */
 
 loc_00265129: ;
@@ -13947,7 +13894,6 @@ void sub_002651D0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002651D0: ;
@@ -13970,7 +13916,6 @@ loc_002651DC: ;
  */
 void sub_002651E3(void)
 {
-    xmm128_t xmm0;
 
 loc_002651E3: ;
     xmm0 = xmm_load_ss(eax + 0x30); /* movss */
@@ -13989,7 +13934,6 @@ void sub_002651E8(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002651E8: ;
@@ -14082,7 +14026,6 @@ void sub_00265280(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00265280: ;
@@ -14372,7 +14315,6 @@ void sub_00265490(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00265490: ;
@@ -14684,7 +14626,6 @@ void sub_00265720(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00265720: ;
@@ -14773,7 +14714,6 @@ void sub_002657C0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_002657C0: ;
     PUSH32(esp, ebp);
@@ -14958,7 +14898,6 @@ void sub_002659A0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -15010,7 +14949,6 @@ loc_002659E7: ;
  */
 void sub_002659F6(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_002659F6: ;
     xmm1 = xmm0; /* movaps */
@@ -15030,7 +14968,6 @@ void sub_002659FF(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -15093,7 +15030,7 @@ loc_00265A60: ;
     xmm1.f[0] = xmm1.f[0] + xmm2.f[0]; /* addss */
     _fpu_cmp = (xmm0.f[0] < xmm1.f[0]) ? -1 : (xmm0.f[0] > xmm1.f[0]) ? 1 : 0; /* ucomiss */
     edi = eax;
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 0x24, xmm1); /* movss */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00265ADE; /* jnp: not parity */
@@ -15211,7 +15148,6 @@ loc_00265B6C: ;
 void sub_00265BC0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_00265BC0: ;
     eax = MEM32(esp + 4);
@@ -15265,7 +15201,6 @@ void sub_00265C10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00265C10: ;
@@ -15311,7 +15246,6 @@ loc_00265C43: ;
  */
 void sub_00265C4D(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00265C4D: ;
     xmm0 = xmm1; /* movaps */
@@ -15329,7 +15263,6 @@ void sub_00265C50(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00265C50: ;
@@ -15519,7 +15452,6 @@ void sub_00265DA0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00265DA0: ;
@@ -15565,7 +15497,6 @@ loc_00265DD1: ;
  */
 void sub_00265DDB(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00265DDB: ;
     xmm1 = xmm0; /* movaps */
@@ -15582,7 +15513,6 @@ loc_00265DDB: ;
 void sub_00265DDE(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_00265DDE: ;
     esi = MEM32(esp + 0x10);
@@ -15667,7 +15597,6 @@ void sub_00265E60(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00265E60: ;
@@ -15897,7 +15826,6 @@ void sub_00266120(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -16078,7 +16006,6 @@ void sub_002662BD(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -16292,7 +16219,6 @@ void sub_00266490(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -16400,7 +16326,6 @@ void sub_00266550(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00266550: ;
@@ -16482,7 +16407,6 @@ void sub_002665F0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002665F0: ;
@@ -16732,7 +16656,6 @@ void sub_00266850(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00266850: ;
@@ -16778,7 +16701,6 @@ loc_00266893: ;
 void sub_002668A0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002668A0: ;
@@ -16813,7 +16735,6 @@ loc_002668CE: ;
 void sub_002668E0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002668E0: ;
@@ -16847,7 +16768,6 @@ void sub_00266910(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
 
 loc_00266910: ;
     eax = MEM32(esp + 4);
@@ -16936,7 +16856,6 @@ void sub_00266990(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
 
 loc_00266990: ;
     eax = MEM32(esp + 4);
@@ -17024,7 +16943,6 @@ void sub_00266A10(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -17057,7 +16975,7 @@ loc_00266A10: ;
     xmm3.f[0] = xmm3.f[0] * xmm1.f[0]; /* mulss */
     xmm0.f[0] = xmm0.f[0] + xmm3.f[0]; /* addss */
     _fpu_cmp = (xmm7.f[0] < xmm0.f[0]) ? -1 : (xmm7.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 0x24, xmm0); /* movss */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00266AC1; /* jnp: not parity */
@@ -17098,7 +17016,7 @@ loc_00266AC1: ;
     _fpu_cmp = (xmm6.f[0] < xmm7.f[0]) ? -1 : (xmm6.f[0] > xmm7.f[0]) ? 1 : 0; /* ucomiss */
     xmm0.f[0] = xmm0.f[0] + xmm1.f[0]; /* addss */
     xmm1 = xmm_load_ss(esi + 4); /* movss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm1.f[0] = xmm1.f[0] + xmm2.f[0]; /* addss */
     xmm_store_ss(esp + 8, xmm0); /* movss */
@@ -17130,12 +17048,11 @@ void sub_00266B24(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm7;
 
 loc_00266B24: ;
     xmm0 = xmm_load_ss(esp + 0x14); /* movss */
     _fpu_cmp = (xmm0.f[0] < xmm7.f[0]) ? -1 : (xmm0.f[0] > xmm7.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_00266B6F(); return; } /* jnp: not parity */
 
 loc_00266B33: ;
@@ -17155,7 +17072,6 @@ void sub_00266B3C(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -17238,7 +17154,6 @@ void sub_00266B6F(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -17296,7 +17211,6 @@ void sub_00266BD0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -17338,7 +17252,7 @@ loc_00266BD0: ;
     xmm0.f[0] = xmm0.f[0] + xmm4.f[0]; /* addss */
     xmm4 = xmm_zero(); /* xorps self */
     _fpu_cmp = (xmm4.f[0] < xmm0.f[0]) ? -1 : (xmm4.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 0x2C, xmm0); /* movss */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00266CBC; /* jnp: not parity */
@@ -17393,7 +17307,7 @@ loc_00266CBC: ;
     xmm2.f[0] = xmm2.f[0] + xmm3.f[0]; /* addss */
     xmm3 = xmm_load_ss(esp + 0x14); /* movss */
     _fpu_cmp = (xmm3.f[0] < xmm7.f[0]) ? -1 : (xmm3.f[0] > xmm7.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 8, xmm4); /* movss */
     xmm_store_ss(esp + 8, xmm0); /* movss */
@@ -17424,13 +17338,12 @@ void sub_00266D53(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00266D53: ;
     xmm0 = xmm_load_ss(esp + 0x18); /* movss */
     _fpu_cmp = (xmm0.f[0] < xmm7.f[0]) ? -1 : (xmm0.f[0] > xmm7.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00266D70; /* jnp: not parity */
 
 loc_00266D62: ;
@@ -17442,7 +17355,7 @@ loc_00266D62: ;
 loc_00266D70: ;
     xmm0 = xmm_load_ss(esp + 0x1C); /* movss */
     _fpu_cmp = (xmm0.f[0] < xmm7.f[0]) ? -1 : (xmm0.f[0] > xmm7.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_00266DCD(); return; } /* jnp: not parity */
 
 loc_00266D7F: ;
@@ -17463,7 +17376,6 @@ void sub_00266D8B(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -17560,7 +17472,6 @@ void sub_00266DCD(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -17627,7 +17538,6 @@ void sub_00266E50(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00266E50: ;
@@ -17736,7 +17646,6 @@ void sub_00266F10(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00266F10: ;
@@ -18698,7 +18607,6 @@ loc_00267760: ;
 void sub_00267770(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00267770: ;
@@ -18747,7 +18655,6 @@ void sub_002677D0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -19106,7 +19013,6 @@ void sub_00267A90(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -19403,7 +19309,6 @@ loc_00267CBF: ;
 void sub_00267CC6(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_00267CC6: ;
     SET_LO16(eax, MEM16(esi + 0x34));
@@ -19443,7 +19348,6 @@ void sub_00267D10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -19509,7 +19413,6 @@ loc_00267D6F: ;
  */
 void sub_00267D89(void)
 {
-    xmm128_t xmm0;
 
 loc_00267D89: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -19597,7 +19500,6 @@ loc_00267DE9: ;
 void sub_00267DF0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_00267DF0: ;
     SET_LO16(eax, MEM16(esi + 0x34));
@@ -19637,7 +19539,6 @@ void sub_00267E40(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -19699,7 +19600,6 @@ loc_00267E95: ;
  */
 void sub_00267EAF(void)
 {
-    xmm128_t xmm0;
 
 loc_00267EAF: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -19719,7 +19619,6 @@ void sub_00267EC0(void)
     uint32_t ebp;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_00267EC0: ;
     MEM32(eax + 0x24) = MEM32(eax + 0x24) + 0x100;
@@ -19753,7 +19652,6 @@ loc_00267EE1: ;
  */
 void sub_00267EFB(void)
 {
-    xmm128_t xmm0;
 
 loc_00267EFB: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -19772,7 +19670,6 @@ void sub_00267F10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -19831,7 +19728,6 @@ loc_00267F5A: ;
  */
 void sub_00267F74(void)
 {
-    xmm128_t xmm0;
 
 loc_00267F74: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -19850,7 +19746,6 @@ void sub_00267F90(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -19909,7 +19804,6 @@ loc_00267FDA: ;
  */
 void sub_00267FF4(void)
 {
-    xmm128_t xmm0;
 
 loc_00267FF4: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -19928,7 +19822,6 @@ void sub_00268010(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -19987,7 +19880,6 @@ loc_0026805A: ;
  */
 void sub_00268074(void)
 {
-    xmm128_t xmm0;
 
 loc_00268074: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -20007,7 +19899,6 @@ void sub_00268090(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00268090: ;
@@ -20047,7 +19938,6 @@ loc_002680D2: ;
  */
 void sub_002680E8(void)
 {
-    xmm128_t xmm0;
 
 loc_002680E8: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -20064,7 +19954,6 @@ loc_002680E8: ;
 void sub_002680F0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_002680F0: ;
     SET_LO16(eax, MEM16(ecx + 0x34));
@@ -20449,7 +20338,6 @@ loc_00268320: ;
  */
 void sub_00268350(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 
 loc_00268350: ;
     SET_LO16(edx, MEM16(0xE57627));
@@ -20663,7 +20551,6 @@ void sub_00268780(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00268780: ;
@@ -20677,7 +20564,7 @@ loc_00268780: ;
     xmm_store_ss(esi + 4, xmm1); /* movss */
     xmm1 = xmm_load_ss(esi + 8); /* movss */
     xmm1.f[0] = xmm1.f[0] + MEMF(esi + 0x14); /* addss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esi, xmm0); /* movss */
     xmm_store_ss(esi + 8, xmm1); /* movss */
@@ -20685,7 +20572,7 @@ loc_00268780: ;
 
 loc_002687BB: ;
     _fpu_cmp = (xmm2.f[0] < MEMF(esi + 0x14)) ? -1 : (xmm2.f[0] > MEMF(esi + 0x14)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00268863; /* jnp: not parity */
 
 loc_002687C9: ;
@@ -20786,7 +20673,6 @@ loc_002688C6: ;
  */
 void sub_002688E3(void)
 {
-    xmm128_t xmm0;
 
 loc_002688E3: ;
     xmm0 = xmm_load_ss(0x3C2E80); /* movss */
@@ -20806,7 +20692,6 @@ void sub_00268900(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00268900: ;
@@ -20958,7 +20843,6 @@ void sub_00268A50(void)
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -21385,7 +21269,6 @@ void sub_00268DE0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -21487,7 +21370,6 @@ loc_00268EF6: ;
  */
 void sub_00268F00(void)
 {
-    xmm128_t xmm1;
 
 loc_00268F00: ;
     xmm1.f[0] = xmm1.f[0] * MEMF(0x444C3C); /* mulss */
@@ -21505,7 +21387,6 @@ void sub_00268F08(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00268F08: ;
@@ -21678,7 +21559,6 @@ loc_0026906F: ;
 void sub_00269080(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -21890,7 +21770,6 @@ void sub_00269300(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00269300: ;
@@ -22027,7 +21906,6 @@ void sub_00269420(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00269420: ;
@@ -22466,7 +22344,6 @@ void sub_00269870(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -23576,7 +23453,6 @@ void sub_0026A180(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -23649,7 +23525,6 @@ void sub_0026A200(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -23722,7 +23597,6 @@ loc_0026A25E: ;
 void sub_0026A280(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0026A280: ;
     ecx = MEM32(esp + 4);
@@ -23770,7 +23644,6 @@ loc_0026A2C1: ;
 void sub_0026A2E0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0026A2E0: ;
     ecx = MEM32(esp + 4);
@@ -23860,7 +23733,6 @@ void sub_0026A380(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026A380: ;
@@ -23993,7 +23865,6 @@ void sub_0026A450(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24069,7 +23940,6 @@ void sub_0026A4E0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24692,7 +24562,6 @@ void sub_0026A840(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026A840: ;
@@ -24848,7 +24717,6 @@ void sub_0026AA10(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -25030,19 +24898,19 @@ loc_0026AC0E: ;
 loc_0026AC1C: ;
     xmm0 = xmm_load_ss(esp + 0x40); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(ebx)) ? -1 : (xmm0.f[0] > MEMF(ebx)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026AC4F; /* jp: parity */
 
 loc_0026AC2B: ;
     xmm0 = xmm_load_ss(esp + 0x44); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(esi + -56)) ? -1 : (xmm0.f[0] > MEMF(esi + -56)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026AC4F; /* jp: parity */
 
 loc_0026AC3B: ;
     xmm0 = xmm_load_ss(esp + 0x48); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(esi + -52)) ? -1 : (xmm0.f[0] > MEMF(esi + -52)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026ACD8; /* jnp: not parity */
 
 loc_0026AC4F: ;
@@ -25729,7 +25597,6 @@ void sub_0026B130(void)
     uint32_t ebp;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0026B130: ;
     PUSH32(esp, ebx);
@@ -25761,7 +25628,6 @@ void sub_0026B163(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026B163: ;
@@ -25902,7 +25768,6 @@ loc_0026B2E0: ;
 void sub_0026B300(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026B300: ;
@@ -25974,7 +25839,6 @@ void sub_0026B370(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -26193,7 +26057,6 @@ void sub_0026B530(void)
     uint32_t ebp;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_0026B530: ;
     ecx = MEM32(esp + 0xC);
@@ -26297,7 +26160,6 @@ loc_0026B5A3: ;
 void sub_0026B5A8(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -26347,7 +26209,6 @@ loc_0026B5DD: ;
  */
 void sub_0026B600(void)
 {
-    xmm128_t xmm0;
 
 loc_0026B600: ;
     xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
@@ -26369,7 +26230,6 @@ loc_0026B600: ;
  */
 void sub_0026B623(void)
 {
-    xmm128_t xmm0;
 
 loc_0026B623: ;
     xmm0 = xmm_zero(); /* xorps self */
@@ -26391,7 +26251,6 @@ void sub_0026B640(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -26404,7 +26263,7 @@ loc_0026B640: ;
     xmm0 = xmm_zero(); /* xorps self */
     esp = esp - 0x10;
     _fpu_cmp = (xmm1.f[0] < xmm0.f[0]) ? -1 : (xmm1.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_0026B71D(); return; } /* jnp: not parity */
 
 loc_0026B65B: ;
@@ -26441,7 +26300,7 @@ loc_0026B6C7: ;
     esp = esp + 4;
     _fpu_cmp = (fp_top() < fp_st1()) ? -1 : (fp_top() > fp_st1()) ? 1 : 0; fp_pop(); /* fucompi */
     fp_popp(); /* fstp st(0) = pop */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026B6EF; /* jnp: not parity */
 
 loc_0026B6EA: ;
@@ -26475,7 +26334,6 @@ loc_0026B6EF: ;
  */
 void sub_0026B71D(void)
 {
-    xmm128_t xmm0;
 
 loc_0026B71D: ;
     eax = MEM32(esp + 0x18);
@@ -26498,7 +26356,6 @@ void sub_0026B740(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -26529,7 +26386,7 @@ loc_0026B765: ;
 loc_0026B769: ;
     xmm0 = xmm_load_ss(0x7AD600); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C1A44)) ? -1 : (xmm0.f[0] > MEMF(0x3C1A44)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026B7FC; /* jp: parity */
 
 loc_0026B77E: ;
@@ -26563,7 +26420,7 @@ loc_0026B7AE: ;
 loc_0026B7B7: ;
     xmm0 = xmm_load_ss(0x7AD600); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C1A44)) ? -1 : (xmm0.f[0] > MEMF(0x3C1A44)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026B7FC; /* jp: parity */
 
 loc_0026B7CC: ;
@@ -26616,7 +26473,6 @@ void sub_0026B810(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -26959,7 +26815,6 @@ void sub_0026BB80(void)
     uint32_t ebp;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0026BB80: ;
     SET_LO8(eax, MEM8(0xE5AE51));
@@ -26984,7 +26839,6 @@ loc_0026BB89: ;
 void sub_0026BB9F(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026BB9F: ;
@@ -27028,7 +26882,6 @@ void sub_0026BC00(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026BC00: ;
@@ -27057,7 +26910,7 @@ loc_0026BC32: ;
     xmm1 = xmm2; /* movaps */
     xmm1.f[0] = xmm1.f[0] - xmm0.f[0]; /* subss */
     _fpu_cmp = (xmm1.f[0] < xmm2.f[0]) ? -1 : (xmm1.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 4, xmm1); /* movss */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026BC68; /* jp: parity */
@@ -27099,7 +26952,6 @@ void sub_0026BC90(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026BC90: ;
@@ -27130,7 +26982,7 @@ loc_0026BCC5: ;
     xmm1 = xmm2; /* movaps */
     xmm1.f[0] = xmm1.f[0] - xmm0.f[0]; /* subss */
     _fpu_cmp = (xmm1.f[0] < xmm2.f[0]) ? -1 : (xmm1.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 8, xmm1); /* movss */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026BCFE; /* jp: parity */
@@ -27453,7 +27305,6 @@ void sub_0026C070(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026C070: ;
@@ -27517,7 +27368,6 @@ void sub_0026C140(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -27564,7 +27414,7 @@ loc_0026C18F: ;
 
 loc_0026C196: ;
     _fpu_cmp = (xmm1.f[0] < xmm2.f[0]) ? -1 : (xmm1.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_0026C1A6; /* jp: parity */
 
 loc_0026C19F: ;
@@ -27701,7 +27551,6 @@ void sub_0026C2E0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -28064,7 +27913,6 @@ loc_0026C706: ;
 void sub_0026C720(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026C720: ;
@@ -28306,7 +28154,6 @@ void sub_0026C980(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026C980: ;
@@ -28401,7 +28248,6 @@ loc_0026CA88: ;
  */
 void sub_0026CAC1(void)
 {
-    xmm128_t xmm0;
 
 loc_0026CAC1: ;
     xmm0 = xmm_load_ss(0x3C1A44); /* movss */
@@ -28419,7 +28265,6 @@ void sub_0026CAC9(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026CAC9: ;
@@ -28794,7 +28639,6 @@ loc_0026CFD3: ;
 void sub_0026CFE0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026CFE0: ;
@@ -29367,7 +29211,6 @@ void sub_0026D610(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026D610: ;
@@ -29656,7 +29499,6 @@ void sub_0026D88C(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026D88C: ;
@@ -29978,7 +29820,6 @@ void sub_0026DD60(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026DD60: ;
@@ -30373,7 +30214,6 @@ loc_0026E2FF: ;
 void sub_0026E310(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -30588,7 +30428,6 @@ void sub_0026E5C2(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026E5C2: ;
@@ -30852,7 +30691,6 @@ void sub_0026E850(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026E850: ;
@@ -30936,7 +30774,6 @@ void sub_0026E900(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -31125,7 +30962,6 @@ void sub_0026EBA1(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_0026EBA1: ;
     xmm2 = xmm_load_ss(0x3C2C50); /* movss */
@@ -31152,7 +30988,6 @@ loc_0026EBBE: ;
 void sub_0026EBC1(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026EBC1: ;
@@ -31208,7 +31043,6 @@ void sub_0026EC02(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026EC02: ;
@@ -31528,7 +31362,6 @@ void sub_0026EF50(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -31841,7 +31674,6 @@ void sub_0026F200(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026F200: ;
@@ -31950,7 +31782,6 @@ void sub_0026F350(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
 
 loc_0026F350: ;
     PUSH32(esp, ebp);
@@ -32633,7 +32464,6 @@ void sub_0026F920(void)
     uint32_t ebp;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_0026F920: ;
     esp = esp - 0x50;
@@ -32668,7 +32498,6 @@ void sub_0026F95B(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -33020,7 +32849,6 @@ void sub_0026FD40(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0026FD40: ;
@@ -33268,7 +33096,6 @@ void sub_00270040(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -34889,7 +34716,6 @@ void sub_00271540(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -35131,7 +34957,6 @@ void sub_002717A0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002717A0: ;
@@ -35181,7 +35006,6 @@ loc_00271808: ;
  */
 void sub_0027181C(void)
 {
-    xmm128_t xmm0;
 
 loc_0027181C: ;
     xmm0 = xmm_load_ss(0x3C3B60); /* movss */
@@ -35200,7 +35024,6 @@ void sub_0027182E(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027182E: ;
@@ -35287,7 +35110,6 @@ void sub_002718E0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -35826,7 +35648,6 @@ loc_00271E6C: ;
 void sub_00271F10(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -35893,7 +35714,6 @@ void sub_00271FB0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -36001,7 +35821,6 @@ loc_0027204A: ;
 void sub_00272060(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_00272060: ;
     eax = MEM32(esp + 0xC);
@@ -36154,7 +35973,6 @@ void sub_00272180(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00272180: ;
@@ -36378,7 +36196,6 @@ void sub_00272358(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -36717,7 +36534,6 @@ void sub_002726E0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002726E0: ;
@@ -36814,7 +36630,6 @@ void sub_002727D0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002727D0: ;
@@ -36976,7 +36791,6 @@ void sub_00272904(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00272904: ;
@@ -37064,7 +36878,6 @@ void sub_002729B0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002729B0: ;
@@ -37265,7 +37078,6 @@ void sub_00272B74(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00272B74: ;
@@ -37410,7 +37222,6 @@ void sub_00272CA0(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00272CA0: ;
     edx = ZX16(MEM16(esp + 4));
@@ -37532,7 +37343,6 @@ void sub_00272DA2(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -37842,7 +37652,6 @@ void sub_00272FB0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00272FB0: ;
@@ -37932,7 +37741,6 @@ void sub_00273080(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00273080: ;
@@ -37973,7 +37781,7 @@ loc_002730CD: ;
     xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
     xmm0.f[0] = xmm0.f[0] * xmm1.f[0]; /* mulss */
     _fpu_cmp = (xmm0.f[0] < xmm2.f[0]) ? -1 : (xmm0.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00273117; /* jnp: not parity */
 
 loc_002730E8: ;
@@ -38093,7 +37901,6 @@ void sub_002731F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002731F0: ;
@@ -38134,14 +37941,14 @@ loc_00273252: ;
     xmm2.f[0] = xmm2.f[0] + MEMF(esi + 0xFC); /* addss */
     xmm3.f[0] = xmm3.f[0] - xmm1.f[0]; /* subss */
     _fpu_cmp = (xmm3.f[0] < xmm0.f[0]) ? -1 : (xmm3.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_002732C9; /* jp: parity */
 
 loc_002732A3: ;
     xmm1 = xmm6; /* movaps */
     xmm1.f[0] = xmm1.f[0] - xmm2.f[0]; /* subss */
     _fpu_cmp = (xmm1.f[0] < xmm0.f[0]) ? -1 : (xmm1.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_002732C9; /* jp: parity */
 
 loc_002732B3: ;
@@ -38357,7 +38164,6 @@ void sub_00273530(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -39356,7 +39162,6 @@ void sub_00274000(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00274000: ;
@@ -39386,7 +39191,6 @@ void sub_0027402F(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027402F: ;
@@ -39416,7 +39220,6 @@ void sub_0027404E(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
 
 loc_0027404E: ;
     xmm4 = xmm_load_ss(ecx + 4); /* movss */
@@ -39552,7 +39355,6 @@ loc_00274124: ;
  */
 void sub_0027414A(void)
 {
-    xmm128_t xmm0;
 
 loc_0027414A: ;
     xmm0 = xmm_load_ss(0x3C2C70); /* movss */
@@ -39816,7 +39618,6 @@ loc_00274324: ;
  */
 void sub_00274348(void)
 {
-    xmm128_t xmm0;
 
 loc_00274348: ;
     xmm0 = xmm_load_ss(0x3C2C70); /* movss */
@@ -40314,7 +40115,6 @@ void sub_00274797(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -40754,7 +40554,6 @@ void sub_00274D70(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -41187,7 +40986,6 @@ void sub_002752AA(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -41654,7 +41452,6 @@ void sub_00275785(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -42256,7 +42053,6 @@ loc_00275D28: ;
 void sub_00275D44(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_00275D44: ;
     xmm0 = xmm_load_ss(0x444C94); /* movss */
@@ -42377,7 +42173,6 @@ void sub_00275E70(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00275E70: ;
@@ -42574,7 +42369,6 @@ void sub_0027607C(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm1, xmm5;
 
 loc_0027607C: ;
     _fpu_cmp = (xmm5.f[0] < xmm1.f[0]) ? -1 : (xmm5.f[0] > xmm1.f[0]) ? 1 : 0; /* comiss */
@@ -42598,7 +42392,6 @@ void sub_00276084(void)
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00276084: ;
@@ -42846,7 +42639,6 @@ void sub_00276213(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -43450,7 +43242,6 @@ void sub_00276910(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
 
 loc_00276910: ;
     ecx = ZX8(MEM8(0x8783A9));
@@ -43479,7 +43270,7 @@ loc_00276962: ;
     xmm1 = xmm_load_ss(ebx + 0x28); /* movss */
     ebx = ebx + 0x28;
     _fpu_cmp = (xmm1.f[0] < xmm0.f[0]) ? -1 : (xmm1.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) { RECOMP_SLICE_POINT(); goto loc_00276930; } /* jp: parity */
 
 loc_00276973: ;
@@ -43501,7 +43292,6 @@ void sub_00276980(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -43568,7 +43358,6 @@ void sub_002769CE(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -43771,7 +43560,6 @@ void sub_00276B80(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -44120,7 +43908,6 @@ void sub_00276EE0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
 
 loc_00276EE0: ;
     PUSH32(esp, ebp);
@@ -44157,7 +43944,7 @@ loc_00276F43: ;
     esi = MEM32(ebp + 0xC);
     xmm0 = xmm_load_ss(esi + 0xC); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A3C)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A3C)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00277064; /* jnp: not parity */
 
 loc_00276F5C: ;
@@ -44268,7 +44055,7 @@ loc_00277044: ;
     esi = esi + 0x28;
     ebx = ebx + 0x10;
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A3C)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A3C)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) { RECOMP_SLICE_POINT(); goto loc_00276F70; } /* jp: parity */
 
 loc_00277064: ;
@@ -44299,7 +44086,7 @@ loc_0027709B: ;
     xmm0 = xmm_load_ss(ecx + 0xC); /* movss */
     edi = 0; /* xor self */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A3C)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A3C)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     MEM32(esp + 0x1C) = edi;
     ebx = ecx;
@@ -44366,7 +44153,7 @@ loc_00277139: ;
     edi++;
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A3C)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A3C)) ? 1 : 0; /* ucomiss */
     MEM32(esp + 0x18) = eax;
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     MEM32(esp + 0x1C) = edi;
     if ((X86_PF8((HI8(eax)) & (0x44)))) { RECOMP_SLICE_POINT(); goto loc_002770C9; } /* jp: parity */
@@ -44410,7 +44197,6 @@ void sub_002770C9(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002770C9: ;
@@ -44473,7 +44259,6 @@ void sub_00277139(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00277139: ;
@@ -44484,7 +44269,7 @@ loc_00277139: ;
     edi++;
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A3C)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A3C)) ? 1 : 0; /* ucomiss */
     MEM32(esp + 0x18) = eax;
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     MEM32(esp + 0x1C) = edi;
     if ((X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_002770C9(); return; } /* jp: parity */
@@ -44528,7 +44313,6 @@ void sub_002771B1(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -44564,7 +44348,7 @@ loc_00277216: ;
     fp_push(MEMF(esp + 0x14)); /* fld float */
     _fpu_cmp = (fp_top() < fp_st1()) ? -1 : (fp_top() > fp_st1()) ? 1 : 0; fp_pop(); /* fucompi */
     fp_popp(); /* fstp st(0) = pop */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_00277139(); return; } /* jnp: not parity */
 
 loc_00277232: ;
@@ -44856,7 +44640,6 @@ void sub_002775B0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
 
 loc_002775B0: ;
     PUSH32(esp, ebp);
@@ -44880,7 +44663,7 @@ loc_002775D1: ;
     xmm0 = xmm_load_ss(edi + 0xC); /* movss */
     ebx = 0; /* xor self */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A3C)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A3C)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00277650; /* jnp: not parity */
 
 loc_002775E8: ;
@@ -44928,7 +44711,7 @@ loc_00277637: ;
 loc_0027763E: ;
     xmm0 = xmm_load_ss(edi + 0xC); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A3C)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A3C)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) { RECOMP_SLICE_POINT(); goto loc_002775F0; } /* jp: parity */
 
 loc_00277650: ;
@@ -44970,7 +44753,6 @@ void sub_00277670(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
 
 loc_00277670: ;
     PUSH32(esp, ebp);
@@ -45243,7 +45025,6 @@ void sub_00277950(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -45764,7 +45545,6 @@ void sub_00277F60(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00277F60: ;
@@ -45813,7 +45593,6 @@ loc_00277FAC: ;
 void sub_00277FB0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_00277FB0: ;
     PUSH32(esp, esi);
@@ -45856,7 +45635,6 @@ void sub_00278000(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00278000: ;
@@ -46171,7 +45949,6 @@ void sub_002783B0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002783B0: ;
@@ -46202,7 +45979,7 @@ loc_002783EC: ;
     xmm1 = xmm2; /* movaps */
     xmm1.f[0] = xmm1.f[0] - xmm0.f[0]; /* subss */
     _fpu_cmp = (xmm1.f[0] < xmm2.f[0]) ? -1 : (xmm1.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 4, xmm1); /* movss */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_00278422; /* jp: parity */
@@ -46244,7 +46021,6 @@ void sub_00278440(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00278440: ;
@@ -46277,7 +46053,7 @@ loc_0027847F: ;
     xmm1 = xmm2; /* movaps */
     xmm1.f[0] = xmm1.f[0] - xmm0.f[0]; /* subss */
     _fpu_cmp = (xmm1.f[0] < xmm2.f[0]) ? -1 : (xmm1.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(esp + 8, xmm1); /* movss */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_002784B8; /* jp: parity */
@@ -46392,7 +46168,6 @@ void sub_00278540(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -46672,7 +46447,6 @@ void sub_00278720(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -48124,7 +47898,6 @@ void sub_00279950(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -48650,7 +48423,6 @@ loc_00279E0C: ;
  */
 void sub_00279E15(void)
 {
-    xmm128_t xmm0;
 
 loc_00279E15: ;
     xmm0 = xmm_load_ss(0x3C1A44); /* movss */
@@ -48669,7 +48441,6 @@ void sub_00279E23(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -48844,7 +48615,6 @@ loc_0027A065: ;
 void sub_0027A070(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -49108,7 +48878,6 @@ loc_0027A41B: ;
 void sub_0027A430(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -49421,7 +49190,6 @@ loc_0027A75D: ;
 void sub_0027A760(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -49981,7 +49749,6 @@ loc_0027AD57: ;
  */
 void sub_0027AD70(void)
 {
-    xmm128_t xmm0;
 
 loc_0027AD70: ;
     xmm0 = xmm_load_ss(esp + 4); /* movss */
@@ -50000,7 +49767,6 @@ loc_0027AD70: ;
  */
 void sub_0027AD90(void)
 {
-    xmm128_t xmm0;
 
 loc_0027AD90: ;
     xmm0 = xmm_load_ss(esp + 4); /* movss */
@@ -50038,7 +49804,6 @@ void sub_0027ADC0(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_0027ADC0: ;
     SET_LO8(eax, MEM8(0xE0D7B8));
@@ -50112,7 +49877,6 @@ void sub_0027AE2F(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_0027AE2F: ;
     _fpu_cmp = (xmm2.f[0] < xmm0.f[0]) ? -1 : (xmm2.f[0] > xmm0.f[0]) ? 1 : 0; /* comiss */
@@ -50136,7 +49900,6 @@ loc_0027AE39: ;
 void sub_0027AE50(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027AE50: ;
@@ -50604,7 +50367,6 @@ void sub_0027B1E1(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -51788,7 +51550,6 @@ void sub_0027BE10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -52024,7 +51785,6 @@ loc_0027C11D: ;
  */
 void sub_0027C125(void)
 {
-    xmm128_t xmm0;
 
 loc_0027C125: ;
     xmm0 = xmm_load_ss(0x3C1A44); /* movss */
@@ -52045,7 +51805,6 @@ void sub_0027C13D(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -52311,7 +52070,6 @@ void sub_0027C400(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -52926,7 +52684,6 @@ void sub_0027CADB(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -52993,7 +52750,6 @@ void sub_0027CB40(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027CB40: ;
@@ -53099,7 +52855,6 @@ void sub_0027CC10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -53405,7 +53160,6 @@ loc_0027CEA1: ;
 void sub_0027CEF0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0027CEF0: ;
     xmm0 = xmm_load_ss(0x3C1A44); /* movss */
@@ -53579,7 +53333,6 @@ void sub_0027D008(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027D008: ;
@@ -53754,7 +53507,6 @@ void sub_0027D160(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027D160: ;
@@ -53862,7 +53614,6 @@ void sub_0027D260(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027D260: ;
@@ -54174,7 +53925,6 @@ loc_0027D459: ;
 void sub_0027D490(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0027D490: ;
     xmm0 = xmm_load_ss(0x3C1A44); /* movss */
@@ -54368,7 +54118,6 @@ void sub_0027D600(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -54507,7 +54256,6 @@ void sub_0027D710(void)
     uint32_t ebp;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0027D710: ;
     if (CMP_B(ecx, 0xC)) { g_seh_ebp = ebp; sub_0027D719(); return; } /* jb: below (unsigned <) */
@@ -54528,7 +54276,6 @@ void sub_0027D719(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
 
 loc_0027D719: ;
     ecx = (uint32_t)((int32_t)ecx * (int32_t)0xF8);
@@ -54999,7 +54746,6 @@ void sub_0027DB10(void)
     uint32_t ebp;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -55047,7 +54793,6 @@ loc_0027DB41: ;
 void sub_0027DB47(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -55221,7 +54966,6 @@ loc_0027DBD4: ;
 void sub_0027DBD6(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027DBD6: ;
@@ -55299,7 +55043,6 @@ loc_0027DC87: ;
 void sub_0027DC8C(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -55467,7 +55210,6 @@ void sub_0027DDD0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027DDD0: ;
@@ -55536,7 +55278,6 @@ void sub_0027DE60(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -55624,7 +55365,6 @@ void sub_0027DEF0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -55799,7 +55539,6 @@ void sub_0027E080(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -56398,7 +56137,6 @@ void sub_0027E700(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027E700: ;
@@ -56482,7 +56220,6 @@ void sub_0027E790(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_0027E790: ;
     PUSH32(esp, ebp);
@@ -56866,7 +56603,6 @@ void sub_0027EA63(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -57288,7 +57024,6 @@ void sub_0027EE5C(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -57422,7 +57157,6 @@ void sub_0027EF90(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027EF90: ;
@@ -57652,7 +57386,6 @@ void sub_0027F200(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -58104,7 +57837,6 @@ loc_0027F68B: ;
  */
 void sub_0027F698(void)
 {
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -58188,7 +57920,6 @@ loc_0027F6DB: ;
  */
 void sub_0027F6E8(void)
 {
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -58222,7 +57953,6 @@ void sub_0027F700(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -58829,7 +58559,6 @@ void sub_0027FD80(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027FD80: ;
@@ -58904,7 +58633,6 @@ void sub_0027FE10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0027FE10: ;
@@ -59036,7 +58764,6 @@ loc_0027FF5C: ;
  */
 void sub_0027FFB0(void)
 {
-    xmm128_t xmm0;
 
 loc_0027FFB0: ;
     xmm0 = xmm_load_ss(esp + 4); /* movss */
@@ -59303,7 +59030,6 @@ loc_0028024D: ;
 void sub_00280250(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00280250: ;
@@ -59360,7 +59086,6 @@ void sub_00280330(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00280330: ;
@@ -59461,7 +59186,6 @@ loc_0028044B: ;
 void sub_00280460(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -59812,7 +59536,6 @@ void sub_002807F0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002807F0: ;
@@ -59909,7 +59632,6 @@ loc_002808FF: ;
  */
 void sub_00280940(void)
 {
-    xmm128_t xmm0;
 
 loc_00280940: ;
     xmm0 = xmm_load_ss(0x3C1A40); /* movss */
@@ -59927,7 +59649,6 @@ void sub_00280948(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00280948: ;
@@ -60843,7 +60564,6 @@ void sub_00281400(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00281400: ;
@@ -61067,7 +60787,6 @@ void sub_002815B8(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -61494,7 +61213,6 @@ loc_0028196E: ;
  */
 void sub_00281980(void)
 {
-    xmm128_t xmm0;
 
 loc_00281980: ;
     xmm0 = xmm_load_ss(0xE655C0); /* movss */
@@ -61519,7 +61237,6 @@ loc_00281980: ;
 void sub_002819C0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002819C0: ;
@@ -61614,7 +61331,6 @@ loc_00281A79: ;
 void sub_00281A80(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00281A80: ;
@@ -61646,7 +61362,6 @@ loc_00281ABB: ;
 void sub_00281AC0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00281AC0: ;
@@ -62838,7 +62553,6 @@ void sub_00282570(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00282570: ;
@@ -64350,7 +64064,6 @@ void sub_00282EF0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -64362,7 +64075,7 @@ loc_00282EF0: ;
     ebp = esp;
     xmm0 = xmm_load_ss(ebp + 8); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A10)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A10)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_00282F0D(); return; } /* jp: parity */
 
 loc_00282F05: ;
@@ -64386,7 +64099,6 @@ loc_00282F05: ;
 void sub_00282F0D(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -64428,7 +64140,6 @@ void sub_00282F50(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -64441,7 +64152,7 @@ loc_00282F50: ;
     PUSH32(esp, ecx);
     xmm0 = xmm_load_ss(ebp + 8); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C2A10)) ? -1 : (xmm0.f[0] > MEMF(0x3C2A10)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_00282F70(); return; } /* jp: parity */
 
 loc_00282F66: ;
@@ -64466,7 +64177,6 @@ loc_00282F66: ;
 void sub_00282F70(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -64537,7 +64247,6 @@ void sub_00282FD0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -64603,7 +64312,6 @@ void sub_00283070(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -64667,7 +64375,6 @@ void sub_00283110(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_00283110: ;
     PUSH32(esp, ebp);
@@ -64787,7 +64494,6 @@ void sub_00283250(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -64888,7 +64594,6 @@ void sub_00283370(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm6, xmm7;
 
 loc_00283370: ;
     PUSH32(esp, ebp);
@@ -64940,7 +64645,6 @@ loc_00283398: ;
  */
 void sub_00283425(void)
 {
-    xmm128_t xmm0, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_00283425: ;
     xmm3 = xmm_load_ss(0x444DE0); /* movss */
@@ -64986,7 +64690,6 @@ loc_00283425: ;
 void sub_002834C3(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65017,7 +64720,6 @@ void sub_002834D0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm4;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65067,7 +64769,6 @@ loc_0028350D: ;
 void sub_00283520(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65325,7 +65026,6 @@ loc_00283679: ;
 void sub_00283680(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00283680: ;
@@ -65384,7 +65084,6 @@ void sub_002836C0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm4;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65459,7 +65158,6 @@ loc_0028373A: ;
  */
 void sub_00283740(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00283740: ;
     xmm0 = xmm_load(edx + 0x10); /* movaps */
@@ -65482,7 +65180,6 @@ loc_00283740: ;
  */
 void sub_00283760(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00283760: ;
     xmm0 = xmm_load(edx + 0x10); /* movaps */
@@ -65506,7 +65203,6 @@ loc_00283760: ;
 void sub_00283780(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00283780: ;
@@ -65545,7 +65241,6 @@ void sub_002837D0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65638,7 +65333,6 @@ void sub_00283840(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65703,7 +65397,6 @@ void sub_002838A0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65767,7 +65460,6 @@ loc_002838E7: ;
  */
 void sub_00283902(void)
 {
-    xmm128_t xmm1;
 
 loc_00283902: ;
     xmm_store_ss(edi, xmm1); /* movss */
@@ -65788,7 +65480,6 @@ loc_00283902: ;
  */
 void sub_00283920(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00283920: ;
     eax = MEM32(esp + 8);
@@ -65823,7 +65514,6 @@ loc_00283920: ;
 void sub_00283980(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00283980: ;
@@ -65876,7 +65566,6 @@ void sub_002839F0(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_002839F0: ;
     PUSH32(esp, esi);
@@ -65920,7 +65609,6 @@ loc_00283A38: ;
 void sub_00283A4A(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -65972,7 +65660,6 @@ loc_00283A7C: ;
  */
 void sub_00283A90(void)
 {
-    xmm128_t xmm0;
 
 loc_00283A90: ;
     xmm0 = xmm_load(edx); /* movups */
@@ -66021,7 +65708,6 @@ loc_00283AA0: ;
  */
 void sub_00283AC0(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00283AC0: ;
     ecx = MEM32(esp + 8);
@@ -66058,7 +65744,6 @@ loc_00283AC0: ;
 void sub_00283B20(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00283B20: ;
@@ -66132,7 +65817,6 @@ void sub_00283B80(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -66196,7 +65880,6 @@ void sub_00283BF0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -66261,7 +65944,6 @@ void sub_00283C60(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
 
 loc_00283C60: ;
     PUSH32(esp, ebp);
@@ -66287,7 +65969,7 @@ loc_00283C60: ;
     xmm3.f[0] = xmm3.f[0] * xmm2.f[0]; /* mulss */
     xmm2 = xmm_zero(); /* xorps self */
     _fpu_cmp = (xmm0.f[0] < xmm2.f[0]) ? -1 : (xmm0.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm1.f[0] = xmm1.f[0] * xmm1.f[0]; /* mulss */
     xmm1.f[0] = xmm1.f[0] + xmm4.f[0]; /* addss */
@@ -66296,7 +65978,7 @@ loc_00283C60: ;
 
 loc_00283CC7: ;
     _fpu_cmp = (xmm1.f[0] < xmm2.f[0]) ? -1 : (xmm1.f[0] > xmm2.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_00283D15(); return; } /* jnp: not parity */
 
 loc_00283CD0: ;
@@ -66332,7 +66014,6 @@ void sub_00283D15(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00283D15: ;
@@ -66359,7 +66040,6 @@ loc_00283D22: ;
 void sub_00283D30(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00283D30: ;
     PUSH32(esp, ebp);
@@ -66403,7 +66083,6 @@ loc_00283D30: ;
  */
 void sub_00283DA0(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 
 loc_00283DA0: ;
     xmm0 = xmm_load_ss(ecx + 4); /* movss */
@@ -66440,7 +66119,6 @@ loc_00283DA0: ;
 void sub_00283E00(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_00283E00: ;
     PUSH32(esp, ebp);
@@ -66476,7 +66154,6 @@ loc_00283E00: ;
  */
 void sub_00283E50(void)
 {
-    xmm128_t xmm0;
 
 loc_00283E50: ;
     eax = 0x7AFDC0;
@@ -66507,7 +66184,6 @@ loc_00283E50: ;
  */
 void sub_00283EA0(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00283EA0: ;
     xmm0 = xmm_load(ecx + 0x10); /* movaps */
@@ -66534,7 +66210,6 @@ loc_00283EA0: ;
  */
 void sub_00283ED0(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00283ED0: ;
     eax = 0xEA6090;
@@ -66561,7 +66236,6 @@ loc_00283ED0: ;
  */
 void sub_00283F00(void)
 {
-    xmm128_t xmm0;
 
 loc_00283F00: ;
     eax = 0x7AFDC0;
@@ -66588,7 +66262,6 @@ loc_00283F00: ;
  */
 void sub_00283F40(void)
 {
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_00283F40: ;
     xmm0 = xmm_load(ecx + 0x10); /* movups */
@@ -66612,7 +66285,6 @@ loc_00283F40: ;
  */
 void sub_00283F70(void)
 {
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_00283F70: ;
     eax = 0xEA6090;
@@ -66636,7 +66308,6 @@ loc_00283F70: ;
  */
 void sub_00283FA0(void)
 {
-    xmm128_t xmm0;
 
 loc_00283FA0: ;
     xmm0 = xmm_load(ecx); /* movups */
@@ -66654,7 +66325,6 @@ loc_00283FA0: ;
  */
 void sub_00283FB0(void)
 {
-    xmm128_t xmm0;
 
 loc_00283FB0: ;
     eax = 0xEA60B0;
@@ -66673,7 +66343,6 @@ loc_00283FB0: ;
 void sub_00283FC0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
 
 loc_00283FC0: ;
     PUSH32(esp, ebp);
@@ -66762,7 +66431,6 @@ loc_00284080: ;
 void sub_00284090(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00284090: ;
@@ -66815,7 +66483,6 @@ loc_002840C7: ;
 void sub_002840D0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_002840D0: ;
     eax = MEM32(0xEA60C0);
@@ -66864,7 +66531,6 @@ loc_0028413C: ;
 void sub_00284140(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00284140: ;
     ecx--;
@@ -66905,7 +66571,6 @@ loc_00284154: ;
  */
 void sub_002841A0(void)
 {
-    xmm128_t xmm0;
 
 loc_002841A0: ;
     eax = 0x7AFDC0;
@@ -66938,7 +66603,6 @@ loc_002841A0: ;
 void sub_002841F0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_002841F0: ;
     PUSH32(esp, ebp);
@@ -66984,7 +66648,6 @@ loc_002841F0: ;
  */
 void sub_00284260(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00284260: ;
     eax = 0xEA60B0;
@@ -67021,7 +66684,6 @@ loc_00284260: ;
  */
 void sub_002842C0(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_002842C0: ;
     eax = 0xEA60B0;
@@ -67058,7 +66720,6 @@ loc_002842C0: ;
  */
 void sub_00284320(void)
 {
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_00284320: ;
     xmm0 = xmm_load_ss(ecx + 8); /* movss */
@@ -67091,7 +66752,6 @@ loc_00284320: ;
  */
 void sub_00284370(void)
 {
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_00284370: ;
     xmm0 = xmm_load_ss(ecx + 8); /* movss */
@@ -67124,7 +66784,6 @@ loc_00284370: ;
  */
 void sub_002843C0(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_002843C0: ;
     xmm0 = xmm_load_ss(ecx + 0xC); /* movss */
@@ -67163,7 +66822,6 @@ loc_002843C0: ;
  */
 void sub_00284420(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00284420: ;
     xmm0 = xmm_load_ss(ecx + 0xC); /* movss */
@@ -67202,7 +66860,6 @@ loc_00284420: ;
  */
 void sub_00284480(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00284480: ;
     xmm0 = xmm_load(ecx + 0x30); /* movaps */
@@ -67236,7 +66893,6 @@ loc_00284480: ;
 void sub_002844D0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_002844D0: ;
     PUSH32(esp, ebp);
@@ -67276,7 +66932,6 @@ loc_002844D0: ;
 void sub_00284520(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00284520: ;
     PUSH32(esp, ebp);
@@ -67314,7 +66969,6 @@ void sub_00284570(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00284570: ;
@@ -67359,7 +67013,6 @@ loc_002845E1: ;
  */
 void sub_00284609(void)
 {
-    xmm128_t xmm2, xmm3, xmm4;
 
 loc_00284609: ;
     xmm2 = xmm_load_ss(0xEA60A8); /* movss */
@@ -67377,7 +67030,6 @@ loc_00284609: ;
  */
 void sub_00284621(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_00284621: ;
     xmm4.f[0] = xmm4.f[0] * xmm0.f[0]; /* mulss */
@@ -67416,7 +67068,6 @@ loc_00284621: ;
  */
 void sub_002846B0(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_002846B0: ;
     xmm0 = xmm_load_ss(0xEA6084); /* movss */
@@ -67455,7 +67106,6 @@ loc_002846B0: ;
  */
 void sub_00284780(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00284780: ;
     xmm0 = xmm_load_ss(0xEA6084); /* movss */
@@ -67483,7 +67133,6 @@ loc_00284780: ;
 void sub_002847F0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm5;
 
 loc_002847F0: ;
     PUSH32(esp, ebp);
@@ -67523,7 +67172,6 @@ void sub_00284840(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00284840: ;
@@ -67597,7 +67245,7 @@ loc_002848C0: ;
 
 loc_002848C3: ;
     _fpu_cmp = (xmm1.f[0] < xmm3.f[0]) ? -1 : (xmm1.f[0] > xmm3.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00284E02; /* jnp: not parity */
 
 loc_002848D0: ;
@@ -67766,7 +67414,7 @@ loc_00284A62: ;
 loc_00284A6C: ;
     xmm0 = xmm_load_ss(ebx + ecx * 4); /* movss */
     _fpu_cmp = (xmm0.f[0] < xmm3.f[0]) ? -1 : (xmm0.f[0] > xmm3.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_00284E02; /* jnp: not parity */
 
 loc_00284A7E: ;
@@ -68090,7 +67738,6 @@ void sub_00284E10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_00284E10: ;
     PUSH32(esp, ebp);
@@ -68356,7 +68003,6 @@ loc_00285175: ;
  */
 void sub_00285180(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm4, xmm5;
 
 loc_00285180: ;
     PUSH32(esp, ecx);
@@ -68481,7 +68127,6 @@ loc_00285270: ;
  */
 void sub_00285280(void)
 {
-    xmm128_t xmm1, xmm2, xmm3, xmm4;
 
 loc_00285280: ;
     PUSH32(esp, ecx);
@@ -68514,7 +68159,6 @@ loc_00285280: ;
 void sub_002852C0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002852C0: ;
@@ -68562,7 +68206,6 @@ loc_002852D2: ;
 void sub_00285330(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285330: ;
@@ -68609,7 +68252,6 @@ loc_00285342: ;
  */
 void sub_002853A0(void)
 {
-    xmm128_t xmm1, xmm2, xmm3, xmm4;
 
 loc_002853A0: ;
     PUSH32(esp, ecx);
@@ -68642,7 +68284,6 @@ loc_002853A0: ;
 void sub_002853E0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002853E0: ;
@@ -68690,7 +68331,6 @@ loc_002853F2: ;
 void sub_00285450(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285450: ;
@@ -68737,7 +68377,6 @@ loc_00285462: ;
  */
 void sub_002854C0(void)
 {
-    xmm128_t xmm1, xmm2, xmm3, xmm4;
 
 loc_002854C0: ;
     PUSH32(esp, ecx);
@@ -68770,7 +68409,6 @@ loc_002854C0: ;
 void sub_00285500(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285500: ;
@@ -68818,7 +68456,6 @@ loc_00285512: ;
 void sub_00285570(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285570: ;
@@ -68866,7 +68503,6 @@ loc_00285582: ;
 void sub_002855E0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002855E0: ;
@@ -68992,7 +68628,6 @@ void sub_00285760(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -69136,7 +68771,6 @@ void sub_00285840(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285840: ;
@@ -69193,7 +68827,6 @@ loc_002858D9: ;
  */
 void sub_002858E3(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_002858E3: ;
     xmm0.f[0] = xmm0.f[0] / xmm4.f[0]; /* divss */
@@ -69259,7 +68892,6 @@ void sub_002859C0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -69532,7 +69164,6 @@ void sub_00285BE0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285BE0: ;
@@ -69638,7 +69269,6 @@ void sub_00285D00(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285D00: ;
@@ -69663,7 +69293,6 @@ void sub_00285D16(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -69705,7 +69334,6 @@ void sub_00285D32(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -69956,7 +69584,6 @@ void sub_00285EC0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285EC0: ;
@@ -70074,7 +69701,6 @@ void sub_00285EF0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00285EF0: ;
@@ -70497,7 +70123,6 @@ void sub_002861AB(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -70843,7 +70468,6 @@ loc_002863CB: ;
 void sub_002863E0(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
 
 loc_002863E0: ;
     eax = MEM32(esp + 4);
@@ -70883,7 +70507,6 @@ loc_00286428: ;
 void sub_00286430(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00286430: ;
     eax = MEM32(esp + 4);
@@ -70924,7 +70547,6 @@ loc_0028647E: ;
 void sub_00286480(void)
 {
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00286480: ;
     eax = MEM32(esp + 4);
@@ -71229,7 +70851,6 @@ void sub_00286620(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00286620: ;
@@ -71418,7 +71039,6 @@ void sub_00286790(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00286790: ;
@@ -71554,7 +71174,6 @@ void sub_002868F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002868F0: ;
@@ -71782,7 +71401,6 @@ loc_00286B40: ;
  */
 void sub_00286B50(void)
 {
-    xmm128_t xmm0;
 
 loc_00286B50: ;
     xmm0 = xmm_load_ss(esp + 4); /* movss */
@@ -71803,7 +71421,6 @@ void sub_00286B70(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00286B70: ;
@@ -71886,7 +71503,6 @@ void sub_00286C00(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00286C00: ;
@@ -71974,7 +71590,7 @@ loc_00286CD3: ;
 loc_00286CD8: ;
     xmm0 = xmm_load_ss(0xEA66A8); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C1A44)) ? -1 : (xmm0.f[0] > MEMF(0x3C1A44)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) { g_seh_ebp = ebp; sub_00286D1C(); return; } /* jnp: not parity */
 
 loc_00286CED: ;
@@ -72033,7 +71649,6 @@ void sub_00286D30(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -72502,7 +72117,6 @@ void sub_002871C0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_002871C0: ;
     PUSH32(esp, ebp);
@@ -72642,7 +72256,6 @@ loc_002872F5: ;
  */
 void sub_0028737F(void)
 {
-    xmm128_t xmm0;
 
 loc_0028737F: ;
     xmm0 = xmm_load_ss(0xEA6670); /* movss */
@@ -72660,7 +72273,6 @@ void sub_00287387(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00287387: ;
@@ -72725,7 +72337,6 @@ void sub_00287440(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
 
 loc_00287440: ;
     PUSH32(esp, ebp);
@@ -72855,7 +72466,6 @@ loc_00287557: ;
  */
 void sub_002875E3(void)
 {
-    xmm128_t xmm0;
 
 loc_002875E3: ;
     xmm0 = xmm_load_ss(0xEA6670); /* movss */
@@ -72873,7 +72483,6 @@ void sub_002875EB(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002875EB: ;
@@ -73235,7 +72844,6 @@ void sub_002878B0(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002878B0: ;
@@ -73503,7 +73111,6 @@ void sub_00287B20(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00287B20: ;
@@ -73609,7 +73216,6 @@ void sub_00287C20(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00287C20: ;
@@ -73713,7 +73319,6 @@ void sub_00287D30(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00287D30: ;
@@ -73770,7 +73375,6 @@ void sub_00287DD0(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00287DD0: ;
@@ -73922,7 +73526,6 @@ void sub_00287F10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00287F10: ;
@@ -74131,7 +73734,6 @@ void sub_002880F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002880F0: ;
@@ -74262,7 +73864,6 @@ void sub_00288200(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00288200: ;
@@ -74459,7 +74060,6 @@ void sub_002883D0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002883D0: ;
@@ -74531,12 +74131,12 @@ loc_00288492: ;
     eax = MEM32(esp + 0x20);
     xmm0 = xmm_load_ss(eax); /* movss */
     _fpu_cmp = (xmm0.f[0] < MEMF(0xEA66A8)) ? -1 : (xmm0.f[0] > MEMF(0xEA66A8)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_002884EF; /* jnp: not parity */
 
 loc_002884A7: ;
     _fpu_cmp = (xmm0.f[0] < MEMF(0x3C1A44)) ? -1 : (xmm0.f[0] > MEMF(0x3C1A44)) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     /* test HI8(eax), 0x44 - flags set for next jcc */
     xmm_store_ss(0xEA66A8, xmm0); /* movss */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_002884E6; /* jnp: not parity */
@@ -74615,7 +74215,6 @@ void sub_00288540(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -74780,7 +74379,6 @@ void sub_00288690(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00288690: ;
@@ -74929,7 +74527,6 @@ void sub_002887D0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002887D0: ;
@@ -75167,7 +74764,6 @@ loc_00288956: ;
 void sub_00288960(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00288960: ;
@@ -75321,7 +74917,6 @@ void sub_00288AA0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00288AA0: ;
@@ -75473,7 +75068,6 @@ void sub_00288C00(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00288C00: ;
@@ -75730,7 +75324,6 @@ void sub_00288E40(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00288E40: ;
@@ -76027,7 +75620,6 @@ void sub_002890F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002890F0: ;
@@ -76292,7 +75884,6 @@ void sub_00289360(void)
 {
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
 
 loc_00289360: ;
     PUSH32(esp, esi);
@@ -76318,7 +75909,7 @@ loc_00289370: ;
 loc_00289381: ;
     xmm1 = xmm_load_ss(ecx + 0xC); /* movss */
     _fpu_cmp = (xmm1.f[0] < xmm0.f[0]) ? -1 : (xmm1.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((X86_PF8((HI8(eax)) & (0x44)))) goto loc_00289397; /* jp: parity */
 
 loc_0028938F: ;
@@ -76350,7 +75941,6 @@ void sub_002893B0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002893B0: ;
@@ -76522,7 +76112,6 @@ void sub_00289500(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00289500: ;
@@ -76542,7 +76131,7 @@ loc_0028951C: ;
 loc_00289520: ;
     xmm1 = xmm_load_ss(edx + 0xC); /* movss */
     _fpu_cmp = (xmm1.f[0] < xmm0.f[0]) ? -1 : (xmm1.f[0] > xmm0.f[0]) ? 1 : 0; /* ucomiss */
-    /* lahf - load AH from flags (used in FPU compare idiom) */
+    SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */
     if ((!X86_PF8((HI8(eax)) & (0x44)))) goto loc_0028953C; /* jnp: not parity */
 
 loc_0028952E: ;
@@ -76796,7 +76385,6 @@ void sub_00289731(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00289731: ;
@@ -78094,7 +77682,6 @@ void sub_0028A164(void)
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028A164: ;
@@ -78984,7 +78571,6 @@ void sub_0028A8D0(void)
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028A8D0: ;
@@ -81612,7 +81198,6 @@ void sub_0028BFF0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028BFF0: ;
@@ -81662,7 +81247,6 @@ loc_0028C066: ;
 void sub_0028C06E(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028C06E: ;
@@ -81715,7 +81299,6 @@ void sub_0028C110(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -81924,7 +81507,6 @@ void sub_0028C344(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -82140,7 +81722,6 @@ void sub_0028C5D0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028C5D0: ;
@@ -82228,7 +81809,6 @@ loc_0028C678: ;
 void sub_0028C680(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -82437,7 +82017,6 @@ void sub_0028C838(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028C838: ;
@@ -82551,7 +82130,6 @@ void sub_0028C8F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028C8F0: ;
@@ -82630,7 +82208,6 @@ void sub_0028C92C(void)
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
 
 loc_0028C92C: ;
     _fpu_cmp = (xmm0.f[0] < xmm1.f[0]) ? -1 : (xmm0.f[0] > xmm1.f[0]) ? 1 : 0; /* comiss */
@@ -82656,7 +82233,6 @@ loc_0028C939: ;
 void sub_0028C93F(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028C93F: ;
@@ -82705,7 +82281,6 @@ void sub_0028C983(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028C983: ;
@@ -82744,7 +82319,6 @@ void sub_0028C9D0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028C9D0: ;
@@ -82981,7 +82555,6 @@ void sub_0028CC88(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -83179,7 +82752,6 @@ void sub_0028CF30(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -83558,7 +83130,6 @@ void sub_0028D3C0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028D3C0: ;
@@ -83729,7 +83300,6 @@ void sub_0028D580(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028D580: ;
@@ -83799,7 +83369,6 @@ void sub_0028D5ED(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028D5ED: ;
@@ -84077,7 +83646,6 @@ void sub_0028D960(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028D960: ;
@@ -84147,7 +83715,6 @@ void sub_0028D9D3(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028D9D3: ;
@@ -85010,7 +84577,6 @@ loc_0028E11B: ;
 void sub_0028E120(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028E120: ;
@@ -85077,7 +84643,6 @@ void sub_0028E13F(void) { /* translation failed */ }
 void sub_0028E143(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028E143: ;
@@ -85160,7 +84725,6 @@ void sub_0028E1C5(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
-    xmm128_t xmm0, xmm1;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -85544,7 +85108,6 @@ void sub_0028E610(void)
     int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028E610: ;
@@ -85608,7 +85171,6 @@ void sub_0028E683(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028E683: ;
@@ -86133,7 +85695,6 @@ void sub_0028ED77(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -86354,7 +85915,6 @@ void sub_0028EF70(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028EF70: ;
@@ -87533,7 +87093,6 @@ void sub_0028FC50(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_0028FC50: ;
@@ -88150,7 +87709,6 @@ loc_002902E9: ;
  */
 void sub_00290350(void)
 {
-    xmm128_t xmm0;
 
 loc_00290350: ;
     xmm0 = xmm_load_ss(0x3C1A44); /* movss */
@@ -88272,7 +87830,6 @@ loc_00290435: ;
 void sub_00290450(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00290450: ;
@@ -88356,7 +87913,6 @@ void sub_002905F0(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -89890,7 +89446,6 @@ void sub_00291900(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00291900: ;
@@ -92046,7 +91601,6 @@ void sub_00292AC0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00292AC0: ;
@@ -92194,7 +91748,6 @@ loc_00292BE0: ;
 void sub_00292BF0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00292BF0: ;
@@ -92218,7 +91771,6 @@ void sub_00292C10(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_00292C10: ;

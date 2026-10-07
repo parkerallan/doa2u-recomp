@@ -19330,7 +19330,6 @@ void sub_002B6740(void)
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_002B6740: ;
@@ -47175,7 +47174,6 @@ loc_002BFEE9: ;
  */
 void sub_002BFFBA(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 
 loc_002BFFBA: ;
     eax = MEM32(esp + 8);

@@ -286,7 +286,6 @@ void sub_003B52AA(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm7;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())

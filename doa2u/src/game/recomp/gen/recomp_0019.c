@@ -21891,7 +21891,6 @@ loc_003411FE: ;
 void sub_00341210(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -23848,7 +23847,6 @@ loc_00342723: ;
  */
 void sub_00342730(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00342730: ;
     xmm0 = xmm_load_ss(0x6ED710); /* movss */
@@ -23884,7 +23882,6 @@ loc_00342730: ;
  */
 void sub_003427D0(void)
 {
-    xmm128_t xmm0;
 
 loc_003427D0: ;
     xmm0 = xmm_load_ss(0x442E54); /* movss */
@@ -23993,7 +23990,6 @@ loc_003428AF: ;
  */
 void sub_003428C0(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_003428C0: ;
     xmm0 = xmm_load_ss(0x442E80); /* movss */
@@ -24043,7 +24039,6 @@ loc_003428C0: ;
  */
 void sub_003429C0(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_003429C0: ;
     xmm1 = xmm_load_ss(0x442EB8); /* movss */
@@ -24215,7 +24210,6 @@ loc_00342C2B: ;
  */
 void sub_00342C40(void)
 {
-    xmm128_t xmm0;
 
 loc_00342C40: ;
     xmm0 = xmm_load_ss(0x443024); /* movss */
@@ -24232,7 +24226,6 @@ loc_00342C40: ;
  */
 void sub_00342C60(void)
 {
-    xmm128_t xmm0, xmm1, xmm2;
 
 loc_00342C60: ;
     xmm2 = xmm_load_ss(0x443304); /* movss */
@@ -24296,7 +24289,6 @@ loc_00342C60: ;
  */
 void sub_00342DF0(void)
 {
-    xmm128_t xmm0;
 
 loc_00342DF0: ;
     xmm0 = xmm_load_ss(0x442E54); /* movss */
@@ -24314,7 +24306,6 @@ loc_00342DF0: ;
  */
 void sub_00342E10(void)
 {
-    xmm128_t xmm0;
 
 loc_00342E10: ;
     xmm0 = xmm_load_ss(0x443308); /* movss */
@@ -24332,7 +24323,6 @@ loc_00342E10: ;
  */
 void sub_00342E30(void)
 {
-    xmm128_t xmm0;
 
 loc_00342E30: ;
     xmm0 = xmm_load_ss(0x44330C); /* movss */
@@ -24350,7 +24340,6 @@ loc_00342E30: ;
  */
 void sub_00342E50(void)
 {
-    xmm128_t xmm0;
 
 loc_00342E50: ;
     xmm0 = xmm_load_ss(0x443310); /* movss */
@@ -24367,7 +24356,6 @@ loc_00342E50: ;
  */
 void sub_00342E70(void)
 {
-    xmm128_t xmm0;
 
 loc_00342E70: ;
     xmm0 = xmm_load_ss(0x443338); /* movss */
@@ -24404,7 +24392,6 @@ loc_00342E70: ;
  */
 void sub_00342F30(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00342F30: ;
     xmm0 = xmm_load_ss(0x44333C); /* movss */
@@ -24426,7 +24413,6 @@ loc_00342F30: ;
  */
 void sub_00342F70(void)
 {
-    xmm128_t xmm0;
 
 loc_00342F70: ;
     xmm0 = xmm_load_ss(0x443338); /* movss */
@@ -24463,7 +24449,6 @@ loc_00342F70: ;
  */
 void sub_00343030(void)
 {
-    xmm128_t xmm0, xmm1;
 
 loc_00343030: ;
     xmm0 = xmm_load_ss(0x44333C); /* movss */
@@ -24486,7 +24471,6 @@ loc_00343030: ;
 void sub_00343070(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24534,7 +24518,6 @@ loc_0034307B: ;
 void sub_003430E0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24582,7 +24565,6 @@ loc_003430EB: ;
 void sub_00343150(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24630,7 +24612,6 @@ loc_0034315B: ;
 void sub_003431C0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24678,7 +24659,6 @@ loc_003431CB: ;
 void sub_00343230(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24726,7 +24706,6 @@ loc_0034323B: ;
 void sub_003432A0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24774,7 +24753,6 @@ loc_003432AB: ;
 void sub_00343310(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24822,7 +24800,6 @@ loc_0034331B: ;
 void sub_00343380(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24870,7 +24847,6 @@ loc_0034338B: ;
 void sub_003433F0(void)
 {
     uint32_t ebp;
-    xmm128_t xmm0, xmm1, xmm2, xmm3;
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
     #define fp_pop() (g_fp_top++)
     #define fp_popp() (fp_pop())
@@ -24962,7 +24938,6 @@ loc_003434AB: ;
  */
 void sub_003434C0(void)
 {
-    xmm128_t xmm0;
 
 loc_003434C0: ;
     xmm0 = xmm_load_ss(0x443CB8); /* movss */
@@ -24999,7 +24974,6 @@ loc_003434E0: ;
  */
 void sub_00343510(void)
 {
-    xmm128_t xmm0;
 
 loc_00343510: ;
     xmm0 = xmm_load_ss(0x752614); /* movss */
@@ -25028,7 +25002,6 @@ loc_00343510: ;
  */
 void sub_00343580(void)
 {
-    xmm128_t xmm0;
 
 loc_00343580: ;
     ecx = MEM32(0x75DC8C);
@@ -25105,7 +25078,6 @@ loc_00343580: ;
  */
 void sub_003436F0(void)
 {
-    xmm128_t xmm0;
 
 loc_003436F0: ;
     eax = MEM32(0x75E078);
@@ -38513,7 +38485,6 @@ void sub_00349720(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0;
 
 loc_00349720: ;
     PUSH32(esp, ebp);
@@ -42354,7 +42325,6 @@ loc_0034B20F: ;
  */
 void sub_0034B220(void)
 {
-    xmm128_t xmm1, xmm2;
 
 loc_0034B220: ;
     eax = MEM32(esp + 8);
@@ -42390,7 +42360,6 @@ loc_0034B220: ;
  */
 void sub_0034B280(void)
 {
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5;
 
 loc_0034B280: ;
     eax = MEM32(esp + 8);

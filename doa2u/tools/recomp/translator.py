@@ -359,14 +359,9 @@ class FunctionTranslator:
 
         # SSE/MMX register declarations
         if used_xmm:
-            xmm_regs = sorted([r for r in used_xmm if r.startswith("xmm")])
             mmx_regs = sorted([r for r in used_xmm if r.startswith("mm")
                                and not r.startswith("xmm")])
-            if xmm_regs:
-                # 128-bit: the XDK maths library runs packed ops on these
-                # (movaps/mulps/shufps ...); a scalar float model dropped
-                # three of every four lanes and all packed arithmetic.
-                lines.append(f"    xmm128_t {', '.join(xmm_regs)};")
+            # xmm0-7 are global (g_xmm in recomp_types.h): no declaration.
             if mmx_regs:
                 lines.append(f"    uint64_t {', '.join(mmx_regs)};")
 

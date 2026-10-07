@@ -30741,7 +30741,6 @@ void sub_003287A0(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_003287A0: ;
     PUSH32(esp, ebp);
@@ -30894,7 +30893,6 @@ void sub_00328991(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     uint64_t mm0, mm1;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 

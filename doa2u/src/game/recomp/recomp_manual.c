@@ -224,12 +224,23 @@ void game_on_file_open(const char *xbox_path)
 }
 
 /* mwPlyStartFname (0x0031BBB0): the host presenter shows the movie with its ADX track
- * while the guest player runs alongside. */
+ * while the guest player runs alongside. The guest's audio is muted with
+ * mwSfdSetOutVol (0x0030E0E0, -96 dB) so the soundtrack does not echo; not
+ * mwPlySetAudioSw(0), which makes the guest player end the movie early. */
 void sub_0031BBB0(void)
 {
     extern void sub_0031BBB0_gen(void);
     extern void doa2u_movie_select(const char *guest_path);
     uint32_t fname = MEM32(esp + 8);
+    uint32_t handle = MEM32(esp + 4);
+    if (handle) {
+        uint32_t saved_esp = esp, sv_ebx = ebx, sv_esi = esi, sv_edi = edi, sv_seh = g_seh_ebp;
+        PUSH32(esp, (uint32_t)-960);        /* vol: -96 dB (CRI minimum) */
+        PUSH32(esp, handle);
+        PUSH32(esp, 0);                     /* dummy return */
+        sub_0030E0E0();
+        esp = saved_esp; ebx = sv_ebx; esi = sv_esi; edi = sv_edi; g_seh_ebp = sv_seh;
+    }
     if (fname) {
         char name[MAX_PATH];
         int i;

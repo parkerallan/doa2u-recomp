@@ -215,6 +215,18 @@ static __forceinline uint32_t native_to_xbox_va(uint32_t val)
  * ops share one representation without type-punning through pointers. */
 typedef union { uint32_t u[4]; float f[4]; } xmm128_t;
 
+/* xmm0-7 are machine state, like g_eax: floats cross calls and split
+ * fragments in xmm registers. Saved/restored per fiber in xbox_fiber.c. */
+extern xmm128_t g_xmm[8];
+#define xmm0 (g_xmm[0])
+#define xmm1 (g_xmm[1])
+#define xmm2 (g_xmm[2])
+#define xmm3 (g_xmm[3])
+#define xmm4 (g_xmm[4])
+#define xmm5 (g_xmm[5])
+#define xmm6 (g_xmm[6])
+#define xmm7 (g_xmm[7])
+
 static __forceinline xmm128_t xmm_load(uint32_t a) {
     xmm128_t r;
     r.u[0] = MEM32(a); r.u[1] = MEM32(a + 4);

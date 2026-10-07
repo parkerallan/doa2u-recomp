@@ -2925,10 +2925,40 @@ static void submit_draw(void)
      * hold it back until the presenter hands the screen over. */
     {
         extern int doa2u_movie_host_owns_screen(void);
+        /* The guest's own movie surface (green: its colour conversion is
+         * wrong) is drawn once more after a START skip. Remember its textures
+         * while the presenter owns the screen and keep dropping draws on them
+         * until a guest frame passes without one. */
+        static uint32_t s_mtex[4];
+        static int s_mtex_n = 0, s_was_owned = 0;
+        static LONG s_mtex_seen = 0;
+        extern volatile LONG g_doa2u_heartbeat;
+        int tex_on = (g_pg.tex[0].control0 >> 30) & 1;
         if (doa2u_movie_host_owns_screen()) {
+            if (!s_was_owned) { s_was_owned = 1; s_mtex_n = 0; }
+            if (tex_on && g_pg.tex[0].offset) {
+                int k, have = 0;
+                for (k = 0; k < s_mtex_n; k++) if (s_mtex[k] == g_pg.tex[0].offset) have = 1;
+                if (!have && s_mtex_n < 4) s_mtex[s_mtex_n++] = g_pg.tex[0].offset;
+            }
             g_dbail[5]++;
             g_pg.inline_count = 0;
             return;
+        }
+        if (s_was_owned) { s_was_owned = 0; s_mtex_seen = g_doa2u_heartbeat; }
+        if (s_mtex_n) {
+            if (g_doa2u_heartbeat - s_mtex_seen > 1) {
+                s_mtex_n = 0;                       /* a frame without it: done */
+            } else if (tex_on) {
+                int k;
+                for (k = 0; k < s_mtex_n; k++) {
+                    if (s_mtex[k] == g_pg.tex[0].offset) {
+                        s_mtex_seen = g_doa2u_heartbeat;
+                        g_pg.inline_count = 0;
+                        return;
+                    }
+                }
+            }
         }
     }
 

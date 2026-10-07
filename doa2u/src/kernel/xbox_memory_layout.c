@@ -55,6 +55,13 @@ double g_fp_stack[8];
 int    g_fp_top;
 uint16_t g_x87_cw = 0x027F;   /* x87 default: all exceptions masked, 53-bit, round-nearest */
 
+/* GLOBAL SSE registers (see recomp_types.h); xbox_fiber.c swaps them per
+ * fiber through the helpers below. */
+typedef union { uint32_t u[4]; float f[4]; } xmm128_t;   /* same as recomp_types.h */
+xmm128_t g_xmm[8];
+void xbox_xmm_save(void *dst)       { memcpy(dst, g_xmm, sizeof(g_xmm)); }
+void xbox_xmm_load(const void *src) { memcpy(g_xmm, src, sizeof(g_xmm)); }
+
 /* SEH frame pointer bridge (see recomp_types.h for explanation) */
 uint32_t g_seh_ebp = 0;
 

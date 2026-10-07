@@ -60,6 +60,8 @@ typedef struct {
     /* saved x87 FPU state (g_fp_stack/g_fp_top are process globals) */
     double   r_fp_stack[8];
     int      r_fp_top;
+    /* saved SSE registers (g_xmm[8]) */
+    uint8_t  r_xmm[128];
 } Fiber;
 
 static Fiber g_fib[MAX_FIBERS];
@@ -76,6 +78,8 @@ static int   g_direct_return = -1;
 
 extern double g_fp_stack[8];
 extern int    g_fp_top;
+extern void   xbox_xmm_save(void *dst);
+extern void   xbox_xmm_load(const void *src);
 
 static void save_regs(Fiber *f)
 {
@@ -83,6 +87,7 @@ static void save_regs(Fiber *f)
     f->r_ebx = g_ebx; f->r_esi = g_esi; f->r_edi = g_edi; f->r_sehebp = g_seh_ebp;
     memcpy(f->r_fp_stack, g_fp_stack, sizeof(g_fp_stack));
     f->r_fp_top = g_fp_top;
+    xbox_xmm_save(f->r_xmm);
 }
 static void load_regs(Fiber *f)
 {
@@ -90,6 +95,7 @@ static void load_regs(Fiber *f)
     g_ebx = f->r_ebx; g_esi = f->r_esi; g_edi = f->r_edi; g_seh_ebp = f->r_sehebp;
     memcpy(g_fp_stack, f->r_fp_stack, sizeof(g_fp_stack));
     g_fp_top = f->r_fp_top;
+    xbox_xmm_load(f->r_xmm);
 }
 
 /* Next runnable (READY) fiber after `from`, round-robin. -1 if none. */

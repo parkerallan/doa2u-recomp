@@ -5950,7 +5950,6 @@ void sub_00361705(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_00361705: ;
     PUSH32(esp, ebp);
@@ -6081,7 +6080,6 @@ void sub_00361803(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_00361803: ;
     PUSH32(esp, ebp);
@@ -6305,7 +6303,6 @@ void sub_003619DF(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_003619DF: ;
     PUSH32(esp, ebp);
@@ -6437,7 +6434,6 @@ void sub_00361AF1(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
 
 loc_00361AF1: ;
     PUSH32(esp, ebp);
@@ -7831,7 +7827,6 @@ void sub_0036249D(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     uint64_t mm0, mm1, mm2, mm3, mm4, mm5, mm6, mm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
@@ -8713,7 +8708,6 @@ void sub_00362BEE(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
-    xmm128_t xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;
     uint64_t mm0, mm1, mm2, mm3, mm4, mm5, mm6, mm7;
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
