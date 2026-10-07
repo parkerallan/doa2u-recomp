@@ -1227,6 +1227,7 @@ static const recomp_entry_t g_recomp_table[] = {
     { 0x00043B30u, (recomp_func_t)sub_00043B30 },
     { 0x00043C10u, (recomp_func_t)sub_00043C10 },
     { 0x00043C60u, (recomp_func_t)sub_00043C60 },
+    { 0x00043F30u, (recomp_func_t)sub_00043F30 },
     { 0x00043F70u, (recomp_func_t)sub_00043F70 },
     { 0x00043FC0u, (recomp_func_t)sub_00043FC0 },
     { 0x00043FE0u, (recomp_func_t)sub_00043FE0 },
@@ -1236,6 +1237,7 @@ static const recomp_entry_t g_recomp_table[] = {
     { 0x00044060u, (recomp_func_t)sub_00044060 },
     { 0x00044090u, (recomp_func_t)sub_00044090 },
     { 0x000441A0u, (recomp_func_t)sub_000441A0 },
+    { 0x000442A0u, (recomp_func_t)sub_000442A0 },
     { 0x000442F0u, (recomp_func_t)sub_000442F0 },
     { 0x00044330u, (recomp_func_t)sub_00044330 },
     { 0x000443A0u, (recomp_func_t)sub_000443A0 },
@@ -11219,6 +11221,7 @@ static const recomp_entry_t g_recomp_table[] = {
     { 0x00222620u, (recomp_func_t)sub_00222620 },
     { 0x00222F00u, (recomp_func_t)sub_00222F00 },
     { 0x00222F40u, (recomp_func_t)sub_00222F40 },
+    { 0x002234C0u, (recomp_func_t)sub_002234C0 },
     { 0x00223610u, (recomp_func_t)sub_00223610 },
     { 0x00223790u, (recomp_func_t)sub_00223790 },
     { 0x0022381Fu, (recomp_func_t)sub_0022381F },
@@ -23566,7 +23569,7 @@ static const recomp_entry_t g_recomp_table[] = {
     { 0x003C146Cu, (recomp_func_t)sub_003C146C },
 };
 
-static const size_t g_recomp_table_size = 23547;
+static const size_t g_recomp_table_size = 23550;
 
 /* Binary search for a function by Xbox VA */
 recomp_func_t recomp_lookup(uint32_t xbox_va)

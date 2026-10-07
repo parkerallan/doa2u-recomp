@@ -17639,7 +17639,7 @@ loc_0033F910: ;
     edx = SX16(LO16(ecx));
     MEM16(eax + esi * 2 + 0x18) = LO16(ecx);
     esi = edx;
-    if (CMP_GE(LO16(ecx) & LO16(ecx), 0)) goto loc_0033F921; /* jge: greater or equal (signed >=) */
+    if (CMP_GE((uint16_t)(LO16(ecx) & LO16(ecx)), 0)) goto loc_0033F921; /* jge: greater or equal (signed >=) */
 
 loc_0033F91F: ;
     esi = (uint32_t)(-(int32_t)esi);
@@ -17650,7 +17650,7 @@ loc_0033F921: ;
     if (CMP_LE(esi, MEM32(eax + 0x78))) goto loc_0033F931; /* jle: less or equal (signed <=) */
 
 loc_0033F927: ;
-    if (CMP_GE(LO16(ecx) & LO16(ecx), 0)) goto loc_0033F92E; /* jge: greater or equal (signed >=) */
+    if (CMP_GE((uint16_t)(LO16(ecx) & LO16(ecx)), 0)) goto loc_0033F92E; /* jge: greater or equal (signed >=) */
 
 loc_0033F92C: ;
     edx = (uint32_t)(-(int32_t)edx);
@@ -27196,7 +27196,7 @@ loc_003447C1: ;
  * CC: cdecl, 0 params, returns int_or_void
  * Frame: fpo_leaf
  */
-void sub_003447D0(void)
+void sub_003447D0_gen(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */

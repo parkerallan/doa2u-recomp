@@ -7455,7 +7455,7 @@ loc_0021C1B0: ;
     xmm_store_ss(esp + 0x18, xmm0); /* movss */
     xmm_store_ss(esp + 0x1C, xmm2); /* movss */
     MEM8(esi + 5) = LO8(ecx);
-    if (CMP_LE(LO8(ecx) & LO8(ecx), 0)) goto loc_0021C232; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint8_t)(LO8(ecx) & LO8(ecx)), 0)) goto loc_0021C232; /* jle: less or equal (signed <=) */
 
 loc_0021C1E9: ;
     edx = esi + -96;
@@ -12998,7 +12998,7 @@ loc_0021F4A8: ;
     SET_LO16(eax, LO16(eax) - 1);
     /* test LO16(eax), LO16(eax) - flags set for next jcc */
     MEM16(0xE3B45C) = LO16(eax);
-    if (CMP_G(LO16(eax) & LO16(eax), 0)) goto loc_0021F4C4; /* jg: greater (signed >) */
+    if (CMP_G((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_0021F4C4; /* jg: greater (signed >) */
 
 loc_0021F4B5: ;
     PUSH32(esp, 0);
@@ -18880,7 +18880,7 @@ loc_00222744: ;
 loc_0022274B: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi + 0x78));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_0022275B; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_0022275B; /* jle: less or equal (signed <=) */
 
 loc_00222756: ;
     eax--;
@@ -19013,7 +19013,7 @@ loc_0022288A: ;
 loc_002228A0: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi + 0x78));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_002228B0; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_002228B0; /* jle: less or equal (signed <=) */
 
 loc_002228AB: ;
     eax--;
@@ -19095,7 +19095,7 @@ loc_0022296D: ;
     if (TEST_NZ(eax, eax)) { RECOMP_SLICE_POINT(); goto loc_002227DC; } /* jne: not equal / not zero */
 
 loc_00222975: ;
-    if (CMP_G(LO16(ecx) & LO16(ecx), 0)) goto loc_00222B03; /* jg: greater (signed >) */
+    if (CMP_G((uint16_t)(LO16(ecx) & LO16(ecx)), 0)) goto loc_00222B03; /* jg: greater (signed >) */
 
 loc_0022297E: ;
     xmm0 = xmm_load_ss(0x3C2BE0); /* movss */
@@ -19674,7 +19674,7 @@ loc_00222F40: ;
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
     xmm_store_ss(ebx + 4, xmm1); /* movss */
     xmm_store_ss(ebx + 8, xmm0); /* movss */
-    if (CMP_BE(LO8(eax) & LO8(eax), 0)) goto loc_00222F6D; /* jbe: below or equal (unsigned <=) */
+    if (CMP_BE((uint8_t)(LO8(eax) & LO8(eax)), 0)) goto loc_00222F6D; /* jbe: below or equal (unsigned <=) */
 
 loc_00222F63: ;
     SET_LO8(eax, LO8(eax) - 1);
@@ -20134,6 +20134,150 @@ loc_002234A8: ;
     #undef fp_popp
     #undef fp_top
     #undef fp_st1
+}
+
+/**
+ * sub_002234C0
+ * Original: 0x002234C0 - 0x00223610 (336 bytes, 86 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002234C0(void)
+{
+    uint32_t ebp;
+    int _flags = 0; /* fallback flag var */
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_002234C0: ;
+    PUSH32(esp, ebx);
+    PUSH32(esp, edi);
+    edi = MEM32(esp + 0xC);
+    MEM32(0xE3B8E4) = edi;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00034DC0(); /* call 0x00034DC0 */
+
+loc_002234D1: ;
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_000350E0(); /* call 0x000350E0 */
+
+loc_002234D7: ;
+    MEM8(0xE3B8F8) = LO8(eax);
+    MEM8(0xE3B42C) = LO8(eax);
+    eax = MEM32(0xE3B934);
+    ebx = 0; /* xor self */
+    esp = esp + 4;
+    /* cmp eax, ebx - flags set for next jcc */
+    MEM8(0xE3B8E0) = 2;
+    MEM8(0xE3B8E1) = LO8(ebx);
+    if (CMP_EQ(eax, ebx)) goto loc_0022350C; /* je: equal / zero */
+
+loc_002234FC: ;
+    eax = (uint32_t)(int32_t)SMEM8(edi + 0x84);
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0013EDB0(); /* call 0x0013EDB0 */
+
+loc_00223509: ;
+    esp = esp + 4;
+
+loc_0022350C: ;
+    MEM32(0xE3B934) = ebx;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00218750(); /* call 0x00218750 */
+
+loc_00223517: ;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0021EAE0(); /* call 0x0021EAE0 */
+
+loc_0022351C: ;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00217FE0(); /* call 0x00217FE0 */
+
+loc_00223521: ;
+    eax = edi;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002188E0(); /* call 0x002188E0 */
+
+loc_00223528: ;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002190B0(); /* call 0x002190B0 */
+
+loc_0022352D: ;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002197F0(); /* call 0x002197F0 */
+
+loc_00223532: ;
+    MEM32(0xE3B944) = ebx;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00218D80(); /* call 0x00218D80 */
+
+loc_0022353D: ;
+    eax = edi;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00220AD0(); /* call 0x00220AD0 */
+
+loc_00223544: ;
+    PUSH32(esp, 0xC);
+    PUSH32(esp, 0x77BA50);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0014A9C0(); /* call 0x0014A9C0 */
+
+loc_00223550: ;
+    xmm0 = xmm_load_ss(0x3C1A44); /* movss */
+    esp = esp + 8;
+    eax = 0x77BBD4;
+    ecx = 0x11;
+
+loc_00223565: ;
+    xmm_store_ss(eax, xmm0); /* movss */
+    eax = eax + 0x10;
+    ecx--;
+    if ((ecx != 0)) goto loc_00223565; /* jne: not equal / not zero */
+
+loc_0022356F: ;
+    PUSH32(esp, ebx);
+    MEM32(0x77D1A0) = ebx;
+    MEM32(0x77D1A4) = ebx;
+    MEM32(0x77D1C0) = ebx;
+    MEM32(0x77D1C4) = ebx;
+    MEM32(0x77D1E0) = ebx;
+    MEM32(0x77D1E4) = ebx;
+    MEM32(0x77D200) = ebx;
+    MEM32(0x77D204) = ebx;
+    MEM32(0x77D220) = ebx;
+    MEM32(0x77D224) = ebx;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00276910(); /* call 0x00276910 */
+
+loc_002235B1: ;
+    eax = MEM32(edi + 0x78);
+    ecx = MEM32(eax + 0x430);
+    edx = MEM32(eax + 0x42C);
+    eax = MEM32(eax + 0x428);
+    PUSH32(esp, 0x3F800000);
+    PUSH32(esp, ecx);
+    PUSH32(esp, edx);
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0026F1D0(); /* call 0x0026F1D0 */
+
+loc_002235D3: ;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002198A0(); /* call 0x002198A0 */
+
+loc_002235D8: ;
+    PUSH32(esp, edi);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00221D30(); /* call 0x00221D30 */
+
+loc_002235DE: ;
+    ecx = MEM32(edi + 0x78);
+    edx = MEM32(ecx + 0x2E4);
+    PUSH32(esp, ebx);
+    PUSH32(esp, 1);
+    PUSH32(esp, edx);
+    MEM32(0xE3B444) = ebx;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002862C0(); /* call 0x002862C0 */
+
+loc_002235F6: ;
+    eax = MEM32(edi + 0x78);
+    ecx = MEM32(eax + 0x450);
+    PUSH32(esp, ebx);
+    PUSH32(esp, 1);
+    PUSH32(esp, ecx);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002862C0(); /* call 0x002862C0 */
+
+loc_00223608: ;
+    esp = esp + 0x30;
+    POP32(esp, edi);
+    POP32(esp, ebx);
+    esp += 4; return; /* ret */
+
 }
 
 /**
@@ -25514,7 +25658,7 @@ loc_00226659: ;
 loc_00226679: ;
     edi = eax;
     SET_LO8(eax, MEM8(esi + 0xF4));
-    if (CMP_GE(LO8(eax) & LO8(eax), 0)) goto loc_0022668E; /* jge: greater or equal (signed >=) */
+    if (CMP_GE((uint8_t)(LO8(eax) & LO8(eax)), 0)) goto loc_0022668E; /* jge: greater or equal (signed >=) */
 
 loc_00226685: ;
     eax = 0x10000;
@@ -26049,7 +26193,7 @@ loc_00226BAA: ;
     goto loc_00226BB8;
 
 loc_00226BB1: ;
-    if (CMP_GE(LO16(eax) & LO16(eax), 0)) goto loc_00226BB8; /* jge: greater or equal (signed >=) */
+    if (CMP_GE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_00226BB8; /* jge: greater or equal (signed >=) */
 
 loc_00226BB6: ;
     eax = 0; /* xor self */
@@ -34955,7 +35099,7 @@ loc_0022C203: ;
 
 loc_0022C220: ;
     SET_LO16(eax, MEM16(esi + 0x34));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_0022C2F0; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_0022C2F0; /* jle: less or equal (signed <=) */
 
 loc_0022C22D: ;
     xmm0 = xmm_load_ss(esi + 0x14); /* movss */
@@ -49533,7 +49677,7 @@ loc_00234D70: ;
     ebx = 0; /* xor self */
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
     MEM8(esi + 0x83) = LO8(eax);
-    if (CMP_LE(LO8(eax) & LO8(eax), 0)) goto loc_00234E22; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint8_t)(LO8(eax) & LO8(eax)), 0)) goto loc_00234E22; /* jle: less or equal (signed <=) */
 
 loc_00234DDD: ;
     eax = esi + 0x20;
@@ -51972,7 +52116,7 @@ loc_002365A6: ;
     /* test LO8(eax), LO8(eax) - flags set for next jcc */
     MEM8(esi + 0x83) = LO8(eax);
     MEM32(esp + 0x10) = 0;
-    if (CMP_LE(LO8(eax) & LO8(eax), 0)) goto loc_00236621; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint8_t)(LO8(eax) & LO8(eax)), 0)) goto loc_00236621; /* jle: less or equal (signed <=) */
 
 loc_002365DE: ;
     ecx = esi + 0x20;
@@ -67407,7 +67551,7 @@ void sub_0023FC90(void)
 loc_0023FC90: ;
     SET_LO16(edx, MEM16(esp + 0xC));
     esp = esp - 0x18;
-    if (CMP_BE(LO16(edx) & LO16(edx), 0)) goto loc_0023FE01; /* jbe: below or equal (unsigned <=) */
+    if (CMP_BE((uint16_t)(LO16(edx) & LO16(edx)), 0)) goto loc_0023FE01; /* jbe: below or equal (unsigned <=) */
 
 loc_0023FCA1: ;
     xmm1 = xmm_zero(); /* xorps self */
@@ -67574,7 +67718,7 @@ void sub_0023FE10(void)
 
 loc_0023FE10: ;
     esp = esp - 0x18;
-    if (CMP_BE(LO16(eax) & LO16(eax), 0)) goto loc_0023FF00; /* jbe: below or equal (unsigned <=) */
+    if (CMP_BE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_0023FF00; /* jbe: below or equal (unsigned <=) */
 
 loc_0023FE1C: ;
     xmm1 = xmm_zero(); /* xorps self */
@@ -67695,7 +67839,7 @@ loc_0023FF10: ;
     xmm2 = xmm_load_ss(edx); /* movss */
     xmm0 = xmm_load_ss(esp + 0xC); /* movss */
     esp = esp - 0x14;
-    if (CMP_BE(LO16(eax) & LO16(eax), 0)) goto loc_00240036; /* jbe: below or equal (unsigned <=) */
+    if (CMP_BE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_00240036; /* jbe: below or equal (unsigned <=) */
 
 loc_0023FF29: ;
     xmm1 = xmm_zero(); /* xorps self */
@@ -75817,7 +75961,7 @@ loc_00244D30: ;
 
 loc_00244D39: ;
     SET_LO8(eax, MEM8(esi + 0xE45B34));
-    if (CMP_A(LO8(eax) & LO8(eax), 0)) goto loc_00244E00; /* ja: above (unsigned >) */
+    if (CMP_A((uint8_t)(LO8(eax) & LO8(eax)), 0)) goto loc_00244E00; /* ja: above (unsigned >) */
 
 loc_00244D47: ;
     ecx = esp + 0x20;
@@ -76089,7 +76233,7 @@ loc_00245010: ;
 
 loc_0024501E: ;
     SET_LO8(eax, MEM8(edi + 0xE45B34));
-    if (CMP_A(LO8(eax) & LO8(eax), 0)) goto loc_002450F1; /* ja: above (unsigned >) */
+    if (CMP_A((uint8_t)(LO8(eax) & LO8(eax)), 0)) goto loc_002450F1; /* ja: above (unsigned >) */
 
 loc_0024502C: ;
     ecx = esp + 0x30;
@@ -77173,7 +77317,7 @@ loc_002458FE: ;
     if (_rccf) goto loc_0024591C; /* jne: not equal / not zero */
 
 loc_0024590E: ;
-    if (CMP_BE(LO8(ecx) & LO8(ecx), 0)) goto loc_00245936; /* jbe: below or equal (unsigned <=) */
+    if (CMP_BE((uint8_t)(LO8(ecx) & LO8(ecx)), 0)) goto loc_00245936; /* jbe: below or equal (unsigned <=) */
 
 loc_00245912: ;
     SET_LO8(ecx, LO8(ecx) - 1);
@@ -77181,7 +77325,7 @@ loc_00245912: ;
     goto loc_00245936;
 
 loc_0024591C: ;
-    if (CMP_BE(LO8(ecx) & LO8(ecx), 0)) goto loc_0024592F; /* jbe: below or equal (unsigned <=) */
+    if (CMP_BE((uint8_t)(LO8(ecx) & LO8(ecx)), 0)) goto loc_0024592F; /* jbe: below or equal (unsigned <=) */
 
 loc_00245920: ;
     if (CMP_AE(LO8(ecx), 0x28)) goto loc_0024592F; /* jae: above or equal (unsigned >=) */
@@ -81665,7 +81809,7 @@ loc_00248BD6: ;
 
 loc_00248BE0: ;
     SET_LO8(eax, MEM8(0x877C20));
-    if (CMP_BE(LO8(eax) & LO8(eax), 0)) goto loc_00248C63; /* jbe: below or equal (unsigned <=) */
+    if (CMP_BE((uint8_t)(LO8(eax) & LO8(eax)), 0)) goto loc_00248C63; /* jbe: below or equal (unsigned <=) */
 
 loc_00248BE9: ;
     if (CMP_BE(LO8(eax), 2)) goto loc_00248C0C; /* jbe: below or equal (unsigned <=) */
@@ -94069,7 +94213,7 @@ loc_00250E7E: ;
 
 loc_00250EC0: ;
     SET_LO16(ecx, MEM16(eax + 0x24));
-    if (CMP_LE(LO16(ecx) & LO16(ecx), 0)) goto loc_00250FAB; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(ecx) & LO16(ecx)), 0)) goto loc_00250FAB; /* jle: less or equal (signed <=) */
 
 loc_00250ECD: ;
     xmm0 = xmm_load_ss(eax + 8); /* movss */
@@ -96389,7 +96533,7 @@ loc_00252340: ;
     ebp = 0xD;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_002523CC; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_002523CC; /* jle: less or equal (signed <=) */
 
 loc_0025235C: ;
     eax--;
@@ -96474,7 +96618,7 @@ loc_002523C9: ;
 loc_002523CC: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi + 2));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_00252425; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_00252425; /* jle: less or equal (signed <=) */
 
 loc_002523D7: ;
     eax--;
@@ -96534,7 +96678,7 @@ loc_00252422: ;
 loc_00252425: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi + -2));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_00252435; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_00252435; /* jle: less or equal (signed <=) */
 
 loc_00252430: ;
     eax--;
@@ -96566,7 +96710,7 @@ void sub_00252352(void)
 loc_00252352: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_002523CC; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_002523CC; /* jle: less or equal (signed <=) */
 
 loc_0025235C: ;
     eax--;
@@ -96651,7 +96795,7 @@ loc_002523C9: ;
 loc_002523CC: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi + 2));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_00252425; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_00252425; /* jle: less or equal (signed <=) */
 
 loc_002523D7: ;
     eax--;
@@ -96711,7 +96855,7 @@ loc_00252422: ;
 loc_00252425: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(esi + -2));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_00252435; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_00252435; /* jle: less or equal (signed <=) */
 
 loc_00252430: ;
     eax--;
@@ -96771,7 +96915,7 @@ loc_0025246B: ;
 loc_0025246F: ;
     eax = 0; /* xor self */
     SET_LO16(eax, MEM16(edi));
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_0025247D; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_0025247D; /* jle: less or equal (signed <=) */
 
 loc_00252479: ;
     eax--;
@@ -100557,7 +100701,7 @@ loc_00254210: ;
     xmm_store_ss(0xE478B8, xmm0); /* movss */
     xmm0 = xmm_load_ss(0x3C1A44); /* movss */
     xmm_store_ss(esp, xmm0); /* movss */
-    if (CMP_LE(LO16(ecx) & LO16(ecx), 0)) goto loc_0025429C; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(ecx) & LO16(ecx)), 0)) goto loc_0025429C; /* jle: less or equal (signed <=) */
 
 loc_00254235: ;
     if (CMP_LE(LO16(ecx), 0x1E)) goto loc_0025429C; /* jle: less or equal (signed <=) */
@@ -103733,7 +103877,7 @@ loc_00255FD4: ;
     goto loc_00255FF5;
 
 loc_00255FF0: ;
-    if (CMP_LE(LO16(eax) & LO16(eax), 0)) goto loc_00256049; /* jle: less or equal (signed <=) */
+    if (CMP_LE((uint16_t)(LO16(eax) & LO16(eax)), 0)) goto loc_00256049; /* jle: less or equal (signed <=) */
 
 loc_00255FF5: ;
     ecx = (uint32_t)(int32_t)SMEM16(0xE478A2);

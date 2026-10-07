@@ -508,6 +508,12 @@ def _make_condition(jcc, flag_setter, flag_ops):
         if test_macro:
             return f"{test_macro}({lhs}, {rhs})", desc
         if cmp_macro:
+            # Cast the AND back to the operand width: uint8_t & uint8_t
+            # promotes to int, and CMP_* sign-extends by sizeof(a), so a
+            # byte's bit 7 was never seen as the sign (`test cl,cl; jge`).
+            w = _sign_cast(lhs)
+            if w != "int32_t":
+                return f"{cmp_macro}((u{w})({lhs} & {rhs}), 0)", desc
             return f"{cmp_macro}({lhs} & {rhs}, 0)", desc
         if jcc == "js":
             return f"(({_sign_cast(lhs)})({lhs} & {rhs}) < 0)", desc

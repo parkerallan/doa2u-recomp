@@ -1767,17 +1767,24 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
              * effect reads the other flip buffer): the last presented host
              * frame, not the never-written guest memory behind it. */
             int samples_fb = nv_samples_framebuffer(g_pg.tex[0].offset);
+            /* Offscreen-to-offscreen is allowed (the glow's blur chain reads
+             * one target while drawing into the next); the bind refuses only
+             * the target currently being drawn into. */
             if (g_pg.tex[0].offset &&
-                (samples_fb || (!d3d8_OffscreenTargetActive() &&
-                                d3d8_HasOffscreenTexture(g_pg.tex[0].offset)))) {
+                (samples_fb || d3d8_HasOffscreenTexture(g_pg.tex[0].offset))) {
                 int use_diffuse = !diffuse_all_zero;
-                if (samples_fb) {
-                    /* The frame buffer is a linear (rect) surface, sampled
-                     * with texel coordinates -- Omega's after-image pass
-                     * reads it with u 0..720, v 0..480 into its 512x512
-                     * buffer. The host copy is sampled 0..1. */
+                {
+                    /* Frame buffers and linear render-target textures (the
+                     * glow chain) are rect surfaces sampled with texel
+                     * coordinates -- Omega's after-image pass reads u 0..720,
+                     * v 0..480. The host copy is sampled 0..1. A swizzled
+                     * target (the castle water's reflection) is already 0..1
+                     * and must be left alone. */
+                    uint32_t cf = (g_pg.tex[0].format >> 8) & 0x7F;
+                    int rect = samples_fb || (cf >= 0x10 && !d3d8_format_is_swizzled(cf) &&
+                                              cf != 0x0C && cf != 0x0E && cf != 0x0F);
                     float tw, th;
-                    if (sum->max_u > 1.5f || sum->max_v > 1.5f) {
+                    if (rect && (sum->max_u > 1.5f || sum->max_v > 1.5f)) {
                         tw = (float)(g_pg.tex[0].image_rect >> 16);
                         th = (float)(g_pg.tex[0].image_rect & 0xFFFF);
                         if (tw < 16.0f) tw = 720.0f;
@@ -2262,7 +2269,7 @@ static void nv_sync_render_target(void)
      * surface and then classed the frame buffer itself as offscreen. */
     unsigned pw = (g_pg_surf_pitch & 0xFFFF) / 4;
     unsigned h  = (g_pg.surface_clip_v >> 16) & 0xFFFF;
-    extern uint32_t g_doa2u_offrt_offs[8]; extern int g_doa2u_offrt_n;
+    extern uint32_t g_doa2u_offrt_offs[32]; extern int g_doa2u_offrt_n;
     if (pw < 16 || pw > 2048) return;             /* pitch not programmed yet */
     if (g_doa2u_offrt_n) {
         /* Colour-offset routing: the SetRenderTarget wrapper records every

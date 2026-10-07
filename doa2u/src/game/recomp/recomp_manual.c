@@ -154,7 +154,27 @@ GARBAGE_TARGET(EE2A2E3C)
 /* ── Runtime symbols the shared libraries expect from the game layer ── */
 volatile int g_doa2u_post_movie = 0;      /* fiber timeslicing gate (kept off) */
 void (*g_kernel_ptinfo_hook)(const char *where);   /* NtReadFile diagnostic hook (unused) */
-uint32_t g_doa2u_offrt_offs[8]; int g_doa2u_offrt_n;
+uint32_t g_doa2u_offrt_offs[32]; int g_doa2u_offrt_n;
+
+/* D3DDevice_SetRenderTarget (0x003447D0): record the colour offset of every
+ * texture surface used as a render target (D3DSurface.Parent at +0x14 is set
+ * only for texture surfaces), so the pgraph translator routes it offscreen.
+ * The stage glow target is 720x480 with the frame buffer's pitch, and without
+ * this its clear landed on the back buffer and blacked out the scene. */
+void sub_003447D0(void)
+{
+    extern void sub_003447D0_gen(void);
+    uint32_t surf = MEM32(esp + 4);
+    sub_003447D0_gen();
+    if (surf && MEM32(surf + 0x14)) {
+        uint32_t data = MEM32(surf + 4) & 0x07FFFFFFu;
+        static int s_next = 0;   /* oldest entry, once the table is full */
+        int k, seen = 0;
+        for (k = 0; k < g_doa2u_offrt_n; k++) if (g_doa2u_offrt_offs[k] == data) seen = 1;
+        if (!seen && g_doa2u_offrt_n < 32) g_doa2u_offrt_offs[g_doa2u_offrt_n++] = data;
+        else if (!seen) { g_doa2u_offrt_offs[s_next] = data; s_next = (s_next + 1) % 32; }
+    }
+}
 /* Worker timeslice: every 4 ms the game thread hands the CRI server fibers a slice,
  * standing in for preemption (the game's load waits never block). */
 int doa2u_workers_may_run(void) { return 1; }
@@ -205,6 +225,33 @@ void doa2u_apu_deliver_irq(void)
         }
     }
     s_delivering = 0;
+}
+
+/* DirectSound's wait for a voice to go off (0x0036A38C, thiscall ecx = voice):
+ * spins on flag 0x8000 at +0x12, which the APU ISR clears when the hardware
+ * reports the voice stopped. On the console that interrupt arrives during the
+ * spin; here interrupts were only delivered at Present, so every voice waited
+ * out sub_00369B74's 500 ms timeout and a stage change froze for seconds.
+ * Deliver the interrupt from inside the wait; guest registers are preserved. */
+void sub_0036A38C(void)
+{
+    uint32_t v = ecx;
+    if (MEM8(v + 0x12) & 1) {
+        while (MEM16(v + 0x12) & 0x8000) {
+            uint32_t r_eax = eax, r_edx = edx, r_ebx = ebx, r_esi = esi,
+                     r_edi = edi, r_esp = esp, r_seh = g_seh_ebp;
+            doa2u_apu_deliver_irq();
+            eax = r_eax; edx = r_edx; ebx = r_ebx; esi = r_esi;
+            edi = r_edi; esp = r_esp; g_seh_ebp = r_seh;
+            if (!(MEM16(v + 0x12) & 0x8000)) break;
+            ecx = v;
+            PUSH32(esp, 0);
+            sub_00369B74();                 /* keeps the driver's 500 ms timeout */
+            if (MEM16(v + 0x12) & 0x8000) Sleep(1);
+        }
+    }
+    ecx = v;
+    esp += 4;                               /* ret */
 }
 
 /* ── Game hooks called by the kernel bridge ─────────────────────────── */

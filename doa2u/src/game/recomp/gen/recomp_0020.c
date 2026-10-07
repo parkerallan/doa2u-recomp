@@ -32780,7 +32780,7 @@ loc_0036A386: ;
  * CC: cdecl, 0 params, returns int_or_void
  * Frame: fpo_leaf
  */
-void sub_0036A38C(void)
+void sub_0036A38C_gen(void)
 {
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
