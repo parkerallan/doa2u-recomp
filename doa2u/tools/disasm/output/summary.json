@@ -1,0 +1,117 @@
+{
+  "binary": "..\\doa2ugamefiles\\DOA2.xbe",
+  "base_address": "0x00010000",
+  "entry_point": "0x002BBB93",
+  "total_instructions": 1193582,
+  "total_functions": 13829,
+  "functions_with_prologue": 1994,
+  "functions_by_method": {
+    "call_target": 10205,
+    "cc_boundary": 1742,
+    "prologue": 1881,
+    "entry_point": 1
+  },
+  "functions_by_section": {
+    ".text": 11767,
+    "D3D": 284,
+    "D3DX": 121,
+    "XGRPH": 36,
+    "DSOUND": 389,
+    "XNET": 370,
+    "XONLINE": 626,
+    "PSFD_B": 4,
+    "PSFD00": 17,
+    "XPP": 215
+  },
+  "total_xrefs": 250798,
+  "xrefs_by_type": {
+    "data_read": 74474,
+    "cond_jump": 86744,
+    "call": 67249,
+    "jump": 21310,
+    "kernel_call": 1021
+  },
+  "total_labels": 17821,
+  "total_strings": 3841,
+  "kernel_imports": 151,
+  "sections_analyzed": [
+    {
+      "name": ".text",
+      "va": "0x00011000",
+      "size": 3354980,
+      "functions": 11767
+    },
+    {
+      "name": "D3D",
+      "va": "0x00344180",
+      "size": 80748,
+      "functions": 284
+    },
+    {
+      "name": "D3DX",
+      "va": "0x00357D00",
+      "size": 38128,
+      "functions": 121
+    },
+    {
+      "name": "XGRPH",
+      "va": "0x00361200",
+      "size": 8524,
+      "functions": 36
+    },
+    {
+      "name": "DSOUND",
+      "va": "0x00363360",
+      "size": 121668,
+      "functions": 389
+    },
+    {
+      "name": "XNET",
+      "va": "0x00380EC0",
+      "size": 76984,
+      "functions": 370
+    },
+    {
+      "name": "XONLINE",
+      "va": "0x00393B80",
+      "size": 138524,
+      "functions": 626
+    },
+    {
+      "name": "PSFD_I",
+      "va": "0x003B58A0",
+      "size": 1060,
+      "functions": 0
+    },
+    {
+      "name": "PSFD_B",
+      "va": "0x003B5CE0",
+      "size": 2244,
+      "functions": 4
+    },
+    {
+      "name": "PSFD_P",
+      "va": "0x003B65C0",
+      "size": 1600,
+      "functions": 0
+    },
+    {
+      "name": "PSFD00",
+      "va": "0x003B6C00",
+      "size": 5992,
+      "functions": 17
+    },
+    {
+      "name": "XPP",
+      "va": "0x003B8380",
+      "size": 37164,
+      "functions": 215
+    },
+    {
+      "name": "DOLBY",
+      "va": "0x01060F60",
+      "size": 29056,
+      "functions": 0
+    }
+  ]
+}

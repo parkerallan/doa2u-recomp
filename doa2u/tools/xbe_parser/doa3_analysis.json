@@ -1,0 +1,762 @@
+{
+  "title": "Dead or Alive 3",
+  "title_id": "0x54430001",
+  "type": "retail",
+  "build_date": "2001-10-26 19:04:33 UTC",
+  "xdk_version": 3911,
+  "build_path": "C:\\Doa3\\Output\\Release\\Doa3.exe",
+  "base_address": "0x00010000",
+  "image_size": 12719360,
+  "entry_point": "0x001651A5",
+  "kernel_thunk_addr": "0x001ED0E0",
+  "sections": [
+    {
+      "name": ".text",
+      "virtual_addr": "0x00011000",
+      "virtual_size": 1703392,
+      "raw_addr": "0x00001000",
+      "raw_size": 1703392,
+      "flags": "PRE, X, HRO",
+      "writable": false,
+      "executable": true
+    },
+    {
+      "name": "D3D",
+      "virtual_addr": "0x001B0DE0",
+      "virtual_size": 75724,
+      "raw_addr": "0x001A1000",
+      "raw_size": 62316,
+      "flags": "W, PRE, X",
+      "writable": true,
+      "executable": true
+    },
+    {
+      "name": "D3DX",
+      "virtual_addr": "0x001C35C0",
+      "virtual_size": 11976,
+      "raw_addr": "0x001B1000",
+      "raw_size": 11968,
+      "flags": "W, PRE, X",
+      "writable": true,
+      "executable": true
+    },
+    {
+      "name": "XGRPH",
+      "virtual_addr": "0x001C64A0",
+      "virtual_size": 1532,
+      "raw_addr": "0x001B4000",
+      "raw_size": 1532,
+      "flags": "W, PRE, X",
+      "writable": true,
+      "executable": true
+    },
+    {
+      "name": "DSOUND",
+      "virtual_addr": "0x001C6AA0",
+      "virtual_size": 110568,
+      "raw_addr": "0x001B5000",
+      "raw_size": 110260,
+      "flags": "W, PRE, X",
+      "writable": true,
+      "executable": true
+    },
+    {
+      "name": "PSGSFD00",
+      "virtual_addr": "0x001E1AA0",
+      "virtual_size": 12688,
+      "raw_addr": "0x001D0000",
+      "raw_size": 12688,
+      "flags": "PRE, X, TRO",
+      "writable": false,
+      "executable": true
+    },
+    {
+      "name": "PSGSFD_I",
+      "virtual_addr": "0x001E4C40",
+      "virtual_size": 496,
+      "raw_addr": "0x001D4000",
+      "raw_size": 496,
+      "flags": "PRE, X, HRO, TRO",
+      "writable": false,
+      "executable": true
+    },
+    {
+      "name": "PSGSFD_B",
+      "virtual_addr": "0x001E4E40",
+      "virtual_size": 1728,
+      "raw_addr": "0x001D5000",
+      "raw_size": 1728,
+      "flags": "PRE, X, HRO",
+      "writable": false,
+      "executable": true
+    },
+    {
+      "name": "PSGSFD_P",
+      "virtual_addr": "0x001E5500",
+      "virtual_size": 1072,
+      "raw_addr": "0x001D6000",
+      "raw_size": 1072,
+      "flags": "PRE, X",
+      "writable": false,
+      "executable": true
+    },
+    {
+      "name": "XPP",
+      "virtual_addr": "0x001E5940",
+      "virtual_size": 30620,
+      "raw_addr": "0x001D7000",
+      "raw_size": 30620,
+      "flags": "W, PRE, X",
+      "writable": true,
+      "executable": true
+    },
+    {
+      "name": ".rdata",
+      "virtual_addr": "0x001ED0E0",
+      "virtual_size": 181580,
+      "raw_addr": "0x001DF000",
+      "raw_size": 181564,
+      "flags": "PRE, X",
+      "writable": false,
+      "executable": true
+    },
+    {
+      "name": ".data",
+      "virtual_addr": "0x00219640",
+      "virtual_size": 10545436,
+      "raw_addr": "0x0020C000",
+      "raw_size": 1737808,
+      "flags": "W, PRE, X",
+      "writable": true,
+      "executable": true
+    },
+    {
+      "name": "DOLBY",
+      "virtual_addr": "0x00C27F60",
+      "virtual_size": 28056,
+      "raw_addr": "0x003B5000",
+      "raw_size": 28036,
+      "flags": "PRE, X, TRO",
+      "writable": false,
+      "executable": true
+    },
+    {
+      "name": "$$XTIMAGE",
+      "virtual_addr": "0x00C2ED00",
+      "virtual_size": 10240,
+      "raw_addr": "0x003BC000",
+      "raw_size": 10240,
+      "flags": "INS, HRO, TRO",
+      "writable": false,
+      "executable": false
+    }
+  ],
+  "libraries": [
+    {
+      "name": "XAPILIB",
+      "version": "1.0.3911",
+      "flags": "0x4001"
+    },
+    {
+      "name": "D3D8",
+      "version": "1.0.3925",
+      "flags": "0x4001"
+    },
+    {
+      "name": "D3DX8",
+      "version": "1.0.3911",
+      "flags": "0x4001"
+    },
+    {
+      "name": "XGRAPHC",
+      "version": "1.0.3911",
+      "flags": "0x4001"
+    },
+    {
+      "name": "DSOUND",
+      "version": "1.0.3936",
+      "flags": "0x4001"
+    },
+    {
+      "name": "XBOXKRNL",
+      "version": "1.0.3911",
+      "flags": "0x4001"
+    },
+    {
+      "name": "LIBC",
+      "version": "1.0.3911",
+      "flags": "0x4001"
+    },
+    {
+      "name": "LIBCPMT",
+      "version": "1.0.3911",
+      "flags": "0x4001"
+    }
+  ],
+  "kernel_imports": [
+    {
+      "ordinal": 184,
+      "name": "NtAllocateVirtualMemory",
+      "thunk_addr": "0x001ED0E0"
+    },
+    {
+      "ordinal": 199,
+      "name": "NtFreeVirtualMemory",
+      "thunk_addr": "0x001ED0E4"
+    },
+    {
+      "ordinal": 217,
+      "name": "NtQueryVirtualMemory",
+      "thunk_addr": "0x001ED0E8"
+    },
+    {
+      "ordinal": 187,
+      "name": "NtClose",
+      "thunk_addr": "0x001ED0EC"
+    },
+    {
+      "ordinal": 233,
+      "name": "NtWaitForMultipleObjectsEx",
+      "thunk_addr": "0x001ED0F0"
+    },
+    {
+      "ordinal": 219,
+      "name": "NtReadFile",
+      "thunk_addr": "0x001ED0F4"
+    },
+    {
+      "ordinal": 236,
+      "name": "NtWriteFile",
+      "thunk_addr": "0x001ED0F8"
+    },
+    {
+      "ordinal": 226,
+      "name": "NtSetInformationFile",
+      "thunk_addr": "0x001ED0FC"
+    },
+    {
+      "ordinal": 211,
+      "name": "NtQueryInformationFile",
+      "thunk_addr": "0x001ED100"
+    },
+    {
+      "ordinal": 218,
+      "name": "NtQueryVolumeInformationFile",
+      "thunk_addr": "0x001ED104"
+    },
+    {
+      "ordinal": 198,
+      "name": "NtFlushBuffersFile",
+      "thunk_addr": "0x001ED108"
+    },
+    {
+      "ordinal": 232,
+      "name": "NtUserIoApcDispatcher",
+      "thunk_addr": "0x001ED10C"
+    },
+    {
+      "ordinal": 200,
+      "name": "NtFsControlFile",
+      "thunk_addr": "0x001ED110"
+    },
+    {
+      "ordinal": 196,
+      "name": "NtDeviceIoControlFile",
+      "thunk_addr": "0x001ED114"
+    },
+    {
+      "ordinal": 190,
+      "name": "NtCreateFile",
+      "thunk_addr": "0x001ED118"
+    },
+    {
+      "ordinal": 289,
+      "name": "RtlInitAnsiString",
+      "thunk_addr": "0x001ED11C"
+    },
+    {
+      "ordinal": 202,
+      "name": "NtOpenFile",
+      "thunk_addr": "0x001ED120"
+    },
+    {
+      "ordinal": 207,
+      "name": "NtQueryDirectoryFile",
+      "thunk_addr": "0x001ED124"
+    },
+    {
+      "ordinal": 178,
+      "name": "MmPersistContiguousMemory",
+      "thunk_addr": "0x001ED128"
+    },
+    {
+      "ordinal": 165,
+      "name": "MmAllocateContiguousMemory",
+      "thunk_addr": "0x001ED12C"
+    },
+    {
+      "ordinal": 164,
+      "name": "LaunchDataPage",
+      "thunk_addr": "0x001ED130"
+    },
+    {
+      "ordinal": 171,
+      "name": "MmFreeContiguousMemory",
+      "thunk_addr": "0x001ED134"
+    },
+    {
+      "ordinal": 301,
+      "name": "RtlNtStatusToDosError",
+      "thunk_addr": "0x001ED138"
+    },
+    {
+      "ordinal": 49,
+      "name": "HalRequestSoftwareInterrupt",
+      "thunk_addr": "0x001ED13C"
+    },
+    {
+      "ordinal": 215,
+      "name": "NtQuerySymbolicLinkObject",
+      "thunk_addr": "0x001ED140"
+    },
+    {
+      "ordinal": 203,
+      "name": "NtOpenSymbolicLinkObject",
+      "thunk_addr": "0x001ED144"
+    },
+    {
+      "ordinal": 40,
+      "name": "HalClearSoftwareInterrupt",
+      "thunk_addr": "0x001ED148"
+    },
+    {
+      "ordinal": 67,
+      "name": "IoCreateFile",
+      "thunk_addr": "0x001ED14C"
+    },
+    {
+      "ordinal": 69,
+      "name": "IoDeleteDevice",
+      "thunk_addr": "0x001ED150"
+    },
+    {
+      "ordinal": 24,
+      "name": "ExQueryPoolBlockSize",
+      "thunk_addr": "0x001ED154"
+    },
+    {
+      "ordinal": 356,
+      "name": "XboxAlternateSignatureKeys",
+      "thunk_addr": "0x001ED158"
+    },
+    {
+      "ordinal": 126,
+      "name": "KeQueryPerformanceCounter",
+      "thunk_addr": "0x001ED15C"
+    },
+    {
+      "ordinal": 127,
+      "name": "KeQueryPerformanceFrequency",
+      "thunk_addr": "0x001ED160"
+    },
+    {
+      "ordinal": 166,
+      "name": "MmAllocateContiguousMemoryEx",
+      "thunk_addr": "0x001ED164"
+    },
+    {
+      "ordinal": 180,
+      "name": "MmQueryAllocationSize",
+      "thunk_addr": "0x001ED168"
+    },
+    {
+      "ordinal": 182,
+      "name": "MmSetAddressProtect",
+      "thunk_addr": "0x001ED16C"
+    },
+    {
+      "ordinal": 179,
+      "name": "MmQueryAddressProtect",
+      "thunk_addr": "0x001ED170"
+    },
+    {
+      "ordinal": 128,
+      "name": "KeQuerySystemTime",
+      "thunk_addr": "0x001ED174"
+    },
+    {
+      "ordinal": 5,
+      "name": "Unknown_5",
+      "thunk_addr": "0x001ED178"
+    },
+    {
+      "ordinal": 305,
+      "name": "RtlTimeToTimeFields",
+      "thunk_addr": "0x001ED17C"
+    },
+    {
+      "ordinal": 156,
+      "name": "KeTickCount",
+      "thunk_addr": "0x001ED180"
+    },
+    {
+      "ordinal": 304,
+      "name": "RtlTimeFieldsToTime",
+      "thunk_addr": "0x001ED184"
+    },
+    {
+      "ordinal": 294,
+      "name": "RtlLeaveCriticalSection",
+      "thunk_addr": "0x001ED188"
+    },
+    {
+      "ordinal": 277,
+      "name": "RtlEnterCriticalSection",
+      "thunk_addr": "0x001ED18C"
+    },
+    {
+      "ordinal": 250,
+      "name": "ObfDereferenceObject",
+      "thunk_addr": "0x001ED190"
+    },
+    {
+      "ordinal": 143,
+      "name": "KeSetBasePriorityThread",
+      "thunk_addr": "0x001ED194"
+    },
+    {
+      "ordinal": 246,
+      "name": "ObReferenceObjectByHandle",
+      "thunk_addr": "0x001ED198"
+    },
+    {
+      "ordinal": 259,
+      "name": "PsThreadObjectType",
+      "thunk_addr": "0x001ED19C"
+    },
+    {
+      "ordinal": 124,
+      "name": "KeQueryBasePriorityThread",
+      "thunk_addr": "0x001ED1A0"
+    },
+    {
+      "ordinal": 144,
+      "name": "KeSetDisableBoostThread",
+      "thunk_addr": "0x001ED1A4"
+    },
+    {
+      "ordinal": 231,
+      "name": "NtSuspendThread",
+      "thunk_addr": "0x001ED1A8"
+    },
+    {
+      "ordinal": 224,
+      "name": "NtResumeThread",
+      "thunk_addr": "0x001ED1AC"
+    },
+    {
+      "ordinal": 302,
+      "name": "RtlRaiseException",
+      "thunk_addr": "0x001ED1B0"
+    },
+    {
+      "ordinal": 258,
+      "name": "PsTerminateSystemThread",
+      "thunk_addr": "0x001ED1B4"
+    },
+    {
+      "ordinal": 255,
+      "name": "PsCreateSystemThreadEx",
+      "thunk_addr": "0x001ED1B8"
+    },
+    {
+      "ordinal": 16,
+      "name": "ExAllocatePoolWithTag",
+      "thunk_addr": "0x001ED1BC"
+    },
+    {
+      "ordinal": 225,
+      "name": "NtSetEvent",
+      "thunk_addr": "0x001ED1C0"
+    },
+    {
+      "ordinal": 234,
+      "name": "NtWaitForSingleObject",
+      "thunk_addr": "0x001ED1C4"
+    },
+    {
+      "ordinal": 99,
+      "name": "KeCancelTimer",
+      "thunk_addr": "0x001ED1C8"
+    },
+    {
+      "ordinal": 91,
+      "name": "KdDebuggerNotPresent",
+      "thunk_addr": "0x001ED1CC"
+    },
+    {
+      "ordinal": 161,
+      "name": "KfLowerIrql",
+      "thunk_addr": "0x001ED1D0"
+    },
+    {
+      "ordinal": 129,
+      "name": "KeRaiseIrqlToDpcLevel",
+      "thunk_addr": "0x001ED1D4"
+    },
+    {
+      "ordinal": 65,
+      "name": "IoCompletionObjectType",
+      "thunk_addr": "0x001ED1D8"
+    },
+    {
+      "ordinal": 14,
+      "name": "DbgPrint",
+      "thunk_addr": "0x001ED1DC"
+    },
+    {
+      "ordinal": 145,
+      "name": "KeSetEvent",
+      "thunk_addr": "0x001ED1E0"
+    },
+    {
+      "ordinal": 159,
+      "name": "KeWaitForSingleObject",
+      "thunk_addr": "0x001ED1E4"
+    },
+    {
+      "ordinal": 113,
+      "name": "KeInitializeTimerEx",
+      "thunk_addr": "0x001ED1E8"
+    },
+    {
+      "ordinal": 107,
+      "name": "KeInitializeDpc",
+      "thunk_addr": "0x001ED1EC"
+    },
+    {
+      "ordinal": 74,
+      "name": "IoInitializeIrp",
+      "thunk_addr": "0x001ED1F0"
+    },
+    {
+      "ordinal": 95,
+      "name": "KeAlertThread",
+      "thunk_addr": "0x001ED1F4"
+    },
+    {
+      "ordinal": 169,
+      "name": "MmCreateKernelStack",
+      "thunk_addr": "0x001ED1F8"
+    },
+    {
+      "ordinal": 170,
+      "name": "MmDeleteKernelStack",
+      "thunk_addr": "0x001ED1FC"
+    },
+    {
+      "ordinal": 149,
+      "name": "KeSetTimer",
+      "thunk_addr": "0x001ED200"
+    },
+    {
+      "ordinal": 97,
+      "name": "KeBugCheck",
+      "thunk_addr": "0x001ED204"
+    },
+    {
+      "ordinal": 269,
+      "name": "RtlCompareMemoryUlong",
+      "thunk_addr": "0x001ED208"
+    },
+    {
+      "ordinal": 291,
+      "name": "RtlInitializeCriticalSection",
+      "thunk_addr": "0x001ED20C"
+    },
+    {
+      "ordinal": 17,
+      "name": "ExEventObjectType",
+      "thunk_addr": "0x001ED210"
+    },
+    {
+      "ordinal": 83,
+      "name": "IoStartNextPacket",
+      "thunk_addr": "0x001ED214"
+    },
+    {
+      "ordinal": 87,
+      "name": "IoSynchronousFsdRequest",
+      "thunk_addr": "0x001ED218"
+    },
+    {
+      "ordinal": 81,
+      "name": "IoSetIoCompletion",
+      "thunk_addr": "0x001ED21C"
+    },
+    {
+      "ordinal": 359,
+      "name": "IoMarkIrpMustComplete",
+      "thunk_addr": "0x001ED220"
+    },
+    {
+      "ordinal": 358,
+      "name": "HalIsResetOrShutdownPending",
+      "thunk_addr": "0x001ED224"
+    },
+    {
+      "ordinal": 125,
+      "name": "KeQueryInterruptTime",
+      "thunk_addr": "0x001ED228"
+    },
+    {
+      "ordinal": 322,
+      "name": "XboxHardwareInfo",
+      "thunk_addr": "0x001ED22C"
+    },
+    {
+      "ordinal": 360,
+      "name": "HalInitiateShutdown",
+      "thunk_addr": "0x001ED230"
+    },
+    {
+      "ordinal": 279,
+      "name": "RtlEqualString",
+      "thunk_addr": "0x001ED234"
+    },
+    {
+      "ordinal": 327,
+      "name": "XboxAlternateSignatureKeys",
+      "thunk_addr": "0x001ED238"
+    },
+    {
+      "ordinal": 328,
+      "name": "XeImageFileName",
+      "thunk_addr": "0x001ED23C"
+    },
+    {
+      "ordinal": 44,
+      "name": "HalGetInterruptVector",
+      "thunk_addr": "0x001ED240"
+    },
+    {
+      "ordinal": 160,
+      "name": "KfRaiseIrql",
+      "thunk_addr": "0x001ED244"
+    },
+    {
+      "ordinal": 47,
+      "name": "HalReadWritePCISpace",
+      "thunk_addr": "0x001ED248"
+    },
+    {
+      "ordinal": 98,
+      "name": "KeBugCheckEx",
+      "thunk_addr": "0x001ED24C"
+    },
+    {
+      "ordinal": 109,
+      "name": "KeInitializeInterrupt",
+      "thunk_addr": "0x001ED250"
+    },
+    {
+      "ordinal": 151,
+      "name": "KeStallExecutionProcessor",
+      "thunk_addr": "0x001ED254"
+    },
+    {
+      "ordinal": 173,
+      "name": "MmGetPhysicalAddress",
+      "thunk_addr": "0x001ED258"
+    },
+    {
+      "ordinal": 175,
+      "name": "MmLockUnlockBufferPages",
+      "thunk_addr": "0x001ED25C"
+    },
+    {
+      "ordinal": 119,
+      "name": "KeInsertQueueDpc",
+      "thunk_addr": "0x001ED260"
+    },
+    {
+      "ordinal": 176,
+      "name": "MmLockUnlockPhysicalPage",
+      "thunk_addr": "0x001ED264"
+    },
+    {
+      "ordinal": 1,
+      "name": "AvGetSavedDataAddress",
+      "thunk_addr": "0x001ED268"
+    },
+    {
+      "ordinal": 2,
+      "name": "AvSendTVEncoderOption",
+      "thunk_addr": "0x001ED26C"
+    },
+    {
+      "ordinal": 3,
+      "name": "AvSetDisplayMode",
+      "thunk_addr": "0x001ED270"
+    },
+    {
+      "ordinal": 4,
+      "name": "AvSetSavedDataAddress",
+      "thunk_addr": "0x001ED274"
+    },
+    {
+      "ordinal": 8,
+      "name": "Unknown_8",
+      "thunk_addr": "0x001ED278"
+    },
+    {
+      "ordinal": 100,
+      "name": "KeConnectInterrupt",
+      "thunk_addr": "0x001ED27C"
+    },
+    {
+      "ordinal": 168,
+      "name": "MmClaimGpuInstanceMemory",
+      "thunk_addr": "0x001ED280"
+    },
+    {
+      "ordinal": 23,
+      "name": "Unknown_23",
+      "thunk_addr": "0x001ED284"
+    },
+    {
+      "ordinal": 15,
+      "name": "ExAllocatePool",
+      "thunk_addr": "0x001ED288"
+    },
+    {
+      "ordinal": 137,
+      "name": "KeRemoveQueueDpc",
+      "thunk_addr": "0x001ED28C"
+    },
+    {
+      "ordinal": 153,
+      "name": "KeSynchronizeExecution",
+      "thunk_addr": "0x001ED290"
+    },
+    {
+      "ordinal": 142,
+      "name": "KeSaveFloatingPointState",
+      "thunk_addr": "0x001ED294"
+    },
+    {
+      "ordinal": 139,
+      "name": "KeRestoreFloatingPointState",
+      "thunk_addr": "0x001ED298"
+    },
+    {
+      "ordinal": 312,
+      "name": "RtlUnwind",
+      "thunk_addr": "0x001ED29C"
+    }
+  ],
+  "tls": {
+    "index_addr": "0x00B228C8",
+    "zero_fill_size": 32
+  }
+}
