@@ -1,11 +1,80 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 15
- * Functions: 1000 (0x002C4715 - 0x002FABD0)
+ * Functions: 1000 (0x002C46EC - 0x002FABBE)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_002C46EC
+ * Original: 0x002C46EC - 0x002C46F5 (9 bytes, 6 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002C46EC(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_002C46EC: ;
+    POP32(esp, edi);
+    POP32(esp, esi);
+    eax = ebp;
+    POP32(esp, ebp);
+    POP32(esp, ebx);
+    esp += 8; return; /* ret 4 */
+
+}
+
+/**
+ * sub_002C46F5
+ * Original: 0x002C46F5 - 0x002C46FD (8 bytes, 5 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002C46F5(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_002C46F5: ;
+    eax = 0; /* xor self */
+    MEM32(edi) = eax; edi += 4; /* stosd */
+    MEM32(edi) = eax; edi += 4; /* stosd */
+    MEM16(edi) = LO16(eax); edi += 2; /* stosw */
+    g_seh_ebp = ebp; sub_002C46EC(); return; /* tail jmp 0x002C46EC */
+
+}
+
+/**
+ * sub_002C46FD
+ * Original: 0x002C46FD - 0x002C4715 (24 bytes, 10 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002C46FD(void)
+{
+    uint32_t ebp;
+
+loc_002C46FD: ;
+    { uint32_t _icall_esp = g_esp;
+    PUSH32(esp, ebp);
+    ebp = esp;
+    esp = MEM32(ebp + 8);
+    PUSH32(esp, MEM32(ebp + 0x18));
+    PUSH32(esp, MEM32(ebp + 0x14));
+    PUSH32(esp, MEM32(ebp + 0x10));
+    { uint32_t _icall_t = MEM32(ebp + 0xC); g_seh_ebp = ebp; PUSH32(esp, 0); RECOMP_ICALL_SAFE(_icall_t, _icall_esp); } /* indirect call */
+    }
+
+loc_002C470F: ;
+    esp = ebp;
+    POP32(esp, ebp);
+    esp += 24; return; /* ret 20 */
+
+}
 
 /**
  * sub_002C4715
@@ -99959,53 +100028,5 @@ void sub_002FABBE(void)
 
 loc_002FABBE: ;
     g_seh_ebp = ebp; RECOMP_ITAIL(MEM32(0x3C1614)); return; /* indirect tail jmp */
-
-}
-
-/**
- * sub_002FABC4
- * Original: 0x002FABC4 - 0x002FABCA (6 bytes, 1 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_002FABC4(void)
-{
-    uint32_t ebp;
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_002FABC4: ;
-    g_seh_ebp = ebp; RECOMP_ITAIL(MEM32(0x3C16A4)); return; /* indirect tail jmp */
-
-}
-
-/**
- * sub_002FABCA
- * Original: 0x002FABCA - 0x002FABD0 (6 bytes, 1 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_002FABCA(void)
-{
-    uint32_t ebp;
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_002FABCA: ;
-    g_seh_ebp = ebp; RECOMP_ITAIL(MEM32(0x3C16CC)); return; /* indirect tail jmp */
-
-}
-
-/**
- * sub_002FABD0
- * Original: 0x002FABD0 - 0x002FABD6 (6 bytes, 1 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_002FABD0(void)
-{
-    uint32_t ebp;
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_002FABD0: ;
-    g_seh_ebp = ebp; RECOMP_ITAIL(MEM32(0x3C16D0)); return; /* indirect tail jmp */
 
 }

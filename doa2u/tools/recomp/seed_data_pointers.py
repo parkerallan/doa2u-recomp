@@ -14,6 +14,11 @@ starts = {int(f["start"], 16) for f in funcs}
 # a function packed directly behind another one starts where the detector
 # ended its neighbour (no padding in between)
 ends = {int(f["end"], 16) for f in funcs}
+spans = [(int(f["start"], 16), int(f["end"], 16)) for f in funcs]
+
+
+def in_function(va):
+    return any(s <= va < e for s, e in spans)
 
 
 def byte_at(va):
@@ -21,14 +26,31 @@ def byte_at(va):
     return xbe[o] if o is not None else None
 
 
-def at_boundary(va):
+def dword_at(va):
+    o = va_to_file_offset(va)
+    return struct.unpack_from("<I", xbe, o)[0] if o is not None else None
+
+
+def at_boundary(va, skip_table=True):
     if va in ends:
         return True
     b1 = byte_at(va - 1)
     if b1 in (0xCC, 0x90, 0xC3):
         return True
     # ret imm16: C2 xx xx
-    return byte_at(va - 3) == 0xC2
+    if byte_at(va - 3) == 0xC2:
+        return True
+    # a switch jump table the compiler placed inline after the previous
+    # function (e.g. sub_00065DC0, script opcode 0x39, behind the table of
+    # sub_00065C40): skip back over its code-address dwords
+    # (MSVC 16-aligns the function after the table)
+    if (skip_table and va % 16 == 0 and not in_function(va)
+            and not is_code_address(dword_at(va) or 0)):
+        p = va
+        while is_code_address(dword_at(p - 4) or 0):
+            p -= 4
+        return p != va and at_boundary(p, False)
+    return False
 
 
 found = set()

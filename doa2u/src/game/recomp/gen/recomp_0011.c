@@ -1,11 +1,97 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 11
- * Functions: 1000 (0x00217629 - 0x0025CA60)
+ * Functions: 1000 (0x002175A2 - 0x0025C9B0)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_002175A2
+ * Original: 0x002175A2 - 0x00217611 (111 bytes, 32 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002175A2(void)
+{
+    uint32_t ebp;
+    int _flags = 0; /* fallback flag var */
+    int _fpu_cmp = 0; /* FPU compare result: -1/0/1 */
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_002175A2: ;
+    ecx = 0xE3B730;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00283EA0(); /* call 0x00283EA0 */
+
+loc_002175AC: ;
+    eax = MEM32(esi + 4);
+    ecx = MEM32(esi);
+    edx = MEM32(esi + -4);
+    PUSH32(esp, eax);
+    PUSH32(esp, ecx);
+    PUSH32(esp, edx);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00283FC0(); /* call 0x00283FC0 */
+
+loc_002175BC: ;
+    eax = MEM32(esi + 0x10);
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00285500(); /* call 0x00285500 */
+
+loc_002175C5: ;
+    ecx = MEM32(esi + 0xC);
+    PUSH32(esp, ecx);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002853E0(); /* call 0x002853E0 */
+
+loc_002175CE: ;
+    edx = MEM32(esi + 8);
+    PUSH32(esp, edx);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002852C0(); /* call 0x002852C0 */
+
+loc_002175D7: ;
+    eax = (uint32_t)(int32_t)SMEM16(esi + 0x14);
+    esp = esp + 0x18;
+    if (CMP_L(eax, ebp)) goto loc_002175FC; /* jl: less (signed <) */
+
+loc_002175E2: ;
+    eax = eax << 4;
+    xmm0 = xmm_load_ss(eax + 0x77BBD4); /* movss */
+    _fpu_cmp = (xmm0.f[0] < MEMF(0x3C1A44)) ? -1 : (xmm0.f[0] > MEMF(0x3C1A44)) ? 1 : 0; /* comiss */
+    xmm_store_ss(esp + 0xC, xmm0); /* movss */
+    if ((_fpu_cmp < 0) /* comiss */) { g_seh_ebp = ebp; sub_00217611(); return; } /* jb: below (unsigned <) */
+
+loc_002175FC: ;
+    eax = MEM32(ebx + 0x78);
+    ecx = MEM32(eax + 0x384);
+    edx = 0x702;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00288C00(); /* call 0x00288C00 */
+
+loc_0021760F: ;
+    g_seh_ebp = ebp; sub_00217629(); return; /* tail jmp 0x00217629 */
+
+}
+
+/**
+ * sub_00217611
+ * Original: 0x00217611 - 0x00217629 (24 bytes, 6 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_00217611(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_00217611: ;
+    ecx = MEM32(esp + 0xC);
+    eax = MEM32(ebx + 0x78);
+    PUSH32(esp, ecx);
+    ecx = MEM32(eax + 0x384);
+    edx = 0x400;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00288E40(); /* call 0x00288E40 */
+
+    g_seh_ebp = ebp; sub_00217629(); return; /* restored dropped fall-through to sub_00217629 */
+}
 
 /**
  * sub_00217629
@@ -116378,272 +116464,4 @@ loc_0025CA06: ;
     POP32(esp, esi);
     esp += 4; return; /* ret */
 
-}
-
-/**
- * sub_0025CA10
- * Original: 0x0025CA10 - 0x0025CA5B (75 bytes, 16 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0025CA10(void)
-{
-
-loc_0025CA10: ;
-    eax = MEM32(esp + 8);
-    ecx = MEM32(esp + 4);
-    eax = (uint32_t)((int32_t)eax * (int32_t)0xA4);
-    edx = MEM32(ecx + 0xC);
-    xmm0 = xmm_load_ss(esp + 0xC); /* movss */
-    eax = eax + edx;
-    xmm_store_ss(eax + 0x3C, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x10); /* movss */
-    xmm_store_ss(eax + 0x40, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x14); /* movss */
-    xmm_store_ss(eax + 0x44, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x18); /* movss */
-    xmm_store_ss(eax + 0x48, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x1C); /* movss */
-    xmm_store_ss(eax + 0x4C, xmm0); /* movss */
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_0025CA60
- * Original: 0x0025CA60 - 0x0025CDAB (843 bytes, 164 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0025CA60(void)
-{
-    uint32_t ebp;
-    #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
-    #define fp_pop() (g_fp_top++)
-    #define fp_popp() (fp_pop())
-    #define fp_top() g_fp_stack[g_fp_top & 7]
-    #define fp_st1() g_fp_stack[(g_fp_top + 1) & 7]
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_0025CA60: ;
-    esp = esp - 0x38;
-    PUSH32(esp, ebx);
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CA69: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0xC); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 8); /* addss */
-    xmm_store_ss(edi + 0x54, xmm0); /* movss */
-    xmm_store_ss(edi + 0x50, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CA8E: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x80); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x74); /* addss */
-    xmm_store_ss(esp + 0x2C, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CAB2: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x78); /* addss */
-    xmm_store_ss(esp + 0x30, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CAD6: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x88); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x7C); /* addss */
-    xmm_store_ss(esp + 0x34, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CAFA: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x50); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x44); /* addss */
-    xmm_store_ss(esp + 0xC, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CB1B: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x54); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x48); /* addss */
-    xmm_store_ss(esp + 0x10, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CB3C: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x58); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x4C); /* addss */
-    xmm_store_ss(esp + 0x14, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CB5D: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x68); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x5C); /* addss */
-    xmm_store_ss(esp + 0x1C, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CB7E: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x6C); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x60); /* addss */
-    xmm_store_ss(esp + 0x20, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CB9F: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x70); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x64); /* addss */
-    xmm_store_ss(esp + 0x24, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00283E50(); /* call 0x00283E50 */
-
-loc_0025CBC0: ;
-    PUSH32(esp, 0x41420000);
-    PUSH32(esp, 0x3FD9999A);
-    PUSH32(esp, 0xC0900000u);
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_00283FC0(); /* call 0x00283FC0 */
-
-loc_0025CBD4: ;
-    PUSH32(esp, 0xFFFFF4A0u);
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002852C0(); /* call 0x002852C0 */
-
-loc_0025CBDE: ;
-    edx = esp + 0x1C;
-    esp = esp + 0x10;
-    ecx = edx;
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_002842C0(); /* call 0x002842C0 */
-
-loc_0025CBEC: ;
-    xmm0 = xmm_load_ss(esp + 0xC); /* movss */
-    xmm_store_ss(edi, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x10); /* movss */
-    xmm_store_ss(edi + 4, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x14); /* movss */
-    xmm_store_ss(edi + 8, xmm0); /* movss */
-    xmm0 = xmm_load_ss(0x3C1A44); /* movss */
-    xmm_store_ss(edi + 0xC, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x1C); /* movss */
-    xmm1 = xmm_load_ss(esp + 0x2C); /* movss */
-    xmm_store_ss(edi + 0x10, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x20); /* movss */
-    xmm_store_ss(edi + 0x14, xmm0); /* movss */
-    xmm0 = xmm_load_ss(esp + 0x24); /* movss */
-    xmm_store_ss(edi + 0x20, xmm1); /* movss */
-    xmm1 = xmm_load_ss(esp + 0x30); /* movss */
-    xmm_store_ss(edi + 0x18, xmm0); /* movss */
-    xmm0 = xmm_zero(); /* xorps self */
-    xmm_store_ss(edi + 0x24, xmm1); /* movss */
-    xmm1 = xmm_load_ss(esp + 0x34); /* movss */
-    xmm_store_ss(edi + 0x1C, xmm0); /* movss */
-    xmm_store_ss(edi + 0x28, xmm1); /* movss */
-    xmm_store_ss(edi + 0x2C, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CC6D: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x90); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x8C); /* addss */
-    xmm_store_ss(edi + 0x30, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CC93: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x98); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x94); /* addss */
-    xmm_store_ss(edi + 0x34, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CCB9: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2D14); /* mulss */
-    xmm_store_ss(edi + 0x38, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CCD7: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0xA0); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x9C); /* addss */
-    xmm_store_ss(edi + 0x3C, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CCFD: ;
-    xmm0.f[0] = (float)(int32_t)eax; /* cvtsi2ss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(0x3C2E84); /* mulss */
-    xmm0.f[0] = xmm0.f[0] * MEMF(esi + 0x18); /* mulss */
-    xmm0.f[0] = xmm0.f[0] + MEMF(esi + 0x14); /* addss */
-    xmm_store_ss(edi + 0x40, xmm0); /* movss */
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CD1D: ;
-    MEM32(esp + 4) = eax;
-    fp_push((double)SMEM32(esp + 4)); /* fild */
-    fp_top() = fp_top() * (double)MEMF(0x3C2E84); /* fmul mem */
-    fp_top() = fp_top() * (double)MEMF(esi + 0x2C); /* fmul mem */
-    fp_top() = fp_top() + (double)MEMF(esi + 0x20); /* fadd mem */
-    fp_top() = fp_top() * (double)MEMF(0x3C1DE0); /* fmul mem */
-    { int64_t _ft = (int64_t)g_fp_stack[g_fp_top & 7]; g_fp_top++; eax = (uint32_t)_ft; edx = (uint32_t)((uint64_t)_ft >> 32); } /* inline _ftol2 (bug #8) */
-
-loc_0025CD3C: ;
-    ebx = eax;
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CD43: ;
-    MEM32(esp + 4) = eax;
-    fp_push((double)SMEM32(esp + 4)); /* fild */
-    fp_top() = fp_top() * (double)MEMF(0x3C2E84); /* fmul mem */
-    fp_top() = fp_top() * (double)MEMF(esi + 0x30); /* fmul mem */
-    fp_top() = fp_top() + (double)MEMF(esi + 0x24); /* fadd mem */
-    fp_top() = fp_top() * (double)MEMF(0x3C1DE0); /* fmul mem */
-    { int64_t _ft = (int64_t)g_fp_stack[g_fp_top & 7]; g_fp_top++; eax = (uint32_t)_ft; edx = (uint32_t)((uint64_t)_ft >> 32); } /* inline _ftol2 (bug #8) */
-
-loc_0025CD62: ;
-    MEM32(esp + 8) = eax;
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
-
-loc_0025CD6B: ;
-    MEM32(esp + 4) = eax;
-    fp_push((double)SMEM32(esp + 4)); /* fild */
-    fp_top() = fp_top() * (double)MEMF(0x3C2E84); /* fmul mem */
-    fp_top() = fp_top() * (double)MEMF(esi + 0x34); /* fmul mem */
-    fp_top() = fp_top() + (double)MEMF(esi + 0x28); /* fadd mem */
-    fp_top() = fp_top() * (double)MEMF(0x3C1DE0); /* fmul mem */
-    { int64_t _ft = (int64_t)g_fp_stack[g_fp_top & 7]; g_fp_top++; eax = (uint32_t)_ft; edx = (uint32_t)((uint64_t)_ft >> 32); } /* inline _ftol2 (bug #8) */
-
-loc_0025CD8A: ;
-    eax = eax & 0xFF;
-    ecx = 0; /* xor self */
-    edx = MEM32(esp + 0x40);
-    SET_HI8(ecx, LO8(ebx));
-    MEM32(edi + 0x58) = edx;
-    POP32(esp, ebx);
-    SET_LO8(ecx, MEM8(esp + 4));
-    ecx = ecx << 8;
-    eax = eax | ecx;
-    MEM32(edi + 0x44) = eax;
-    esp = esp + 0x38;
-    esp += 4; return; /* ret */
-
-    #undef fp_push
-    #undef fp_pop
-    #undef fp_popp
-    #undef fp_top
-    #undef fp_st1
 }
