@@ -339,6 +339,7 @@ static struct {
      * title did not, hence the wrapper-supplied fallback layout above). */
     Nv2aVertexProgram vp;
     uint32_t xform_mode;        /* NV097_SET_TRANSFORM_EXECUTION_MODE */
+    uint32_t skin_mode;         /* NV097_SET_SKIN_MODE 0x0328 */
     uint32_t attr_fmt[16];      /* SET_VERTEX_DATA_ARRAY_FORMAT per slot */
     int      attr_fmt_seen;
 
@@ -1093,6 +1094,48 @@ static int nv_fetch_attr(int slot, uint32_t index, float out[4], uint32_t *out_c
 static void nv_transform_clip(const float in[4], OutputVertex *v,
                               int apply_composite);
 
+/* NV097_SET_SKIN_MODE: eye = sum_i w_i * (MV_i * v), clip = Composite * eye.
+ * "G" modes generate the last weight as 1 - sum; MV_i is c[8 + 8i]. */
+static int nv_skin_count(int *gen)
+{
+    switch (g_pg.skin_mode) {
+    case 1: *gen = 1; return 2;   /* 2G: 1 weight, 2 matrices */
+    case 2: *gen = 0; return 2;   /* 2:  2 weights */
+    case 3: *gen = 1; return 3;   /* 3G */
+    case 4: *gen = 0; return 3;   /* 3 */
+    case 5: *gen = 1; return 4;   /* 4G */
+    case 6: *gen = 0; return 4;   /* 4 */
+    default: *gen = 0; return 0;
+    }
+}
+
+/* Object space -> blended eye space; no-op when skinning is off. */
+static void nv_skin_blend(uint32_t index, float pos[4], float nrm[3])
+{
+    int gen, n = nv_skin_count(&gen), i, r;
+    float w[4] = { 0.0f, 0.0f, 0.0f, 0.0f }, rest = 1.0f;
+    float p[4] = { 0.0f, 0.0f, 0.0f, 0.0f }, q[3] = { 0.0f, 0.0f, 0.0f };
+
+    if (!n) return;
+    nv_fetch_attr(1, index, w, NULL);
+    for (i = 0; i < n; i++) {
+        const float *m = &g_pg.vp.consts[8 + 8 * i][0];
+        float wi = (gen && i == n - 1) ? rest : w[i];
+        rest -= wi;
+        for (r = 0; r < 4; r++)
+            p[r] += wi * (m[r * 4 + 0] * pos[0] + m[r * 4 + 1] * pos[1] +
+                          m[r * 4 + 2] * pos[2] + m[r * 4 + 3] * pos[3]);
+        if (nrm)
+            for (r = 0; r < 3; r++)
+                q[r] += wi * (m[r * 4 + 0] * nrm[0] + m[r * 4 + 1] * nrm[1] +
+                              m[r * 4 + 2] * nrm[2]);
+    }
+    memcpy(pos, p, sizeof p);
+    if (nrm) memcpy(nrm, q, sizeof q);
+}
+
+static const float s_identity_mv[16] = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 };
+
 static void nv_transform_position(const float in[4], OutputVertex *v)
 {
     nv_transform_clip(in, v, g_pg.composite_seen);
@@ -1293,9 +1336,8 @@ static void nv_batch_ctx_init(NvBatchCtx *c)
 }
 
 static uint32_t nv_light_vertex(const float pos[4], const float nrm[3],
-                                const NvBatchCtx *ctx)
+                                const float *mv, const NvBatchCtx *ctx)
 {
-    const float *mv = g_mv;
     float P[3], N[3], col[3], len;
     int i, k;
     /* The eye-space position only feeds local and spot lights. */
@@ -1416,12 +1458,18 @@ static void nv_build_array_vertex(uint32_t index, OutputVertex *v,
     if (nv_fetch_attr(0, index, pos, NULL)) {
         {   extern float g_fix_in0[4];
             memcpy(g_fix_in0, pos, sizeof g_fix_in0); }
+        int gen, has_nrm = ctx->lit && nv_fetch_attr(2, index, nrm, NULL);
+        const float *mv = g_mv;
+        if (nv_skin_count(&gen)) {
+            nv_skin_blend(index, pos, has_nrm ? nrm : NULL);
+            mv = s_identity_mv;                /* pos/nrm are now eye space */
+        }
         nv_transform_position(pos, v);
         /* Fixed-function lighting: only when the guest enabled it, has a
          * light on, and supplies normals; otherwise diffuse stays white as
          * before. */
-        if (ctx->lit && nv_fetch_attr(2, index, nrm, NULL))
-            v->color = nv_light_vertex(pos, nrm, ctx);
+        if (has_nrm)
+            v->color = nv_light_vertex(pos, nrm, mv, ctx);
         /* Lighting on with every light off still lights: the NV2A outputs
          * scene ambient + emission with the material alpha. The beach's palm
          * shadow relies on it -- the fronds are drawn into the shadow surface
@@ -2550,6 +2598,7 @@ static int nv_gpu_ff_submit(IDirect3DDevice8 *dev, const NvBatchCtx *ctx, int pr
     Nv2aFFConstants cb;
     NvDrawSummary sum;
     NvPostOps post;
+    int gen, skinned = nv_skin_count(&gen) != 0;
     static int s_flip = -1;
     if (s_flip < 0) { const char *e = getenv("DOA2U_FLIPW"); s_flip = (e && *e == '1'); }
 
@@ -2590,6 +2639,7 @@ static int nv_gpu_ff_submit(IDirect3DDevice8 *dev, const NvBatchCtx *ctx, int pr
             }
             if (lit) { if (!nv_fetch_attr(2, idx, tmp, NULL)) return 0; v->nrm[0] = tmp[0]; v->nrm[1] = tmp[1]; v->nrm[2] = tmp[2]; }
             else     { v->nrm[0] = v->nrm[1] = v->nrm[2] = 0.0f; }
+            if (skinned) nv_skin_blend(idx, v->pos, lit ? v->nrm : NULL);   /* -> eye space */
             if (has_color) { if (!nv_fetch_attr(3, idx, tmp, &colour)) return 0; if (colour) all_zero = 0; }
             v->color = colour;
             if (has_uv) { if (!nv_fetch_attr(9, idx, tmp, NULL)) return 0; v->uv[0] = tmp[0]; v->uv[1] = tmp[1]; }
@@ -2652,7 +2702,7 @@ static int nv_gpu_ff_submit(IDirect3DDevice8 *dev, const NvBatchCtx *ctx, int pr
             cb.clip[3][k] =  r3;
         }
     }
-    for (k = 0; k < 3; k++) { int j; for (j = 0; j < 4; j++) cb.mv[k][j] = g_mv[k * 4 + j]; }
+    for (k = 0; k < 3; k++) { int j; for (j = 0; j < 4; j++) cb.mv[k][j] = (skinned ? s_identity_mv : g_mv)[k * 4 + j]; }
     for (k = 0; k < 4; k++) {
         uint32_t t = ctx->ltype[k];
         if (!t) continue;
@@ -3838,6 +3888,9 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
     /* -- Transform program -- */
     case 0x1E94:                       /* SET_TRANSFORM_EXECUTION_MODE */
         g_pg.xform_mode = param;
+        return 1;
+    case 0x0328:                       /* SET_SKIN_MODE */
+        g_pg.skin_mode = param;
         return 1;
 
     /* The NV2A order is LOAD, START, CONSTANT_LOAD. START and CONSTANT_LOAD

@@ -764,6 +764,24 @@ def _make_cmovcc_cond(cmov_mnemonic, flag_setter, flag_ops):
 
 # ── Pattern matching for flag-setter + jcc ────────────────────
 
+LOOP_MNEMONICS = ("loop", "loope", "loopne")
+
+
+def _lift_loop(insn, flag_setter, flag_ops, lifter):
+    """--ecx, then branch while ecx != 0 (and ZF set/clear for loope/loopne).
+    ZF is read before the decrement, as the flag setter may use ecx."""
+    m = insn.mnemonic
+    if m == "loop":
+        return _emit_cond_goto("--ecx != 0", m, "loop", insn.jump_target, lifter)
+    zf = _make_condition("je" if m == "loope" else "jne", flag_setter, flag_ops) \
+        if flag_setter else None
+    if zf is None:
+        return (f"ecx--; /* {m}: ZF untracked */ "
+                + _emit_cond_goto("ecx != 0 && _flags", m, m, insn.jump_target, lifter))
+    return ("{ int _zf = (" + zf[0] + "); "
+            + _emit_cond_goto("--ecx != 0 && _zf", m, m, insn.jump_target, lifter) + " }")
+
+
 def _emit_cond_goto(cond_expr, jcc, desc, target, lifter):
     """Emit a conditional goto or call for a jump target."""
     if target is None:
@@ -789,6 +807,8 @@ def try_match_cmp_jcc(insns, idx, lifter=None):
     second = insns[idx + 1]
 
     if first.mnemonic not in ("cmp", "test") or not second.is_cond_jump:
+        return None
+    if second.mnemonic in LOOP_MNEMONICS:   # decrements ecx: see _lift_loop
         return None
 
     if len(first.operands) < 2:
@@ -1440,6 +1460,9 @@ class Lifter:
                 return [f"if ({cond}) goto loc_{target:08X}; /* {jcc} */"]
             return [f"/* {jcc} - no target */"]
 
+        if jcc in LOOP_MNEMONICS:
+            return [_lift_loop(insn, None, [], self)]
+
         cond_info = COND_MAP.get(jcc)
         desc = cond_info[2] if cond_info else jcc
         if target:
@@ -1978,6 +2001,11 @@ def lift_basic_block(lifter, bb, flag_state=None):
             last_flag_setter = flag_insn.mnemonic
             last_flag_ops = list(flag_insn.operands)
             i += consumed
+            continue
+
+        if curr.mnemonic in LOOP_MNEMONICS:
+            stmts.append(_lift_loop(curr, last_flag_setter, last_flag_ops, lifter))
+            i += 1
             continue
 
         # Handle jecxz/jcxz specially (not flag-based)

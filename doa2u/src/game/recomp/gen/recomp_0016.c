@@ -1,11 +1,59 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 16
- * Functions: 1000 (0x002FABE8 - 0x0030C3CF)
+ * Functions: 1000 (0x002FABD6 - 0x0030C380)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_002FABD6
+ * Original: 0x002FABD6 - 0x002FABDC (6 bytes, 1 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002FABD6(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_002FABD6: ;
+    g_seh_ebp = ebp; RECOMP_ITAIL(MEM32(0x3C16D4)); return; /* indirect tail jmp */
+
+}
+
+/**
+ * sub_002FABDC
+ * Original: 0x002FABDC - 0x002FABE2 (6 bytes, 1 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002FABDC(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_002FABDC: ;
+    g_seh_ebp = ebp; RECOMP_ITAIL(MEM32(0x3C16E0)); return; /* indirect tail jmp */
+
+}
+
+/**
+ * sub_002FABE2
+ * Original: 0x002FABE2 - 0x002FABE8 (6 bytes, 1 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_002FABE2(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_002FABE2: ;
+    g_seh_ebp = ebp; RECOMP_ITAIL(MEM32(0x3C16F0)); return; /* indirect tail jmp */
+
+}
 
 /**
  * sub_002FABE8
@@ -47956,71 +48004,4 @@ loc_0030C39C: ;
     #undef fp_popp
     #undef fp_top
     #undef fp_st1
-}
-
-/**
- * sub_0030C3A0
- * Original: 0x0030C3A0 - 0x0030C3AF (15 bytes, 5 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0030C3A0(void)
-{
-    uint32_t ebp;
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_0030C3A0: ;
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0030C2A0(); /* call 0x0030C2A0 */
-
-loc_0030C3A5: ;
-    ecx = MEM32(esp + 4);
-    MEM32(eax + 0x68) = ecx;
-    eax = ecx;
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_0030C3B0
- * Original: 0x0030C3B0 - 0x0030C3CF (31 bytes, 10 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0030C3B0(void)
-{
-    uint32_t ebp;
-    int _flags = 0; /* fallback flag var */
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_0030C3B0: ;
-    PUSH32(esp, esi);
-    esi = MEM32(esp + 8);
-    if (TEST_Z(esi, esi)) { g_seh_ebp = ebp; sub_0030C3CF(); return; } /* je: equal / zero */
-
-loc_0030C3B9: ;
-    PUSH32(esp, esi);
-    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0030E1E0(); /* call 0x0030E1E0 */
-
-loc_0030C3BF: ;
-    esp = esp + 4;
-    MEM32(0x1056D80) = esi;
-    MEM32(0x10583CC) = eax;
-    g_seh_ebp = ebp; sub_0030C3E3(); return; /* tail jmp 0x0030C3E3 */
-
-}
-
-/**
- * sub_0030C3CF
- * Original: 0x0030C3CF - 0x0030C3E3 (20 bytes, 2 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0030C3CF(void)
-{
-
-loc_0030C3CF: ;
-    MEM32(0x1056D80) = 0;
-    MEM32(0x10583CC) = 0;
-
-    sub_0030C3E3(); return; /* restored dropped fall-through to sub_0030C3E3 */
 }

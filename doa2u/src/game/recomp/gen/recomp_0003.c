@@ -1,11 +1,54 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 3
- * Functions: 1000 (0x00098BB8 - 0x000C3900)
+ * Functions: 1000 (0x00098BA0 - 0x000C38D0)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_00098BA0
+ * Original: 0x00098BA0 - 0x00098BB8 (24 bytes, 10 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_00098BA0(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+    int _flags = 0; /* fallback flag var */
+
+loc_00098BA0: ;
+    edx = MEM32(esp + 4);
+    eax = MEM32(edx + 4);
+    PUSH32(esp, esi);
+    esi = MEM32(esp + 0xC);
+    ecx = MEM32(esi + 4);
+    if (CMP_BE(eax, ecx)) { g_seh_ebp = ebp; sub_00098BB8(); return; } /* jbe: below or equal (unsigned <=) */
+
+loc_00098BB3: ;
+    eax = eax | 0xFFFFFFFFu;
+    POP32(esp, esi);
+    esp += 4; return; /* ret */
+
+}
+
+/**
+ * sub_00098BB3
+ * Original: 0x00098BB3 - 0x00098BB8 (5 bytes, 3 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_00098BB3(void)
+{
+
+loc_00098BB3: ;
+    eax = eax | 0xFFFFFFFFu;
+    POP32(esp, esi);
+    esp += 4; return; /* ret */
+
+}
 
 /**
  * sub_00098BB8
@@ -12700,7 +12743,7 @@ loc_0009E192: ;
 
 loc_0009E1A4: ;
     /* TODO: outsd dx, dword ptr [esi] */
-    if (_flags /* loope: loope */) goto loc_0009E1B0;
+    ecx--; /* loope: ZF untracked */ if (ecx != 0 && _flags) goto loc_0009E1B0; /* loope: loope */
 
 loc_0009E1A7: ;
     MEM8(ecx + 9) = MEM8(ecx + 9) + HI8(edx);
@@ -12714,9 +12757,8 @@ loc_0009E1B2: ;
     MEM32(eax) = MEM32(eax) | eax;
     ecx = ecx & 9;
     MEM8(eax + -1929377311) = MEM8(eax + -1929377311) + LO8(ecx);
-    if (_flags /* loope: loope */) { g_seh_ebp = ebp; sub_0009E1C8(); return; }
+    { int _zf = ((MEM8(eax + -1929377311) == 0)); if (--ecx != 0 && _zf) { g_seh_ebp = ebp; sub_0009E1C8(); return; } /* loope: loope */ }
 
-    g_seh_ebp = ebp; sub_0009E1C0(); return; /* restored dropped fall-through to sub_0009E1C0 */
 }
 
 /**
@@ -78370,47 +78412,6 @@ loc_000C38E7: ;
     if (TEST_Z(eax, eax)) { g_seh_ebp = ebp; sub_000C38F1(); return; } /* je: equal / zero */
 
 loc_000C38EB: ;
-    eax = 1;
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_000C38F1
- * Original: 0x000C38F1 - 0x000C3900 (15 bytes, 14 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_000C38F1(void)
-{
-
-loc_000C38F1: ;
-    eax = 0; /* xor self */
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_000C3900
- * Original: 0x000C3900 - 0x000C3918 (24 bytes, 8 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_000C3900(void)
-{
-    uint32_t ebp;
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-    int _flags = 0; /* fallback flag var */
-
-loc_000C3900: ;
-    SET_LO8(eax, MEM8(0x87AE08));
-    if (TEST_NZ(LO8(eax), LO8(eax))) { g_seh_ebp = ebp; sub_000C3918(); return; } /* jne: not equal / not zero */
-
-loc_000C3909: ;
-    SET_LO8(eax, MEM8(0x87D400));
-    if (TEST_NZ(LO8(eax), LO8(eax))) { g_seh_ebp = ebp; sub_000C3918(); return; } /* jne: not equal / not zero */
-
-loc_000C3912: ;
     eax = 1;
     esp += 4; return; /* ret */
 

@@ -64970,7 +64970,7 @@ loc_0002A085: ;
     esp += 4; return; /* ret */
 
     SET_LO8(eax, LO8(eax) + MEM8(eax));
-    if (_flags /* loop: loop */) { RECOMP_SLICE_POINT(); goto loc_0002A044; }
+    if (--ecx != 0) { RECOMP_SLICE_POINT(); goto loc_0002A044; } /* loop: loop */
 
 loc_0002A0A6: ;
     SET_LO8(eax, LO8(eax) + MEM8(eax));

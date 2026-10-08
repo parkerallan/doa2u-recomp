@@ -1,6 +1,6 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 1
- * Functions: 1000 (0x000349A0 - 0x0006B600)
+ * Functions: 1000 (0x000349A0 - 0x0006B5E0)
  */
 
 #define RECOMP_GENERATED_CODE
@@ -72168,7 +72168,7 @@ loc_0005E033: ;
     eax = eax + 0x30;
     ebx = ebx + 0x30;
     esi = esi + 0x10;
-    if (_flags /* loop: loop */) { RECOMP_SLICE_POINT(); goto loc_0005E033; }
+    if (--ecx != 0) { RECOMP_SLICE_POINT(); goto loc_0005E033; } /* loop: loop */
 
     sub_0005E0A5(); return; /* restored dropped fall-through to sub_0005E0A5 */
 }
@@ -82125,7 +82125,7 @@ loc_00063541: ;
     xmm_store(edi + 0x20, xmm4); /* movaps */
     esi = esi + 0x20;
     edi = edi + 0x40;
-    if (_flags /* loop: loop */) { RECOMP_SLICE_POINT(); goto loc_00063541; }
+    if (--ecx != 0) { RECOMP_SLICE_POINT(); goto loc_00063541; } /* loop: loop */
 
 loc_00063584: ;
     xmm4 = xmm_load_ss(esi + 0x10); /* movss */
@@ -98964,112 +98964,6 @@ void sub_0006B5E0(void)
 
 loc_0006B5E0: ;
     eax = 0x678A68;
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_0006B5F0
- * Original: 0x0006B5F0 - 0x0006B5FB (11 bytes, 2 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0006B5F0(void)
-{
-
-loc_0006B5F0: ;
-    MEM32(0x678A60) = 0;
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_0006B600
- * Original: 0x0006B600 - 0x0006B686 (134 bytes, 45 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0006B600(void)
-{
-    int _flags = 0; /* fallback flag var */
-
-loc_0006B600: ;
-    eax = 0; /* xor self */
-    if (CMP_EQ(LO16(ecx), 0x41)) goto loc_0006B60E; /* je: equal / zero */
-
-loc_0006B608: ;
-    if (CMP_NE(LO16(ecx), 0x61)) goto loc_0006B63D; /* jne: not equal / not zero */
-
-loc_0006B60E: ;
-    if (CMP_EQ(LO16(edx), 0x54)) goto loc_0006B61A; /* je: equal / zero */
-
-loc_0006B614: ;
-    if (CMP_NE(LO16(edx), 0x74)) goto loc_0006B61F; /* jne: not equal / not zero */
-
-loc_0006B61A: ;
-    eax = 0xFFFFFFF8u;
-
-loc_0006B61F: ;
-    if (CMP_EQ(LO16(edx), 0x59)) goto loc_0006B62B; /* je: equal / zero */
-
-loc_0006B625: ;
-    if (CMP_NE(LO16(edx), 0x79)) goto loc_0006B62E; /* jne: not equal / not zero */
-
-loc_0006B62B: ;
-    eax = eax - 8;
-
-loc_0006B62E: ;
-    if (CMP_EQ(LO16(edx), 0x56)) goto loc_0006B63A; /* je: equal / zero */
-
-loc_0006B634: ;
-    if (CMP_NE(LO16(edx), 0x76)) goto loc_0006B63D; /* jne: not equal / not zero */
-
-loc_0006B63A: ;
-    eax = eax - 8;
-
-loc_0006B63D: ;
-    if (CMP_EQ(LO16(edx), 0x41)) goto loc_0006B649; /* je: equal / zero */
-
-loc_0006B643: ;
-    if (CMP_NE(LO16(edx), 0x61)) goto loc_0006B676; /* jne: not equal / not zero */
-
-loc_0006B649: ;
-    if (CMP_EQ(LO16(ecx), 0x54)) goto loc_0006B655; /* je: equal / zero */
-
-loc_0006B64F: ;
-    if (CMP_NE(LO16(ecx), 0x74)) goto loc_0006B658; /* jne: not equal / not zero */
-
-loc_0006B655: ;
-    eax = eax - 8;
-
-loc_0006B658: ;
-    if (CMP_EQ(LO16(ecx), 0x59)) goto loc_0006B664; /* je: equal / zero */
-
-loc_0006B65E: ;
-    if (CMP_NE(LO16(ecx), 0x79)) goto loc_0006B667; /* jne: not equal / not zero */
-
-loc_0006B664: ;
-    eax = eax - 8;
-
-loc_0006B667: ;
-    if (CMP_EQ(LO16(ecx), 0x56)) goto loc_0006B673; /* je: equal / zero */
-
-loc_0006B66D: ;
-    if (CMP_NE(LO16(ecx), 0x76)) goto loc_0006B676; /* jne: not equal / not zero */
-
-loc_0006B673: ;
-    eax = eax - 8;
-
-loc_0006B676: ;
-    if (CMP_NE(LO16(edx), 0x4F)) goto loc_0006B685; /* jne: not equal / not zero */
-
-loc_0006B67C: ;
-    if (CMP_NE(LO16(ecx), 0x56)) goto loc_0006B685; /* jne: not equal / not zero */
-
-loc_0006B682: ;
-    eax = eax - 5;
-
-loc_0006B685: ;
     esp += 4; return; /* ret */
 
 }
