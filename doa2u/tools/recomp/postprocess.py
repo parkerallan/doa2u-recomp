@@ -6,8 +6,7 @@
 Steps, in order (each is idempotent):
   1. fix_fallthroughs      restore fall-throughs into split-off fragments
   2. fix_cond_tailcall_ebp sync g_seh_ebp on conditional tail-calls
-  3. fix_deferred_cmp      evaluate compares whose operands change before the jcc
-     fix_entry_flags       branches at a split function's entry that read the
+  3. fix_entry_flags       branches at a split function's entry that read the
                            predecessor's flags (re-evaluate its cmp/test)
   4. fix_ftol_inline       inline CRT _ftol2 (0x003354E0)
      fix_selfspins         XDK hardware busy-waits on memory forced through
@@ -21,7 +20,7 @@ import re
 import runpy
 import sys
 
-for tool in ("fix_fallthroughs", "fix_cond_tailcall_ebp", "fix_deferred_cmp", "fix_entry_flags", "fix_ftol_inline",
+for tool in ("fix_fallthroughs", "fix_cond_tailcall_ebp", "fix_entry_flags", "fix_ftol_inline",
              "fix_selfspins", "fix_slicepoints"):
     print(f"--- {tool}")
     sys.argv = [tool]

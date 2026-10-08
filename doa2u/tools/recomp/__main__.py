@@ -211,6 +211,13 @@ def main():
               file=sys.stderr)
         print_stats(stats)
 
+    unlatched = translator.translator.lifter.unlatched_reads
+    if unlatched:
+        print(f"\nflag reads after an operand overwrite that could not be latched "
+              f"(setter in an earlier block): {len(unlatched)}: "
+              + " ".join(f"0x{a:08X}" for a in sorted(set(unlatched))[:40]),
+              file=sys.stderr)
+
     # Write summary
     output_dir = args.output_dir or os.path.join(
         os.path.dirname(__file__), "output")

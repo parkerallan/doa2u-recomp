@@ -406,6 +406,7 @@ class FunctionTranslator:
                     label_addrs.add(t)
 
         flag_state = None
+        self.lifter.rcc_needed = 0
         for bb in blocks:
             # Emit label if this block is a branch target.
             # Always append an empty statement (";") so a terminal label whose
@@ -457,6 +458,13 @@ class FunctionTranslator:
 
         lines.append(f"}}")
         lines.append(f"")
+
+        # Flag reads latched at their setter (lift_basic_block).
+        if self.lifter.rcc_needed:
+            sig_idx = lines.index("{")
+            lines.insert(sig_idx + 1, "    int " + ", ".join(
+                f"_rcc{k} = 0" for k in range(self.lifter.rcc_needed))
+                + "; /* flag reads latched at their setter */")
 
         # Safety net: emitted code may reference the local `ebp` even when the
         # used-register scan missed it (e.g. the g_seh_ebp sync emitted for

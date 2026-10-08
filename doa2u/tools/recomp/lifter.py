@@ -894,6 +894,8 @@ class Lifter:
         self._fp_top = 0  # FPU stack top index
         self.func_start = 0  # Set per-function by translator
         self.func_end = 0
+        self.rcc_needed = 0       # _rccN latches the current function needs
+        self.unlatched_reads = [] # clobbered flag reads whose setter is in an earlier block
 
     def _call_target_name(self, addr):
         """Get the name for a call target address."""
@@ -2007,6 +2009,88 @@ class Lifter:
         return [f"/* FPU: {m} {insn.op_str} */"]
 
 
+# Flag latching: a flag read whose setter operand is overwritten in between
+# (0x000B3A9D cmp edi,eax; cvttss2si eax; sete cl) is evaluated at the setter.
+
+_REG32 = {
+    "al": "eax", "ah": "eax", "ax": "eax", "eax": "eax",
+    "bl": "ebx", "bh": "ebx", "bx": "ebx", "ebx": "ebx",
+    "cl": "ecx", "ch": "ecx", "cx": "ecx", "ecx": "ecx",
+    "dl": "edx", "dh": "edx", "dx": "edx", "edx": "edx",
+    "si": "esi", "esi": "esi", "di": "edi", "edi": "edi",
+    "bp": "ebp", "ebp": "ebp", "sp": "esp", "esp": "esp",
+}
+_ALL_GPR = frozenset(_REG32.values())
+
+# Instructions whose first operand is only read.
+_OP0_READ_ONLY = frozenset({
+    "cmp", "test", "bt", "push", "jmp", "call", "ret", "nop",
+    "comiss", "ucomiss", "comisd", "ucomisd", "prefetchnta", "prefetcht0",
+    "prefetcht1", "prefetcht2", "fldcw", "frstor",
+})
+
+# Implicit general-register writes.
+_IMPLICIT_WRITES = {
+    "mul": {"eax", "edx"}, "div": {"eax", "edx"}, "idiv": {"eax", "edx"},
+    "cdq": {"edx"}, "cwd": {"edx"}, "cbw": {"eax"}, "cwde": {"eax"},
+    "lahf": {"eax"}, "cpuid": {"eax", "ebx", "ecx", "edx"},
+    "rdtsc": {"eax", "edx"}, "xlatb": {"eax"},
+    "leave": {"esp", "ebp"}, "enter": {"esp", "ebp"},
+    "push": {"esp"}, "pop": {"esp"}, "pushfd": {"esp"}, "popfd": {"esp"},
+    "pushal": {"esp"}, "popal": set(_ALL_GPR),
+    "cmpxchg": {"eax"},
+    "loop": {"ecx"}, "loope": {"ecx"}, "loopne": {"ecx"},
+}
+
+
+def _operand_regs(op):
+    if op.type == "reg":
+        r = _REG32.get(op.reg)
+        return {r} if r else set()
+    if op.type == "mem":
+        return {_REG32[r] for r in (op.mem_base, op.mem_index) if r in _REG32}
+    return set()
+
+
+def _insn_writes(insn):
+    """(general registers written, writes memory) for one instruction.
+    Over-approximates: a spurious write only costs an unneeded latch."""
+    m = insn.mnemonic
+    ops = insn.operands
+    if m == "call":
+        return set(_ALL_GPR), True
+    regs = set(_IMPLICIT_WRITES.get(m, ()))
+    mem = m in ("push", "pushfd", "pushal")
+    base = m.split()[-1]
+    if base.startswith(("movs", "stos", "lods", "scas", "cmps")) and \
+            base[4:] in ("", "b", "w", "d"):
+        regs |= {"esi", "edi"}
+        if base.startswith("lods"):
+            regs.add("eax")
+        if base.startswith(("movs", "stos")):
+            mem = True
+        if m.startswith("rep"):
+            regs.add("ecx")
+        return regs, mem
+    if m in ("imul", "mul") and len(ops) == 1:
+        regs |= {"eax", "edx"}
+    if m.startswith("f") and not m.startswith(("fst", "fist", "fnst", "fbstp",
+                                                "fsave", "fnsave")):
+        return regs, mem                       # x87 loads/arith: no GPR or memory write
+    if ops and m not in _OP0_READ_ONLY:
+        if ops[0].type == "reg":
+            r = _REG32.get(ops[0].reg)
+            if r:
+                regs.add(r)
+        elif ops[0].type == "mem":
+            mem = True
+    if m in ("xchg", "xadd") and len(ops) > 1 and ops[1].type == "reg":
+        r = _REG32.get(ops[1].reg)
+        if r:
+            regs.add(r)
+    return regs, mem
+
+
 def lift_basic_block(lifter, bb, flag_state=None):
     """
     Lift a basic block to C statements.
@@ -2015,8 +2099,8 @@ def lift_basic_block(lifter, bb, flag_state=None):
     Args:
         lifter: Lifter instance
         bb: BasicBlock with instructions
-        flag_state: tuple of (flag_setter_mnemonic, flag_operands) from
-                    a preceding block, or None
+        flag_state: tuple of (flag_setter_mnemonic, flag_operands, clobbered)
+                    from a preceding block, or None
 
     Returns:
         (stmts, flag_state) where stmts is a list of C statement strings
@@ -2028,10 +2112,53 @@ def lift_basic_block(lifter, bb, flag_state=None):
 
     # Track the last instruction that set flags
     if flag_state:
-        last_flag_setter, last_flag_ops = flag_state
+        last_flag_setter, last_flag_ops, clobbered = flag_state
     else:
         last_flag_setter = None
         last_flag_ops = []
+        clobbered = False
+    # Where a latched read goes (just after the setter's statements). None
+    # while the setter is in an earlier block: nothing can be inserted there.
+    latch_pos = None
+    latch_n = 0
+    setter_regs, setter_mem = set(), False
+
+    def new_setter(insn):
+        nonlocal last_flag_setter, last_flag_ops, clobbered, latch_pos, latch_n
+        nonlocal setter_regs, setter_mem
+        last_flag_setter = insn.mnemonic
+        last_flag_ops = list(insn.operands)
+        clobbered = False
+        latch_pos = len(stmts)
+        latch_n = 0
+        setter_regs, setter_mem = set(), False
+        for op in insn.operands:
+            setter_regs |= _operand_regs(op)
+            setter_mem = setter_mem or op.type == "mem"
+
+    def note_writes(insn):
+        nonlocal clobbered
+        if not last_flag_setter or clobbered:
+            return
+        regs, mem = _insn_writes(insn)
+        if regs & setter_regs or (mem and setter_mem):
+            clobbered = True
+
+    def latched(cond):
+        """The condition as x86 sees it: evaluated at the setter when an
+        operand has been overwritten since."""
+        nonlocal latch_pos, latch_n
+        if not clobbered:
+            return cond
+        if latch_pos is None:
+            lifter.unlatched_reads.append(insns[i].address)
+            return cond
+        name = f"_rcc{latch_n}"
+        stmts.insert(latch_pos, f"{name} = ({cond}); /* latched */")
+        latch_pos += 1
+        latch_n += 1
+        lifter.rcc_needed = max(lifter.rcc_needed, latch_n)
+        return name
 
     while i < len(insns):
         curr = insns[i]
@@ -2043,14 +2170,15 @@ def lift_basic_block(lifter, bb, flag_state=None):
             stmts.append(stmt)
             # Preserve the flag-setter from the cmp/test since jcc
             # doesn't modify flags - subsequent jcc can reuse them
-            flag_insn = insns[i]
-            last_flag_setter = flag_insn.mnemonic
-            last_flag_ops = list(flag_insn.operands)
+            new_setter(insns[i])
             i += consumed
             continue
 
         if curr.mnemonic in LOOP_MNEMONICS:
+            if clobbered:
+                lifter.unlatched_reads.append(curr.address)
             stmts.append(_lift_loop(curr, last_flag_setter, last_flag_ops, lifter))
+            note_writes(curr)
             i += 1
             continue
 
@@ -2069,7 +2197,7 @@ def lift_basic_block(lifter, bb, flag_state=None):
                 cond_expr, desc = result
                 target = curr.jump_target
                 stmt = _emit_cond_goto(
-                    cond_expr, curr.mnemonic, desc, target, lifter)
+                    latched(cond_expr), curr.mnemonic, desc, target, lifter)
                 stmts.append(stmt)
                 i += 1
                 continue
@@ -2083,8 +2211,9 @@ def lift_basic_block(lifter, bb, flag_state=None):
             if cond:
                 stmts.append(
                     _fmt_operand_write(curr.operands[0],
-                                       f"({cond}) ? 1 : 0")
+                                       f"({latched(cond)}) ? 1 : 0")
                     + f" /* {curr.mnemonic} */")
+                note_writes(curr)
                 i += 1
                 continue
 
@@ -2097,9 +2226,10 @@ def lift_basic_block(lifter, bb, flag_state=None):
             if cond:
                 src = _fmt_operand_read(curr.operands[1])
                 stmts.append(
-                    f"if ({cond}) "
+                    f"if ({latched(cond)}) "
                     + _fmt_operand_write(curr.operands[0], src)
                     + f" /* {curr.mnemonic} */")
+                note_writes(curr)
                 i += 1
                 continue
 
@@ -2109,7 +2239,15 @@ def lift_basic_block(lifter, bb, flag_state=None):
         if curr.mnemonic in ("sbb", "adc") and last_flag_setter:
             cf_expr = _make_cf_expr(last_flag_setter, last_flag_ops)
             if cf_expr is not None:
-                stmts.append(f"_cf = {cf_expr}; /* CF from {last_flag_setter} */")
+                cf_stmt = f"_cf = {cf_expr}; /* CF from {last_flag_setter} */"
+                if clobbered and latch_pos is not None:
+                    # nothing else writes _cf before this sbb/adc
+                    stmts.insert(latch_pos, cf_stmt)
+                    latch_pos += 1
+                else:
+                    if clobbered:
+                        lifter.unlatched_reads.append(curr.address)
+                    stmts.append(cf_stmt)
 
         # lahf after a float compare: rebuild AH (ZF=0x40, CF=0x01) from
         # _fpu_cmp, as fnstsw does, so the following `test ah; jp` works.
@@ -2118,6 +2256,7 @@ def lift_basic_block(lifter, bb, flag_state=None):
                 "fucomip", "fcompi", "fucompi"):
             stmts.append("SET_HI8(eax, 0x02 | (_fpu_cmp < 0 ? 0x01 : 0) | "
                          "(_fpu_cmp == 0 ? 0x40 : 0)); /* lahf */")
+            note_writes(curr)
             i += 1
             continue
 
@@ -2127,47 +2266,40 @@ def lift_basic_block(lifter, bb, flag_state=None):
 
         # Track flag-setting instructions
         if curr.mnemonic in FLAG_SETTERS:
-            last_flag_setter = curr.mnemonic
-            last_flag_ops = list(curr.operands)
+            new_setter(curr)
         elif curr.mnemonic in _FLAGS_UNDEFINED:
             # Flags are undefined after these - clear tracking
             last_flag_setter = None
             last_flag_ops = []
         elif curr.mnemonic in _EFLAGS_SETTERS:
             # Additional flag-setting instructions
-            last_flag_setter = curr.mnemonic
-            last_flag_ops = list(curr.operands)
+            new_setter(curr)
         elif curr.mnemonic in _EFLAGS_PRESERVE:
-            pass  # These don't affect EFLAGS
+            note_writes(curr)  # These don't affect EFLAGS
         elif curr.mnemonic in ("fcompi", "fcomip", "fucomi", "fucompi",
                                 "fucomip", "fcomi"):
             # FPU compare-to-EFLAGS: sets CF, ZF, PF directly
-            last_flag_setter = curr.mnemonic
-            last_flag_ops = list(curr.operands)
+            new_setter(curr)
         elif curr.mnemonic == "sahf":
             # sahf loads AH into flags - typically after fnstsw ax
             # in the fcomp/fnstsw/sahf pattern for FPU comparisons
+            new_setter(curr)
             last_flag_setter = "sahf"
-            last_flag_ops = list(curr.operands)
         elif curr.mnemonic.startswith("f") or curr.mnemonic.startswith("cmov"):
-            pass  # FPU and already-handled CMOVcc
+            note_writes(curr)  # FPU and already-handled CMOVcc
         elif curr.mnemonic.startswith("j"):
             pass  # Jumps don't set flags
         elif curr.mnemonic.startswith("set"):
-            pass  # SETcc doesn't set flags
+            note_writes(curr)  # SETcc doesn't set flags
         elif curr.mnemonic.startswith("rep"):
             # rep movsb/movsd = data copy, preserves flags
             # repe cmpsb/repne scasb = comparison, sets flags
             rest = curr.op_str.strip() if hasattr(curr, 'op_str') else ""
             raw_m = curr.mnemonic
-            if "cmps" in raw_m or "scas" in raw_m:
-                last_flag_setter = raw_m
-                last_flag_ops = list(curr.operands)
-            elif "cmps" in rest or "scas" in rest:
-                last_flag_setter = raw_m
-                last_flag_ops = list(curr.operands)
+            if "cmps" in raw_m or "scas" in raw_m or "cmps" in rest or "scas" in rest:
+                new_setter(curr)
             else:
-                pass  # rep movs/stos = data movement, flags preserved
+                note_writes(curr)  # rep movs/stos = data movement, flags preserved
         else:
             # Unknown instruction - conservatively clear flag state
             last_flag_setter = None
@@ -2175,5 +2307,6 @@ def lift_basic_block(lifter, bb, flag_state=None):
 
         i += 1
 
-    out_flag_state = (last_flag_setter, last_flag_ops) if last_flag_setter else None
+    out_flag_state = ((last_flag_setter, last_flag_ops, clobbered)
+                      if last_flag_setter else None)
     return stmts, out_flag_state

@@ -68758,6 +68758,19 @@
   "called_by": []
  },
  {
+  "start": "0x000CF960",
+  "end": "0x000CF9C0",
+  "size": 96,
+  "name": "sub_000CF960",
+  "section": ".text",
+  "confidence": 0.5,
+  "detection_method": "link_seed",
+  "num_instructions": 0,
+  "has_prologue": false,
+  "calls_to": [],
+  "called_by": []
+ },
+ {
   "start": "0x000CF9C0",
   "end": "0x000CFA12",
   "size": 82,

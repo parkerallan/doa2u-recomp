@@ -1093,6 +1093,7 @@ static int nv_fetch_attr(int slot, uint32_t index, float out[4], uint32_t *out_c
  * pre-transformed XYZRHW, which is what the rest of this path expects. */
 static void nv_transform_clip(const float in[4], OutputVertex *v,
                               int apply_composite);
+static void nv_surface_size(unsigned *w, unsigned *h);
 
 /* NV097_SET_SKIN_MODE: eye = sum_i w_i * (MV_i * v), clip = Composite * eye.
  * "G" modes generate the last weight as 1 - sum; MV_i is c[8 + 8i]. */
@@ -1209,8 +1210,8 @@ static void nv_transform_clip(const float in[4], OutputVertex *v,
          * zeros and unit vectors -- only a plausible on-surface origin is
          * applied, and (0,0) costs nothing. */
         {   float ox = g_pg.vp_offset[0], oy = g_pg.vp_offset[1];
-            unsigned sw = (g_pg.surface_clip_h >> 16) & 0xFFFF;
-            unsigned sh = (g_pg.surface_clip_v >> 16) & 0xFFFF;
+            unsigned sw, sh;
+            nv_surface_size(&sw, &sh);
             if (!(ox >= 0.0f && oy >= 0.0f && sw && sh &&
                   ox < (float)sw && oy < (float)sh)) { ox = 0.0f; oy = 0.0f; }
             v->x   = c[0] * inv + ox;
@@ -2191,6 +2192,32 @@ static uint32_t nv_clip_batch(const OutputVertex *out, uint32_t n, int prim, Out
  * point, which routed the scene offscreen and froze the picture. */
 static uint32_t g_pg_surf_coff, g_pg_surf_pitch;
 extern int  d3d8_OffscreenTargetActive(void);
+
+/* Bound colour surface size: SET_SURFACE_CLIP can be a sub-rect (char-select portrait),
+ * so use the last origin-0 clip on this surface, else the clip's far corner. */
+static void nv_surface_size(unsigned *w, unsigned *h)
+{
+    static uint32_t s_off[8], s_wh[8]; static int s_next;
+    unsigned x0 = g_pg.surface_clip_h & 0xFFFF, y0 = g_pg.surface_clip_v & 0xFFFF;
+    unsigned cw = (g_pg.surface_clip_h >> 16) & 0xFFFF, ch = (g_pg.surface_clip_v >> 16) & 0xFFFF;
+    int k;
+    if (x0 == 0 && y0 == 0) {
+        if (cw && ch) {
+            for (k = 0; k < 8 && s_off[k] != g_pg_surf_coff; k++) ;
+            if (k == 8) { k = s_next; s_next = (s_next + 1) & 7; s_off[k] = g_pg_surf_coff; }
+            s_wh[k] = (cw << 16) | ch;
+        }
+        *w = cw; *h = ch;
+        return;
+    }
+    for (k = 0; k < 8; k++)
+        if (s_off[k] == g_pg_surf_coff && s_wh[k] &&
+            (s_wh[k] >> 16) >= x0 + cw && (s_wh[k] & 0xFFFF) >= y0 + ch) {
+            *w = s_wh[k] >> 16; *h = s_wh[k] & 0xFFFF;
+            return;
+        }
+    *w = x0 + cw; *h = y0 + ch;
+}
 /* Map guest screen coordinates onto the host backbuffer.
  *
  * Everything this module emits is in the guest's framebuffer space, which
@@ -2250,18 +2277,31 @@ static uint32_t nv_inline_layout_from_attrs(int *pos_dw, int *uv_off, int *color
 static int nv_apply_window_clip(void)
 {
     extern void d3d8_SetScissorRect(int x, int y, int w, int h);
-    unsigned gw = (g_pg.surface_clip_h >> 16) & 0xFFFF;
-    unsigned gh = (g_pg.surface_clip_v >> 16) & 0xFFFF;
+    unsigned gw, gh;
     unsigned bw = d3d8_GetBackbufferWidth(), bh = d3d8_GetBackbufferHeight();
     uint32_t hz = g_pg.window_clip_h[0], vt = g_pg.window_clip_v[0];
+    /* The surface clip rect (see nv_surface_size) clips too. */
+    unsigned cx0 = g_pg.surface_clip_h & 0xFFFF, cy0 = g_pg.surface_clip_v & 0xFFFF;
+    unsigned cx1 = cx0 + ((g_pg.surface_clip_h >> 16) & 0xFFFF) - 1;
+    unsigned cy1 = cy0 + ((g_pg.surface_clip_v >> 16) & 0xFFFF) - 1;
     unsigned x0, y0, x1, y1;
     int sx0, sy0, sx1, sy1;
 
-    if (g_pg.window_clip_type != 0) return 0;
+    nv_surface_size(&gw, &gh);
     if (!gw || !gh || !bw || !bh) return 0;
-    x0 =  hz        & 0xFFFu; x1 = (hz >> 16) & 0xFFFu;
-    y0 =  vt        & 0xFFFu; y1 = (vt >> 16) & 0xFFFu;
-    if (x1 <= x0 || y1 <= y0) return 0;                 /* never programmed */
+    if (!(g_pg.surface_clip_h >> 16) || !(g_pg.surface_clip_v >> 16)) return 0;
+    if (g_pg.window_clip_type == 0 &&
+        ((hz >> 16) & 0xFFFu) > (hz & 0xFFFu) && ((vt >> 16) & 0xFFFu) > (vt & 0xFFFu)) {
+        x0 =  hz        & 0xFFFu; x1 = (hz >> 16) & 0xFFFu;
+        y0 =  vt        & 0xFFFu; y1 = (vt >> 16) & 0xFFFu;
+        if (x0 < cx0) x0 = cx0;
+        if (y0 < cy0) y0 = cy0;
+        if (x1 > cx1) x1 = cx1;
+        if (y1 > cy1) y1 = cy1;
+    } else {
+        x0 = cx0; y0 = cy0; x1 = cx1; y1 = cy1;      /* window clip unset or exclusive */
+    }
+    if (x1 <= x0 || y1 <= y0) return 0;
     if (x0 == 0 && y0 == 0 && x1 + 1 >= gw && y1 + 1 >= gh) return 0;  /* whole surface */
 
     sx0 = (int)((float)x0 * (float)bw / (float)gw);
@@ -2283,13 +2323,13 @@ static int nv_apply_window_clip(void)
  * from the clip. */
 static void nv_fit_to_backbuffer(OutputVertex *out, uint32_t n, int screen_space)
 {
-    unsigned gw = (g_pg.surface_clip_h >> 16) & 0xFFFF;
-    unsigned gh = (g_pg.surface_clip_v >> 16) & 0xFFFF;
+    unsigned gw, gh;
     unsigned bw = d3d8_GetBackbufferWidth();
     unsigned bh = d3d8_GetBackbufferHeight();
     float sx, sy;
     uint32_t i;
 
+    nv_surface_size(&gw, &gh);
     /* Only for the swap chain: an offscreen target really is the size of the
      * clip that made it, so its draws must keep using the clip. */
     if (screen_space && !d3d8_OffscreenTargetActive()) {
@@ -2686,9 +2726,10 @@ static int nv_gpu_ff_submit(IDirect3DDevice8 *dev, const NvBatchCtx *ctx, int pr
     {
         float zrange = (((g_pg.surface_fmt >> 4) & 0xF) == 1) ? 65535.0f : 16777215.0f;
         float ox = g_pg.vp_offset[0], oy = g_pg.vp_offset[1];
-        unsigned sw = (g_pg.surface_clip_h >> 16) & 0xFFFF, sh = (g_pg.surface_clip_v >> 16) & 0xFFFF;
+        unsigned sw, sh;
         unsigned bw = d3d8_GetBackbufferWidth(), bh = d3d8_GetBackbufferHeight();
         float sx = 1.0f, sy = 1.0f, kx, ky;
+        nv_surface_size(&sw, &sh);
         if (!(ox >= 0.0f && oy >= 0.0f && sw && sh && ox < (float)sw && oy < (float)sh)) { ox = 0.0f; oy = 0.0f; }
         if (sw && sh && bw && bh && !(sw == bw && sh == bh)) { sx = (float)bw / (float)sw; sy = (float)bh / (float)sh; }
         kx = 2.0f * sx / (float)bw;

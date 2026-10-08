@@ -5,6 +5,7 @@ usage: py -3 -m tools.recomp.seed_immediates <xbe> <seed_list_out>
 import glob
 import json
 import re
+import struct
 import sys
 
 from .config import is_code_address, va_to_file_offset
@@ -20,6 +21,25 @@ def byte_at(va):
     return xbe[o] if o is not None else None
 
 
+def dword_at(va):
+    o = va_to_file_offset(va)
+    return struct.unpack_from("<I", xbe, o)[0] if o is not None else None
+
+
+def at_boundary(va, skip_table=True):
+    if byte_at(va - 1) in (0xCC, 0x90, 0xC3) or byte_at(va - 3) == 0xC2:
+        return True
+    # behind an inline switch jump table (e.g. sub_000CF960): skip back over
+    # its code-address dwords. A 00 first byte is data, not an entry.
+    if (skip_table and va % 16 == 0 and byte_at(va) != 0
+            and not is_code_address(dword_at(va) or 0)):
+        p = va
+        while is_code_address(dword_at(p - 4) or 0):
+            p -= 4
+        return p != va and at_boundary(p, False)
+    return False
+
+
 found = set()
 for path in glob.glob("tools/disasm/output/asm/*.asm"):
     for line in open(path, encoding="utf-8", errors="replace"):
@@ -33,7 +53,7 @@ for path in glob.glob("tools/disasm/output/asm/*.asm"):
             a = int(v, 16)
             if a in starts or not is_code_address(a):
                 continue
-            if byte_at(a - 1) in (0xCC, 0x90, 0xC3) or byte_at(a - 3) == 0xC2:
+            if at_boundary(a):
                 found.add(a)
 
 with open(sys.argv[2], "w") as f:

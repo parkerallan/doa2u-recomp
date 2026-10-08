@@ -1,11 +1,203 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 23
- * Functions: 553 (0x003B4E94 - 0x003C146C)
+ * Functions: 554 (0x003B4D1D - 0x003C146C)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_003B4D1D
+ * Original: 0x003B4D1D - 0x003B4E94 (375 bytes, 130 insns)
+ * Category: game_network
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_003B4D1D(void)
+{
+    uint32_t ebp;
+    int _flags = 0; /* fallback flag var */
+    int _cf = 0; /* carry flag */
+
+loc_003B4D1D: ;
+    PUSH32(esp, ebp);
+    ebp = esp;
+    esp = esp - 0xC;
+    PUSH32(esp, ebx);
+    ebx = MEM32(ebp + 8);
+    eax = MEM32(ebx + 0xC);
+    PUSH32(esp, esi);
+    esi = 0; /* xor self */
+    /* cmp eax, esi - flags set for next jcc */
+    PUSH32(esp, edi);
+    edi = ecx;
+    MEM32(ebp + -8) = edi;
+    MEM32(ebp + -4) = esi;
+    if (CMP_EQ(eax, esi)) goto loc_003B4D78; /* je: equal / zero */
+
+loc_003B4D3A: ;
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0039C7AF(); /* call 0x0039C7AF */
+
+loc_003B4D40: ;
+    /* cmp eax, esi - flags set for next jcc */
+    MEM32(ebp + -4) = eax;
+    if (CMP_EQ(eax, esi)) goto loc_003B4D78; /* je: equal / zero */
+
+loc_003B4D47: ;
+    if (CMP_L(eax, esi)) goto loc_003B4E8A; /* jl: less (signed <) */
+
+loc_003B4D4F: ;
+    eax = MEM32(ebx + 0x14);
+    eax = eax + 0x30;
+    PUSH32(esp, eax);
+    PUSH32(esp, MEM32(ebx + 0xC));
+    ecx = edi;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003B4CDB(); /* call 0x003B4CDB */
+
+loc_003B4D60: ;
+    /* cmp eax, esi - flags set for next jcc */
+    MEM32(ebp + -4) = eax;
+    if (CMP_L(eax, esi)) goto loc_003B4E8A; /* jl: less (signed <) */
+
+loc_003B4D6B: ;
+    PUSH32(esp, MEM32(ebx + 0xC));
+    ecx = edi;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0039C7C4(); /* call 0x0039C7C4 */
+
+loc_003B4D75: ;
+    MEM32(ebx + 0xC) = esi;
+
+loc_003B4D78: ;
+    eax = MEM32(ebx + 0x10);
+    if (CMP_EQ(eax, esi)) goto loc_003B4E79; /* je: equal / zero */
+
+loc_003B4D83: ;
+    PUSH32(esp, eax);
+    ecx = edi;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0039C7AF(); /* call 0x0039C7AF */
+
+loc_003B4D8B: ;
+    /* cmp eax, esi - flags set for next jcc */
+    MEM32(ebp + -4) = eax;
+    if (CMP_EQ(eax, esi)) goto loc_003B4E79; /* je: equal / zero */
+
+loc_003B4D96: ;
+    if (CMP_L(eax, esi)) goto loc_003B4E8A; /* jl: less (signed <) */
+
+loc_003B4D9E: ;
+    eax = MEM32(ebx + 0x24);
+    ecx = MEM32(ebx + 0x28);
+    esi = MEM32(ebx + 0x14);
+    ecx = ecx - eax;
+    MEM32(ebp + 8) = ecx;
+    ecx = ebp + 8;
+    PUSH32(esp, ecx);
+    ecx = MEM32(ebx + 0x20);
+    ecx = ecx + eax;
+    PUSH32(esp, ecx);
+    ecx = MEM32(ebx + 0x18);
+    eax = 0; /* xor self */
+    eax++;
+    eax = eax << LO8(ecx);
+    ecx = edi;
+    MEM32(ebp + -12) = esi;
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003AD9E3(); /* call 0x003AD9E3 */
+
+loc_003B4DC9: ;
+    /* test eax, eax - flags set for next jcc */
+    MEM32(ebp + -4) = eax;
+    if (TEST_S(eax, eax)) goto loc_003B4E8A; /* jl: less (signed <) */
+
+loc_003B4DD4: ;
+    PUSH32(esp, MEM32(ebx + 0x10));
+    ecx = edi;
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_0039C7C4(); /* call 0x0039C7C4 */
+
+loc_003B4DDE: ;
+    MEM32(ebx + 0x10) = MEM32(ebx + 0x10) & 0;
+    eax = MEM32(ebx + 0x24);
+    PUSH32(esp, MEM32(esi + 0x18));
+    ecx = MEM32(esi + 0xEC);
+    edx = 0; /* xor self */
+    eax = eax + MEM32(esi + 0xE8);
+    _cf = ((uint32_t)(eax) < (uint32_t)(MEM32(esi + 0xE8))); /* CF from add */
+    ecx = ecx + edx + _cf; /* adc */
+    edx = MEM32(ebp + 8);
+    edi = 0; /* xor self */
+    eax = eax + edx;
+    _cf = ((uint32_t)(eax) < (uint32_t)(edx)); /* CF from add */
+    edx = MEM32(esi + 0xB4);
+    ecx = ecx + edi + _cf; /* adc */
+    PUSH32(esp, ecx);
+    ecx = MEM32(ebp + -8);
+    PUSH32(esp, eax);
+    PUSH32(esp, 0);
+    PUSH32(esp, 0);
+    edi = esi + 0xA8;
+    PUSH32(esp, edi);
+    PUSH32(esp, MEM32(esi + 0xB0));
+    MEM32(edi) = edx;
+    PUSH32(esp, MEM32(esi + 0x34));
+    PUSH32(esp, MEM32(ebx + 0x1C));
+    PUSH32(esp, MEM32(esi + 0x30));
+    g_seh_ebp = ebp; PUSH32(esp, 0); sub_003AAC87(); /* call 0x003AAC87 */
+
+loc_003B4E2D: ;
+    /* test eax, eax - flags set for next jcc */
+    MEM32(ebp + -4) = eax;
+    if (TEST_S(eax, eax)) goto loc_003B4E8A; /* jl: less (signed <) */
+
+loc_003B4E34: ;
+    ecx = MEM32(ebx + 0x24);
+    ecx = ecx + MEM32(ebp + 8);
+    edi = MEM32(edi);
+    edx = MEM32(ebp + -12);
+    edi = edi + MEM32(edx + 0xB0);
+    esi = MEM32(ebx + 0x20);
+    eax = ecx;
+    ecx = ecx >> 2;
+    memcpy((void*)XBOX_PTR(edi), (void*)XBOX_PTR(esi), ecx * 4);
+    esi += ecx * 4; edi += ecx * 4; ecx = 0; /* rep movsd */
+    ecx = eax;
+    ecx = ecx & 3;
+    memcpy((void*)XBOX_PTR(edi), (void*)XBOX_PTR(esi), ecx);
+    esi += ecx; edi += ecx; ecx = 0; /* rep movsb */
+    ecx = MEM32(ebx + 0x24);
+    ecx = ecx + MEM32(ebp + 8);
+    eax = edx + 0xA8;
+    MEM32(eax) = MEM32(eax) + ecx;
+    eax = MEM32(eax);
+    if (CMP_BE(eax, MEM32(edx + 0xB4))) goto loc_003B4E77; /* jbe: below or equal (unsigned <=) */
+
+loc_003B4E6E: ;
+    MEM32(ebp + -4) = 0x8007007Au;
+    goto loc_003B4E8A;
+
+loc_003B4E77: ;
+    esi = 0; /* xor self */
+
+loc_003B4E79: ;
+    if (CMP_NE(MEM32(ebx + 0xC), esi)) goto loc_003B4E8A; /* jne: not equal / not zero */
+
+loc_003B4E7E: ;
+    if (CMP_NE(MEM32(ebx + 0x10), esi)) goto loc_003B4E8A; /* jne: not equal / not zero */
+
+loc_003B4E83: ;
+    MEM32(ebp + -4) = 0x1500F0;
+
+loc_003B4E8A: ;
+    eax = MEM32(ebp + -4);
+    POP32(esp, edi);
+    POP32(esp, esi);
+    POP32(esp, ebx);
+    esp = ebp;
+    POP32(esp, ebp); /* leave */
+    esp += 8; return; /* ret 4 */
+
+}
 
 /**
  * sub_003B4E94
@@ -67,6 +259,7 @@ loc_003B4EC9: ;
  */
 void sub_003B4ECF(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -83,10 +276,11 @@ loc_003B4ECF: ;
     eax = MEM32(edi);
     ebx = 0; /* xor self */
     /* cmp MEM32(ebp + 8), 3 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(ebp + 8), 3)); /* latched */
     MEM32(ebp + -4) = ecx;
     MEM32(ebp + -8) = eax;
     MEM32(esi) = ebx;
-    if (CMP_NE(MEM32(ebp + 8), 3)) goto loc_003B4F61; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003B4F61; /* jne: not equal / not zero */
 
 loc_003B4EEF: ;
     ecx = MEM32(ebp + 0xC);
@@ -849,6 +1043,7 @@ loc_003B52A3: ;
  */
 void sub_003B52AA(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     #define fp_push(v) (g_fp_stack[--g_fp_top & 7] = (v))
@@ -1218,6 +1413,7 @@ loc_003B55AA: ;
     { uint32_t _i; for (_i = 0; _i < ecx; _i++) MEM32(edi + _i*4) = eax; }
     edi += ecx * 4; ecx = 0; /* rep stosd */
     /* cmp MEM32(ebx + 0x610), 0 - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(ebx + 0x610), 0)); /* latched */
     eax = MEM32(ebx + 0xEB);
     esi = ebx + 0xDF;
     edi = ebx + 0x57C;
@@ -1227,7 +1423,7 @@ loc_003B55AA: ;
     eax = MEM32(ebx + 0xEF);
     MEM32(edi) = MEM32(esi); esi += 4; edi += 4; /* movsd */
     MEM32(ebx + 0x58C) = eax;
-    if (CMP_EQ(MEM32(ebx + 0x610), 0)) goto loc_003B5665; /* je: equal / zero */
+    if (_rcc0) goto loc_003B5665; /* je: equal / zero */
 
 loc_003B55E7: ;
     MEM32(ebx + 0x10) = 4;
@@ -1335,11 +1531,12 @@ loc_003B56E1: ;
 
 loc_003B56E8: ;
     /* cmp MEM32(ebp + 0x70), 0 - flags set for next jcc */
+    _rcc0 = (CMP_L(MEM32(ebp + 0x70), 0)); /* latched */
     eax = 0x1500F1;
     MEM32(ebx + 0x10) = edi;
     MEM32(ebx + 0x14) = eax;
     MEM32(ebp + 0x70) = eax;
-    if (CMP_L(MEM32(ebp + 0x70), 0)) goto loc_003B570B; /* jl: less (signed <) */
+    if (_rcc0) goto loc_003B570B; /* jl: less (signed <) */
 
 loc_003B56FC: ;
     MEM32(ebx + 0x610) = MEM32(ebx + 0x610) & 0;
@@ -1463,6 +1660,7 @@ loc_003B5799: ;
  */
 void sub_003B57A3(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -1508,12 +1706,13 @@ loc_003B57E5: ;
 
 loc_003B57ED: ;
     /* cmp MEM32(ebp + 0xC), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(ebp + 0xC), 0)); /* latched */
     eax = MEM32(ebp + 0x14);
     MEM32(esi + 0x14) = 0x80004005u;
     MEM32(esi) = 0x3B52AA;
     MEM32(esi + 4) = 0x3B5161;
     MEM32(esi + 8) = eax;
-    if (CMP_NE(MEM32(ebp + 0xC), 0)) goto loc_003B5849; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003B5849; /* jne: not equal / not zero */
 
 loc_003B580D: ;
     ecx = MEM32(ebp + -4);
@@ -1564,8 +1763,9 @@ loc_003B5865: ;
 
 loc_003B586C: ;
     /* cmp MEM32(esi + 0x1C), eax - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(esi + 0x1C), eax)); /* latched */
     MEM32(ebp + 8) = 0x8007000Eu;
-    if (CMP_EQ(MEM32(esi + 0x1C), eax)) goto loc_003B5892; /* je: equal / zero */
+    if (_rcc0) goto loc_003B5892; /* je: equal / zero */
 
 loc_003B5878: ;
     PUSH32(esp, esi);
@@ -3211,6 +3411,7 @@ loc_003B6597: ;
  */
 void sub_003B65C0(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -3686,11 +3887,12 @@ loc_003B69FD: ;
 
 loc_003B6A07: ;
     /* test MEM8(ebp + 0x344), 1 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(ebp + 0x344), 1)); /* latched */
     MEM32(ebp) = ebx;
     MEM32(ebp + 4) = edx;
     MEM32(ebp + 8) = edi;
     MEM32(ebp + 0xC) = esi;
-    if (TEST_Z(MEM8(ebp + 0x344), 1)) goto loc_003B6A2C; /* je: equal / zero */
+    if (_rcc0) goto loc_003B6A2C; /* je: equal / zero */
 
 loc_003B6A1C: ;
     { uint32_t _icall_esp = g_esp;
@@ -5705,7 +5907,7 @@ loc_003B79F3: ;
  */
 void sub_003B7A00(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     int _flags = 0; /* fallback flag var */
 
 loc_003B7A00: ;
@@ -5714,9 +5916,9 @@ loc_003B7A00: ;
     ecx++;
     MEM32(eax + 0x33C) = ecx;
     /* cmp ecx, edx - flags set for next jcc */
-    _rccf = (CMP_L(ecx, edx));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (CMP_L(ecx, edx)); /* latched */
     ecx = MEM32(eax + 0x334);
-    if (_rccf) goto loc_003B7A34; /* jl: less (signed <) */
+    if (_rcc0) goto loc_003B7A34; /* jl: less (signed <) */
 
 loc_003B7A1D: ;
     edx = MEM32(eax + 0x338);
@@ -6785,7 +6987,7 @@ loc_003B82F0: ;
  */
 void sub_003B8604(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -6907,9 +7109,9 @@ loc_003B86EB: ;
     POP32(esp, esi);
     MEM8(0x3B8409) = LO8(ebx);
     /* cmp ebx, 1 - flags set for next jcc */
-    _rccf = (CMP_BE(ebx, 1));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (CMP_BE(ebx, 1)); /* latched */
     POP32(esp, ebx);
-    if (_rccf) goto loc_003B86FF; /* jbe: below or equal (unsigned <=) */
+    if (_rcc0) goto loc_003B86FF; /* jbe: below or equal (unsigned <=) */
 
 loc_003B86F9: ;
     MEM8(0x3B840F) = MEM8(0x3B840F) << 1;
@@ -7625,6 +7827,7 @@ loc_003B8AEA: ;
  */
 void sub_003B8AEE(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -7638,10 +7841,11 @@ loc_003B8AEE: ;
     esi = 0; /* xor self */
     MEM8(ecx + 0xA0) = 0x10;
     /* cmp MEM8(0x3B83B0), LO8(eax) - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM8(0x3B83B0), LO8(eax))); /* latched */
     PUSH32(esp, edi);
     MEM32(ebp + -4) = eax;
     MEM32(ebp + -8) = eax;
-    if (CMP_EQ(MEM8(0x3B83B0), LO8(eax))) goto loc_003B8B17; /* je: equal / zero */
+    if (_rcc0) goto loc_003B8B17; /* je: equal / zero */
 
 loc_003B8B10: ;
     MEM8(ecx + 0xA0) = 0x30;
@@ -7709,9 +7913,10 @@ loc_003B8B74: ;
     ebx = ZX8(MEM8(eax + -7));
     ebx = ebx + edx;
     MEM32(ebp + -12) = MEM32(ebp + -12) - 1;
+    _rcc0 = ((MEM32(ebp + -12) != 0)); /* latched */
     MEM32(ebp + -8) = edi;
     MEM32(ecx + 0xA8) = ebx;
-    if ((MEM32(ebp + -12) != 0)) { RECOMP_SLICE_POINT(); goto loc_003B8B74; } /* jne: not equal / not zero */
+    if (_rcc0) { RECOMP_SLICE_POINT(); goto loc_003B8B74; } /* jne: not equal / not zero */
 
 loc_003B8BE2: ;
     if (CMP_EQ(MEM8(0x3B83B0), 0)) { g_seh_ebp = ebp; sub_003B8BF4(); return; } /* je: equal / zero */
@@ -7791,6 +7996,7 @@ loc_003B8C0C: ;
  */
 void sub_003B8C37(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -7801,10 +8007,11 @@ loc_003B8C37: ;
     PUSH32(esp, esi);
     esi = 0; /* xor self */
     /* cmp MEM32(0x3B8548), esi - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(0x3B8548), esi)); /* latched */
     MEM32(ebp + -8) = esi;
     MEM32(ebp + -4) = esi;
     MEM32(ebp + -12) = esi;
-    if (CMP_NE(MEM32(0x3B8548), esi)) goto loc_003B8E3D; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003B8E3D; /* jne: not equal / not zero */
 
 loc_003B8C55: ;
     ecx = MEM32(ebp + 8);
@@ -7884,8 +8091,9 @@ loc_003B8CD6: ;
 
 loc_003B8CE1: ;
     /* cmp MEM32(ebp + -4), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(ebp + -4), 0)); /* latched */
     MEM16(0xF2A4C8) = 8;
-    if (CMP_NE(MEM32(ebp + -4), 0)) goto loc_003B8CF9; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003B8CF9; /* jne: not equal / not zero */
 
 loc_003B8CF0: ;
     MEM16(0xF2A4C8) = 4;
@@ -7969,9 +8177,10 @@ loc_003B8D9C: ;
 loc_003B8DA2: ;
     edx = 0; /* xor self */
     /* cmp MEM16(0xF2A4C8), LO16(edi) - flags set for next jcc */
+    _rcc0 = (CMP_BE(MEM16(0xF2A4C8), LO16(edi))); /* latched */
     MEM32(0xF2A4CC) = eax;
     MEM16(0xF2A4CA) = LO16(edi);
-    if (CMP_BE(MEM16(0xF2A4C8), LO16(edi))) goto loc_003B8DD6; /* jbe: below or equal (unsigned <=) */
+    if (_rcc0) goto loc_003B8DD6; /* jbe: below or equal (unsigned <=) */
 
 loc_003B8DB9: ;
     ecx = 0; /* xor self */
@@ -8047,6 +8256,7 @@ loc_003B8E3D: ;
  */
 void sub_003B8E42(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -8054,8 +8264,9 @@ void sub_003B8E42(void)
 loc_003B8E42: ;
     eax = 0; /* xor self */
     /* cmp MEM8(0x3B83B0), LO8(eax) - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(0x3B83B0), LO8(eax))); /* latched */
     PUSH32(esp, edi);
-    SET_LO8(eax, (CMP_NE(MEM8(0x3B83B0), LO8(eax))) ? 1 : 0); /* setne */
+    SET_LO8(eax, (_rcc0) ? 1 : 0); /* setne */
     MEM16(0xF2A622) = MEM16(0xF2A622) & 0;
     PUSH32(esp, 0x48425355);
     eax = eax * 8 + 6;
@@ -8101,6 +8312,7 @@ loc_003B8EA3: ;
  */
 void sub_003B8EAE(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -8143,8 +8355,9 @@ loc_003B8EDC: ;
     edi = ebp + -4;
     ecx++;
     /* cmp MEM8(esi + 0x460), LO8(edx) - flags set for next jcc */
+    _rcc0 = (CMP_BE(MEM8(esi + 0x460), LO8(edx))); /* latched */
     MEM32(edi) = eax; edi += 4; /* stosd */
-    if (CMP_BE(MEM8(esi + 0x460), LO8(edx))) goto loc_003B8F38; /* jbe: below or equal (unsigned <=) */
+    if (_rcc0) goto loc_003B8F38; /* jbe: below or equal (unsigned <=) */
 
 loc_003B8F07: ;
     eax = ebx + 0x54;
@@ -8449,6 +8662,7 @@ loc_003B911E: ;
  */
 void sub_003B9127(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -8463,9 +8677,10 @@ loc_003B9127: ;
     ecx = ecx << 6;
     ecx = ecx + 0x30;
     /* cmp MEM32(ebx), eax - flags set for next jcc */
+    _rcc0 = (CMP_AE(MEM32(ebx), eax)); /* latched */
     PUSH32(esp, esi);
     MEM32(ebp + -8) = ecx;
-    if (CMP_AE(MEM32(ebx), eax)) goto loc_003B9147; /* jae: above or equal (unsigned >=) */
+    if (_rcc0) goto loc_003B9147; /* jae: above or equal (unsigned >=) */
 
 loc_003B9145: ;
     MEM32(ebx) = eax;
@@ -8544,8 +8759,9 @@ loc_003B919E: ;
     MEM32(0xF45F2C) = edi;
     MEM32(0xF45F28) = edx;
     /* cmp MEM32(ebx + 4), edx - flags set for next jcc */
+    _rcc0 = (CMP_BE(MEM32(ebx + 4), edx)); /* latched */
     MEM32(ebp + -12) = ecx;
-    if (CMP_BE(MEM32(ebx + 4), edx)) goto loc_003B922D; /* jbe: below or equal (unsigned <=) */
+    if (_rcc0) goto loc_003B922D; /* jbe: below or equal (unsigned <=) */
 
 loc_003B91EF: ;
     edi = MEM32(0xF45F28);
@@ -8976,6 +9192,7 @@ loc_003B94C0: ;
  */
 void sub_003B94C4(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -9010,8 +9227,9 @@ loc_003B94E6: ;
     ecx = esi + -70;
     eax = eax << LO8(ecx);
     /* test MEM32(0xF273C0), eax - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM32(0xF273C0), eax)); /* latched */
     MEM32(ebp + -16) = eax;
-    if (TEST_Z(MEM32(0xF273C0), eax)) { g_seh_ebp = ebp; sub_003B951B(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003B951B(); return; } /* je: equal / zero */
 
 loc_003B9507: ;
     eax = MEM32(ebp + 0x10);
@@ -9363,6 +9581,7 @@ loc_003B96FD: ;
  */
 void sub_003B9704(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -9390,8 +9609,9 @@ loc_003B9725: ;
     ecx = ecx - 0x46;
     eax = eax << LO8(ecx);
     /* test MEM32(0xF273C0), eax - flags set for next jcc */
+    _rcc0 = (TEST_NZ(MEM32(0xF273C0), eax)); /* latched */
     MEM32(ebp + -20) = eax;
-    if (TEST_NZ(MEM32(0xF273C0), eax)) { g_seh_ebp = ebp; sub_003B9764(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003B9764(); return; } /* jne: not equal / not zero */
 
 loc_003B973E: ;
     eax = ebp + -148;
@@ -10428,6 +10648,7 @@ loc_003B9BB5: ;
  */
 void sub_003B9BB9(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -10451,9 +10672,10 @@ loc_003B9BDA: ;
     esi = MEM32(edi + 8);
     ebx = 0; /* xor self */
     /* cmp MEM32(esi + 8), ebx - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(esi + 8), ebx)); /* latched */
     SET_LO8(ecx, LO8(eax));
     MEM8(ebp + 0xF) = LO8(ecx);
-    if (CMP_EQ(MEM32(esi + 8), ebx)) { g_seh_ebp = ebp; sub_003B9C10(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003B9C10(); return; } /* je: equal / zero */
 
 loc_003B9BE9: ;
     MEM32(esi + 0xC) = MEM32(esi + 0xC) | 1;
@@ -10580,14 +10802,16 @@ loc_003B9C5C: ;
  */
 void sub_003B9C63(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_003B9C63: ;
     /* cmp MEM32(edi), ebx - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(edi), ebx)); /* latched */
     PUSH32(esp, esi);
-    if (CMP_NE(MEM32(edi), ebx)) { g_seh_ebp = ebp; sub_003B9C82(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003B9C82(); return; } /* jne: not equal / not zero */
 
 loc_003B9C68: ;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003B99BD(); /* call 0x003B99BD */
@@ -11798,8 +12022,8 @@ loc_003BA26F: ;
 
 loc_003BA27C: ;
     MEM32(edi) = MEM32(edi) + 0xF4240;
-    MEM32(esi + 0x10) = ebx;
     _cf = ((uint32_t)(MEM32(edi)) < (uint32_t)(0xF4240)); /* CF from add */
+    MEM32(esi + 0x10) = ebx;
     MEM32(edi + 4) = MEM32(edi + 4) + ebx + _cf; /* adc */
     eax = MEM32(0xF2A454);
     if (CMP_NE(eax, ebx)) goto loc_003BA29C; /* jne: not equal / not zero */
@@ -11881,14 +12105,16 @@ loc_003BA312: ;
  */
 void sub_003BA313(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_003BA313: ;
     /* cmp MEM32(esp + 4), 0 - flags set for next jcc */
+    _rcc0 = (CMP_GE(MEM32(esp + 4), 0)); /* latched */
     MEM8(0xF2A3DB) = 0x81;
-    if (CMP_GE(MEM32(esp + 4), 0)) goto loc_003BA32E; /* jge: greater or equal (signed >=) */
+    if (_rcc0) goto loc_003BA32E; /* jge: greater or equal (signed >=) */
 
 loc_003BA321: ;
     PUSH32(esp, MEM32(esp + 8));
@@ -12379,6 +12605,7 @@ loc_003BA519: ;
  */
 void sub_003BA51D(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -12386,8 +12613,9 @@ void sub_003BA51D(void)
 loc_003BA51D: ;
     ecx = MEM32(esp + 4);
     /* cmp MEM8(ecx), 4 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(ecx), 4)); /* latched */
     PUSH32(esp, esi);
-    if (CMP_NE(MEM8(ecx), 4)) goto loc_003BA559; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BA559; /* jne: not equal / not zero */
 
 loc_003BA527: ;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003BA1FF(); /* call 0x003BA1FF */
@@ -12660,6 +12888,7 @@ loc_003BA690: ;
  */
 void sub_003BA695(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -12668,9 +12897,10 @@ loc_003BA695: ;
     ebp = esp;
     PUSH32(esp, ecx);
     /* cmp MEM8(ecx), 5 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(ecx), 5)); /* latched */
     PUSH32(esp, esi);
     PUSH32(esp, edi);
-    if (CMP_NE(MEM8(ecx), 5)) { g_seh_ebp = ebp; sub_003BA6A9(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BA6A9(); return; } /* jne: not equal / not zero */
 
 loc_003BA6A0: ;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003BA1E8(); /* call 0x003BA1E8 */
@@ -12748,6 +12978,7 @@ loc_003BA6D6: ;
  */
 void sub_003BA6DA(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -12761,10 +12992,11 @@ loc_003BA6DA: ;
     SET_LO8(ebx, 0); /* xor self */
     edi = 0; /* xor self */
     /* cmp MEM8(0xF2A3D9), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(0xF2A3D9), 0)); /* latched */
     esi = ecx;
     MEM8(ebp + -4) = LO8(ebx);
     MEM8(0xF2A3DB) = 0xA;
-    if (CMP_NE(MEM8(0xF2A3D9), 0)) goto loc_003BA71C; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BA71C; /* jne: not equal / not zero */
 
 loc_003BA6FA: ;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003BA1E8(); /* call 0x003BA1E8 */
@@ -12856,6 +13088,7 @@ loc_003BA76B: ;
  */
 void sub_003BA76E(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -12864,8 +13097,9 @@ loc_003BA76E: ;
     ecx = MEM32(esp + 8);
     eax = 0; /* xor self */
     /* cmp MEM32(esp + 4), eax - flags set for next jcc */
+    _rcc0 = (CMP_GE(MEM32(esp + 4), eax)); /* latched */
     MEM8(0xF2A3DB) = 9;
-    if (CMP_GE(MEM32(esp + 4), eax)) goto loc_003BA78C; /* jge: greater or equal (signed >=) */
+    if (_rcc0) goto loc_003BA78C; /* jge: greater or equal (signed >=) */
 
 loc_003BA781: ;
     if (CMP_NE(MEM8(0xF2A3D9), LO8(eax))) goto loc_003BA794; /* jne: not equal / not zero */
@@ -12896,15 +13130,17 @@ loc_003BA79E: ;
  */
 void sub_003BA7A1(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_003BA7A1: ;
     /* cmp MEM8(0xF2A3D9), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(0xF2A3D9), 0)); /* latched */
     PUSH32(esp, esi);
     MEM8(0xF2A3DB) = 8;
-    if (CMP_NE(MEM8(0xF2A3D9), 0)) { g_seh_ebp = ebp; sub_003BA7FA(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BA7FA(); return; } /* jne: not equal / not zero */
 
 loc_003BA7B2: ;
     esi = MEM32(esp + 0xC);
@@ -12991,6 +13227,7 @@ loc_003BA80A: ;
  */
 void sub_003BA80E(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -13008,8 +13245,9 @@ loc_003BA819: ;
 
 loc_003BA82A: ;
     /* cmp MEM8(0xF2A3D9), 0 - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM8(0xF2A3D9), 0)); /* latched */
     MEM32(0xF2A3E4) = 0x3BA364;
-    if (CMP_EQ(MEM8(0xF2A3D9), 0)) goto loc_003BA847; /* je: equal / zero */
+    if (_rcc0) goto loc_003BA847; /* je: equal / zero */
 
 loc_003BA83D: ;
     MEM32(0xF2A3E4) = 0x3BA7A1;
@@ -13040,6 +13278,7 @@ loc_003BA86B: ;
  */
 void sub_003BA873(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -13054,10 +13293,11 @@ loc_003BA873: ;
     ecx++;
     ebx = 0; /* xor self */
     /* cmp MEM32(ebp + 8), ebx - flags set for next jcc */
+    _rcc0 = (CMP_GE(MEM32(ebp + 8), ebx)); /* latched */
     PUSH32(esp, edi);
     MEM32(ebp + -4) = ecx;
     MEM8(0xF2A3DB) = 7;
-    if (CMP_GE(MEM32(ebp + 8), ebx)) { g_seh_ebp = ebp; sub_003BA8A3(); return; } /* jge: greater or equal (signed >=) */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BA8A3(); return; } /* jge: greater or equal (signed >=) */
 
 loc_003BA892: ;
     if (CMP_NE(MEM32(ebp + 8), 0x80000400u)) goto loc_003BA89E; /* jne: not equal / not zero */
@@ -13509,6 +13749,7 @@ loc_003BAB0A: ;
  */
 void sub_003BAB0E(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -13549,8 +13790,9 @@ loc_003BAB63: ;
 
 loc_003BAB69: ;
     /* cmp MEM8(0xF2A468), 1 - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM8(0xF2A468), 1)); /* latched */
     MEM32(0xF2A4B4) = eax;
-    if (CMP_EQ(MEM8(0xF2A468), 1)) goto loc_003BAC00; /* je: equal / zero */
+    if (_rcc0) goto loc_003BAC00; /* je: equal / zero */
 
 loc_003BAB7B: ;
     if (CMP_EQ(MEM8(0xF2A453), 0)) goto loc_003BAC00; /* je: equal / zero */
@@ -13700,6 +13942,7 @@ loc_003BAC4F: ;
  */
 void sub_003BAC55(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -13713,8 +13956,9 @@ loc_003BAC55: ;
     ebx = 0; /* xor self */
     edi = edi + 0x18;
     /* cmp MEM8(0xF2A3D9), LO8(ebx) - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM8(0xF2A3D9), LO8(ebx))); /* latched */
     MEM8(0xF2A3DB) = 1;
-    if (CMP_EQ(MEM8(0xF2A3D9), LO8(ebx))) { g_seh_ebp = ebp; sub_003BAC7D(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BAC7D(); return; } /* je: equal / zero */
 
 loc_003BAC71: ;
     PUSH32(esp, esi);
@@ -13945,6 +14189,7 @@ loc_003BAE0C: ;
  */
 void sub_003BAE0E(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -13955,10 +14200,11 @@ loc_003BAE0E: ;
     PUSH32(esp, ebx);
     ebx = 0; /* xor self */
     /* cmp MEM8(0xF2A3D9), LO8(ebx) - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM8(0xF2A3D9), LO8(ebx))); /* latched */
     PUSH32(esp, esi);
     esi = edx;
     MEM8(0xF2A3DB) = 4;
-    if (CMP_EQ(MEM8(0xF2A3D9), LO8(ebx))) { g_seh_ebp = ebp; sub_003BAE33(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BAE33(); return; } /* je: equal / zero */
 
 loc_003BAE27: ;
     PUSH32(esp, esi);
@@ -14433,6 +14679,7 @@ loc_003BB099: ;
  */
 void sub_003BB0B9(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -14451,9 +14698,10 @@ loc_003BB0B9: ;
 
 loc_003BB0D0: ;
     /* test MEM8(esi + 0xC), 6 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(esi + 0xC), 6)); /* latched */
     ecx = MEM32(ebp + 0xC);
     MEM8(ebp + 0xB) = LO8(eax);
-    if (TEST_Z(MEM8(esi + 0xC), 6)) { g_seh_ebp = ebp; sub_003BB0F0(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BB0F0(); return; } /* je: equal / zero */
 
 loc_003BB0DC: ;
     eax = 0xC000009Du;
@@ -14528,7 +14776,7 @@ loc_003BB10A: ;
  */
 void sub_003BB113(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -14542,9 +14790,9 @@ loc_003BB113: ;
     ecx = 0xC0000000u;
     eax = eax & ecx;
     /* cmp eax, ecx - flags set for next jcc */
-    _rccf = (CMP_NE(eax, ecx));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (CMP_NE(eax, ecx)); /* latched */
     eax = MEM32(esi + 0x10);
-    if (_rccf) { g_seh_ebp = ebp; sub_003BB136(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BB136(); return; } /* jne: not equal / not zero */
 
 loc_003BB130: ;
     MEM32(eax + 0x14) = MEM32(eax + 0x14) & 0;
@@ -15083,6 +15331,7 @@ loc_003BB428: ;
  */
 void sub_003BB42D(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -15156,9 +15405,10 @@ loc_003BB49E: ;
 
 loc_003BB4B0: ;
     MEM32(ebp + -4) = MEM32(ebp + -4) - 1;
+    _rcc0 = ((MEM32(ebp + -4) != 0)); /* latched */
     eax = MEM32(ebp + -4);
     MEM32(edi + eax * 4) = 0x4C494146;
-    if ((MEM32(ebp + -4) != 0)) { RECOMP_SLICE_POINT(); goto loc_003BB4B0; } /* jne: not equal / not zero */
+    if (_rcc0) { RECOMP_SLICE_POINT(); goto loc_003BB4B0; } /* jne: not equal / not zero */
 
 loc_003BB4BF: ;
     if (CMP_EQ(esi, 0xFFFFFFFFu)) goto loc_003BB4CE; /* je: equal / zero */
@@ -15210,6 +15460,7 @@ loc_003BB4F6: ;
  */
 void sub_003BB4FB(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -15223,10 +15474,11 @@ loc_003BB4FB: ;
     ecx = MEM32(esi + 0x10);
     ebx = ebx & 0xF0000000u;
     /* cmp MEM32(ebp + 0xC), 0 - flags set for next jcc */
+    _rcc0 = (CMP_L(MEM32(ebp + 0xC), 0)); /* latched */
     PUSH32(esp, edi);
     edi = MEM32(ecx + 0x5C);
     MEM32(ebp + 8) = ecx;
-    if (CMP_L(MEM32(ebp + 0xC), 0)) goto loc_003BB5D1; /* jl: less (signed <) */
+    if (_rcc0) goto loc_003BB5D1; /* jl: less (signed <) */
 
 loc_003BB520: ;
     ebx = ebx + 0x10000000;
@@ -15407,6 +15659,7 @@ loc_003BB6DA: ;
  */
 void sub_003BB6E1(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -15422,8 +15675,9 @@ loc_003BB6E1: ;
     edi = MEM32(esi + 0xC);
     edi = edi & 0xF0000000u;
     /* cmp MEM32(ebp + 0xC), 0 - flags set for next jcc */
+    _rcc0 = (CMP_L(MEM32(ebp + 0xC), 0)); /* latched */
     MEM32(ebp + 8) = edx;
-    if (CMP_L(MEM32(ebp + 0xC), 0)) { g_seh_ebp = ebp; sub_003BB70A(); return; } /* jl: less (signed <) */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BB70A(); return; } /* jl: less (signed <) */
 
 loc_003BB702: ;
     edi = edi + 0x10000000;
@@ -17726,6 +17980,7 @@ loc_003BC195: ;
  */
 void sub_003BC199(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -17747,8 +18002,9 @@ loc_003BC1A9: ;
 
 loc_003BC1B3: ;
     /* cmp MEM8(eax), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(eax), 0)); /* latched */
     MEM32(ebp + esi * 4 + -24) = eax;
-    if (CMP_NE(MEM8(eax), 0)) { RECOMP_SLICE_POINT(); goto loc_003BC1A9; } /* jne: not equal / not zero */
+    if (_rcc0) { RECOMP_SLICE_POINT(); goto loc_003BC1A9; } /* jne: not equal / not zero */
 
 loc_003BC1BC: ;
     edx = MEM32(0x3C1620);
@@ -17756,11 +18012,12 @@ loc_003BC1BC: ;
     POP32(esp, eax);
     eax = eax - esi;
     /* test MEM8(edx), 1 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(edx), 1)); /* latched */
     ecx = ebp + esi * 4 + -24;
     PUSH32(esp, eax);
     PUSH32(esp, ecx);
     ecx = edi;
-    if (TEST_Z(MEM8(edx), 1)) { g_seh_ebp = ebp; sub_003BC1DB(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BC1DB(); return; } /* je: equal / zero */
 
 loc_003BC1D4: ;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003BC157(); /* call 0x003BC157 */
@@ -17877,6 +18134,7 @@ loc_003BC21B: ;
  */
 void sub_003BC21F(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -17886,10 +18144,11 @@ loc_003BC21F: ;
     PUSH32(esp, esi);
     esi = ecx;
     /* test MEM8(esi + 0xD), 1 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(esi + 0xD), 1)); /* latched */
     ebp = MEM32(esi + 8);
     PUSH32(esp, edi);
     edi = edx;
-    if (TEST_Z(MEM8(esi + 0xD), 1)) goto loc_003BC23D; /* je: equal / zero */
+    if (_rcc0) goto loc_003BC23D; /* je: equal / zero */
 
 loc_003BC22F: ;
     eax = esi + 0x70;
@@ -18249,6 +18508,7 @@ loc_003BC42F: ;
  */
 void sub_003BC432(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -18264,8 +18524,9 @@ loc_003BC443: ;
     eax = eax & 0xFFFFF7FFu;
     ecx = esi + 0xB8;
     /* cmp MEM32(esp + 8), ecx - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(esp + 8), ecx)); /* latched */
     MEM32(esi + 0xC) = eax;
-    if (CMP_NE(MEM32(esp + 8), ecx)) goto loc_003BC45F; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BC45F; /* jne: not equal / not zero */
 
 loc_003BC457: ;
     ecx = MEM32(esi + 0xEC);
@@ -18291,8 +18552,9 @@ loc_003BC47C: ;
 loc_003BC481: ;
     ecx = MEM32(esp + 8);
     /* cmp MEM32(ecx + 4), 0 - flags set for next jcc */
+    _rcc0 = (CMP_L(MEM32(ecx + 4), 0)); /* latched */
     PUSH32(esp, edi);
-    if (CMP_L(MEM32(ecx + 4), 0)) goto loc_003BC4D5; /* jl: less (signed <) */
+    if (_rcc0) goto loc_003BC4D5; /* jl: less (signed <) */
 
 loc_003BC48C: ;
     if (TEST_NZ(LO8(eax), 6)) goto loc_003BC4D5; /* jne: not equal / not zero */
@@ -18587,6 +18849,7 @@ loc_003BC659: ;
  */
 void sub_003BC5F5(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -18595,9 +18858,10 @@ loc_003BC5F5: ;
     eax = MEM32(esp + 4);
     ecx = 0; /* xor self */
     /* cmp MEM32(eax + 4), ecx - flags set for next jcc */
+    _rcc0 = (CMP_L(MEM32(eax + 4), ecx)); /* latched */
     PUSH32(esp, esi);
     esi = MEM32(esp + 0xC);
-    if (CMP_L(MEM32(eax + 4), ecx)) goto loc_003BC644; /* jl: less (signed <) */
+    if (_rcc0) goto loc_003BC644; /* jl: less (signed <) */
 
 loc_003BC605: ;
     if (TEST_NZ(MEM8(esi + 0xC), 6)) goto loc_003BC644; /* jne: not equal / not zero */
@@ -19057,6 +19321,7 @@ loc_003BC973: ;
  */
 void sub_003BC983(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -19068,10 +19333,11 @@ loc_003BC983: ;
     ebx = 0; /* xor self */
     ebp = 0; /* xor self */
     /* cmp MEM16(0xF2A4C8), LO16(ebx) - flags set for next jcc */
+    _rcc0 = (CMP_BE(MEM16(0xF2A4C8), LO16(ebx))); /* latched */
     PUSH32(esp, edi);
     MEM32(esp + 0xC) = edx;
     edi = ecx;
-    if (CMP_BE(MEM16(0xF2A4C8), LO16(ebx))) goto loc_003BC9E6; /* jbe: below or equal (unsigned <=) */
+    if (_rcc0) goto loc_003BC9E6; /* jbe: below or equal (unsigned <=) */
 
 loc_003BC99A: ;
     PUSH32(esp, esi);
@@ -19223,6 +19489,7 @@ loc_003BCA93: ;
  */
 void sub_003BCA98(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -19231,10 +19498,11 @@ loc_003BCA98: ;
     PUSH32(esp, esi);
     esi = MEM32(esp + 0xC);
     /* test MEM8(esi + 0xA2), 2 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(esi + 0xA2), 2)); /* latched */
     eax = MEM32(esi);
     ecx = MEM32(eax);
     PUSH32(esp, edi);
-    if (TEST_Z(MEM8(esi + 0xA2), 2)) { g_seh_ebp = ebp; sub_003BCAC9(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BCAC9(); return; } /* je: equal / zero */
 
 loc_003BCAAB: ;
     eax = MEM32(esp + 0xC);
@@ -19742,6 +20010,7 @@ loc_003BCCDF: ;
  */
 void sub_003BCB49(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -19750,9 +20019,10 @@ loc_003BCB49: ;
     PUSH32(esp, ebx);
     ebx = MEM32(esp + 0xC);
     /* test MEM8(ebx + 0xA2), 1 - flags set for next jcc */
+    _rcc0 = (TEST_NZ(MEM8(ebx + 0xA2), 1)); /* latched */
     PUSH32(esp, edi);
     edi = MEM32(ebx);
-    if (TEST_NZ(MEM8(ebx + 0xA2), 1)) goto loc_003BCBA1; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BCBA1; /* jne: not equal / not zero */
 
 loc_003BCB5A: ;
     SET_LO8(eax, MEM8(edi + 4));
@@ -20487,7 +20757,7 @@ loc_003BCF29: ;
  */
 void sub_003BCF2A(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -20497,9 +20767,9 @@ loc_003BCF2A: ;
     ecx = MEM32(edx + 8);
     eax = MEM32(ecx);
     /* test MEM8(ecx + 0xA2), 1 - flags set for next jcc */
-    _rccf = (TEST_NZ(MEM8(ecx + 0xA2), 1));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (TEST_NZ(MEM8(ecx + 0xA2), 1)); /* latched */
     ecx = MEM32(esp + 4);
-    if (_rccf) goto loc_003BCF46; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BCF46; /* jne: not equal / not zero */
 
 loc_003BCF40: ;
     if (TEST_Z(MEM8(eax + 4), 2)) goto loc_003BCF4D; /* je: equal / zero */
@@ -20827,6 +21097,7 @@ loc_003BD175: ;
  */
 void sub_003BD193(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -20907,10 +21178,11 @@ loc_003BD211: ;
 loc_003BD214: ;
     edx = MEM32(ebp + -8);
     /* cmp MEM32(edx + 0x10), ebx - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(edx + 0x10), ebx)); /* latched */
     eax = esi + 0x10;
     MEM32(esi + 0x1C) = esi;
     MEM32(esi + 0x18) = 0x3BCF2A;
-    if (CMP_EQ(MEM32(edx + 0x10), ebx)) goto loc_003BD24C; /* je: equal / zero */
+    if (_rcc0) goto loc_003BD24C; /* je: equal / zero */
 
 loc_003BD229: ;
     MEM8(eax) = 0x28;
@@ -21420,6 +21692,7 @@ loc_003BD4CB: ;
  */
 void sub_003BD4D7(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
@@ -21571,8 +21844,9 @@ loc_003BD63C: ;
 
 loc_003BD642: ;
     /* cmp MEM32(ebx), 0 - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(ebx), 0)); /* latched */
     MEM8(ebp + -1) = LO8(eax);
-    if (CMP_EQ(MEM32(ebx), 0)) { g_seh_ebp = ebp; sub_003BD4CB(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BD4CB(); return; } /* je: equal / zero */
 
 loc_003BD64E: ;
     if (TEST_NZ(MEM8(esi + 4), 2)) { g_seh_ebp = ebp; sub_003BD4CB(); return; } /* jne: not equal / not zero */
@@ -22270,15 +22544,17 @@ loc_003BD987: ;
  */
 void sub_003BD98B(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_003BD98B: ;
     /* cmp MEM32(0xF2A618), 0 - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(0xF2A618), 0)); /* latched */
     PUSH32(esp, esi);
     esi = 0xF2A5D0;
-    if (CMP_EQ(MEM32(0xF2A618), 0)) goto loc_003BD9B5; /* je: equal / zero */
+    if (_rcc0) goto loc_003BD9B5; /* je: equal / zero */
 
 loc_003BD99A: ;
     { uint32_t _icall_esp = g_esp;
@@ -22774,6 +23050,7 @@ loc_003BDB9A: ;
  */
 void sub_003BDB9F(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -22803,9 +23080,10 @@ loc_003BDBC9: ;
 
 loc_003BDBD5: ;
     /* cmp MEM8(ebp + 0x14), LO8(ecx) - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM8(ebp + 0x14), LO8(ecx))); /* latched */
     eax = MEM32(ebp + 0x10);
     MEM32(0xF2A5C8) = eax;
-    if (CMP_EQ(MEM8(ebp + 0x14), LO8(ecx))) goto loc_003BDBF3; /* je: equal / zero */
+    if (_rcc0) goto loc_003BDBF3; /* je: equal / zero */
 
 loc_003BDBE2: ;
     edx = 0; /* xor self */
@@ -23174,7 +23452,7 @@ loc_003BDE1D: ;
  */
 void sub_003BDE21(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -23215,10 +23493,10 @@ loc_003BDE51: ;
 
 loc_003BDE5E: ;
     /* test MEM8(esi), 8 - flags set for next jcc */
-    _rccf = (TEST_Z(MEM8(esi), 8));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (TEST_Z(MEM8(esi), 8)); /* latched */
     POP32(esp, esi);
     POP32(esp, ebx);
-    if (_rccf) goto loc_003BDE6D; /* je: equal / zero */
+    if (_rcc0) goto loc_003BDE6D; /* je: equal / zero */
 
 loc_003BDE65: ;
     PUSH32(esp, MEM32(ebp + 8));
@@ -23583,6 +23861,7 @@ loc_003BE099: ;
  */
 void sub_003BE0A1(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -23590,11 +23869,12 @@ void sub_003BE0A1(void)
 loc_003BE0A1: ;
     SET_LO8(ebx, MEM8(eax + 3));
     /* cmp LO8(ebx), MEM8(eax + 2) - flags set for next jcc */
+    _rcc0 = (CMP_BE(LO8(ebx), MEM8(eax + 2))); /* latched */
     MEM8(eax + 0x26) = LO8(ecx);
     MEM8(eax + 0x24) = 2;
     MEM32(eax + 0x14) = edi;
     esi = eax + 8;
-    if (CMP_BE(LO8(ebx), MEM8(eax + 2))) goto loc_003BE0E4; /* jbe: below or equal (unsigned <=) */
+    if (_rcc0) goto loc_003BE0E4; /* jbe: below or equal (unsigned <=) */
 
 loc_003BE0B6: ;
     edx = MEM32(eax + 0x3C);
@@ -23666,6 +23946,7 @@ loc_003BE134: ;
  */
 void sub_003BE13B(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -23678,8 +23959,9 @@ loc_003BE13B: ;
 
 loc_003BE147: ;
     /* test MEM8(eax), 2 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(eax), 2)); /* latched */
     PUSH32(esp, esi);
-    if (TEST_Z(MEM8(eax), 2)) { g_seh_ebp = ebp; sub_003BE154(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BE154(); return; } /* je: equal / zero */
 
 loc_003BE14D: ;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003BDCA8(); /* call 0x003BDCA8 */
@@ -24130,6 +24412,7 @@ loc_003BE30E: ;
  */
 void sub_003BE312(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -24164,8 +24447,9 @@ loc_003BE33B: ;
 loc_003BE353: ;
     ecx = ZX16(LO16(ecx));
     /* cmp MEM32(esi + 0x14), ecx - flags set for next jcc */
+    _rcc0 = (CMP_B(MEM32(esi + 0x14), ecx)); /* latched */
     MEM32(ebp + 8) = ecx;
-    if (CMP_B(MEM32(esi + 0x14), ecx)) { g_seh_ebp = ebp; sub_003BE428(); return; } /* jb: below (unsigned <) */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BE428(); return; } /* jb: below (unsigned <) */
 
 loc_003BE362: ;
     SET_LO8(eax, MEM8(eax));
@@ -24691,6 +24975,7 @@ loc_003BE63A: ;
  */
 void sub_003BE63E(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -24768,8 +25053,9 @@ loc_003BE6D3: ;
     MEM32(ecx) = eax;
     ecx = ecx + 4;
     MEM32(ebp + -20) = MEM32(ebp + -20) - 1;
+    _rcc0 = ((MEM32(ebp + -20) != 0)); /* latched */
     MEM32(ebp + -16) = ecx;
-    if ((MEM32(ebp + -20) != 0)) { RECOMP_SLICE_POINT(); goto loc_003BE672; } /* jne: not equal / not zero */
+    if (_rcc0) { RECOMP_SLICE_POINT(); goto loc_003BE672; } /* jne: not equal / not zero */
 
 loc_003BE6EE: ;
     POP32(esp, ebx);
@@ -24858,6 +25144,7 @@ loc_003BE735: ;
  */
 void sub_003BE741(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -24902,8 +25189,9 @@ loc_003BE77A: ;
     eax = eax & 0x780;
     eax = eax ^ ecx;
     /* cmp MEM8(esi + 0x11), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(esi + 0x11), 0)); /* latched */
     MEM32(esi) = eax;
-    if (CMP_NE(MEM8(esi + 0x11), 0)) goto loc_003BE7AD; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BE7AD; /* jne: not equal / not zero */
 
 loc_003BE7A4: ;
     eax = eax & 0xFFFFE7FFu;
@@ -24912,9 +25200,10 @@ loc_003BE7A4: ;
 
 loc_003BE7AD: ;
     /* test MEM8(ebx + 0x15), 0x80 - flags set for next jcc */
+    _rcc0 = (TEST_NZ(MEM8(ebx + 0x15), 0x80)); /* latched */
     PUSH32(esp, 0);
     POP32(esp, ecx);
-    SET_LO8(ecx, (TEST_NZ(MEM8(ebx + 0x15), 0x80)) ? 1 : 0); /* setne */
+    SET_LO8(ecx, (_rcc0) ? 1 : 0); /* setne */
     ecx++;
     ecx = ecx << 0xB;
     ecx = ecx ^ eax;
@@ -25417,6 +25706,7 @@ loc_003BE9E7: ;
  */
 void sub_003BE9EA(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -25426,9 +25716,10 @@ loc_003BE9EA: ;
     esi = edx;
     MEM8(esi + 0x20) = MEM8(esi + 0x20) + 1;
     /* test MEM8(esi + 0x10), 0x20 - flags set for next jcc */
+    _rcc0 = (TEST_NZ(MEM8(esi + 0x10), 0x20)); /* latched */
     PUSH32(esp, edi);
     edi = ecx;
-    if (TEST_NZ(MEM8(esi + 0x10), 0x20)) goto loc_003BEA24; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BEA24; /* jne: not equal / not zero */
 
 loc_003BE9F9: ;
     MEM8(esi + 1) = MEM8(esi + 1) | 0x40;
@@ -26066,15 +26357,17 @@ loc_003BECEB: ;
  */
 void sub_003BED08(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_003BED08: ;
     /* cmp MEM8(edx + 0x11), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(edx + 0x11), 0)); /* latched */
     eax = MEM32(ecx);
     PUSH32(esp, esi);
-    if (CMP_NE(MEM8(edx + 0x11), 0)) { g_seh_ebp = ebp; sub_003BED1C(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BED1C(); return; } /* jne: not equal / not zero */
 
 loc_003BED11: ;
     esi = ecx + 0x40C;
@@ -26141,15 +26434,17 @@ loc_003BED3F: ;
  */
 void sub_003BED45(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_003BED45: ;
     /* cmp MEM8(edx + 0x11), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(edx + 0x11), 0)); /* latched */
     PUSH32(esp, esi);
     PUSH32(esp, edi);
-    if (CMP_NE(MEM8(edx + 0x11), 0)) { g_seh_ebp = ebp; sub_003BED5A(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BED5A(); return; } /* jne: not equal / not zero */
 
 loc_003BED4D: ;
     esi = ecx + 0x40C;
@@ -26377,6 +26672,7 @@ loc_003BEE1C: ;
  */
 void sub_003BEE22(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -26388,8 +26684,9 @@ loc_003BEE22: ;
     PUSH32(esp, esi);
     esi = edx;
     /* cmp MEM8(esi + 0x11), 3 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(esi + 0x11), 3)); /* latched */
     PUSH32(esp, edi);
-    if (CMP_NE(MEM8(esi + 0x11), 3)) goto loc_003BEE86; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BEE86; /* jne: not equal / not zero */
 
 loc_003BEE33: ;
     SET_LO8(eax, 0x20);
@@ -26977,6 +27274,7 @@ loc_003BF20D: ;
  */
 void sub_003BF231(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -27079,9 +27377,10 @@ loc_003BF2FB: ;
     ecx = MEM32(ecx);
     edx = MEM32(ecx + 0x34);
     /* test eax, eax - flags set for next jcc */
+    _rcc0 = (CMP_LE(eax & eax, 0)); /* latched */
     esi = edx;
     eax = 0x3FFF;
-    if (CMP_LE(eax & eax, 0)) goto loc_003BF31A; /* jle: less or equal (signed <=) */
+    if (_rcc0) goto loc_003BF31A; /* jle: less or equal (signed <=) */
 
 loc_003BF30B: ;
     esi = esi & eax;
@@ -27443,6 +27742,7 @@ loc_003BF4E1: ;
  */
 void sub_003BF4E6(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -27454,12 +27754,13 @@ loc_003BF4E6: ;
     PUSH32(esp, esi);
     esi = edx;
     /* cmp MEM8(esi + 0x1E), 1 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(esi + 0x1E), 1)); /* latched */
     eax = MEM32(esi + 0x14);
     PUSH32(esp, edi);
     edi = MEM32(esi + 0x18);
     MEM32(ebp + -4) = ecx;
     MEM32(ebp + -8) = eax;
-    if (CMP_NE(MEM8(esi + 0x1E), 1)) goto loc_003BF51B; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BF51B; /* jne: not equal / not zero */
 
 loc_003BF501: ;
     eax = MEM32(esi + 0xC);
@@ -27492,7 +27793,7 @@ loc_003BF52B: ;
  */
 void sub_003BF52D(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -27541,9 +27842,9 @@ loc_003BF56E: ;
 
 loc_003BF579: ;
     /* test LO8(ebx), LO8(ebx) - flags set for next jcc */
-    _rccf = (TEST_Z(LO8(ebx), LO8(ebx)));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (TEST_Z(LO8(ebx), LO8(ebx))); /* latched */
     POP32(esp, ebx);
-    if (_rccf) { g_seh_ebp = ebp; sub_003BF58E(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BF58E(); return; } /* je: equal / zero */
 
 loc_003BF57E: ;
     edx = MEM32(ebp + -8);
@@ -27584,6 +27885,7 @@ loc_003BF58E: ;
  */
 void sub_003BF592(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -27597,10 +27899,11 @@ loc_003BF592: ;
     ebx = ecx;
     edx = 0; /* xor self */
     /* cmp MEM32(ebx + 0x42C), edx - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(ebx + 0x42C), edx)); /* latched */
     MEM32(ebp + -20) = edi;
     MEM32(ebp + -8) = ebx;
     MEM32(ebp + -4) = edx;
-    if (CMP_EQ(MEM32(ebx + 0x42C), edx)) goto loc_003BF683; /* je: equal / zero */
+    if (_rcc0) goto loc_003BF683; /* je: equal / zero */
 
 loc_003BF5B5: ;
     PUSH32(esp, esi);
@@ -27640,8 +27943,9 @@ loc_003BF5EF: ;
     eax = eax & 0xFFFFFFF0u;
     edx = edi + eax;
     /* cmp ecx, MEM32(edx + 0x18) - flags set for next jcc */
+    _rcc0 = (CMP_EQ(ecx, MEM32(edx + 0x18))); /* latched */
     MEM32(ebp + -16) = eax;
-    if (CMP_EQ(ecx, MEM32(edx + 0x18))) goto loc_003BF625; /* je: equal / zero */
+    if (_rcc0) goto loc_003BF625; /* je: equal / zero */
 
 loc_003BF60D: ;
     ebx = MEM32(esi + 4);
@@ -27787,7 +28091,7 @@ loc_003BF6E6: ;
  */
 void sub_003BF6EA(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -27799,8 +28103,9 @@ loc_003BF6EA: ;
     ebx = ecx;
     ebp = 0; /* xor self */
     /* cmp MEM32(ebx + 0x430), ebp - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(ebx + 0x430), ebp)); /* latched */
     MEM32(esp + 8) = edx;
-    if (CMP_EQ(MEM32(ebx + 0x430), ebp)) goto loc_003BF760; /* je: equal / zero */
+    if (_rcc0) goto loc_003BF760; /* je: equal / zero */
 
 loc_003BF6FD: ;
     PUSH32(esp, esi);
@@ -27861,9 +28166,9 @@ loc_003BF760: ;
     eax = 0; /* xor self */
     MEM32(ebx + 0x430) = ebp;
     /* test ebp, ebp - flags set for next jcc */
-    _rccf = (TEST_NZ(ebp, ebp));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (TEST_NZ(ebp, ebp)); /* latched */
     POP32(esp, ebp);
-    SET_LO8(eax, (_rccf) ? 1 : 0); /* setne */
+    SET_LO8(eax, (_rcc0) ? 1 : 0); /* setne */
     POP32(esp, ebx);
     POP32(esp, ecx);
     esp += 4; return; /* ret */
@@ -27879,6 +28184,7 @@ loc_003BF760: ;
  */
 void sub_003BF771(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -27890,9 +28196,10 @@ loc_003BF771: ;
     ebx = ecx;
     ecx = 0; /* xor self */
     /* cmp MEM32(ebx + 0x434), ecx - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(ebx + 0x434), ecx)); /* latched */
     MEM32(ebp + -8) = edx;
     MEM32(ebp + -4) = ecx;
-    if (CMP_EQ(MEM32(ebx + 0x434), ecx)) goto loc_003BF83B; /* je: equal / zero */
+    if (_rcc0) goto loc_003BF83B; /* je: equal / zero */
 
 loc_003BF78E: ;
     PUSH32(esp, esi);
@@ -28004,6 +28311,7 @@ loc_003BF83B: ;
  */
 void sub_003BF84B(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -28073,9 +28381,10 @@ loc_003BF8BB: ;
 
 loc_003BF8CF: ;
     /* test MEM8(ebp + -4), 4 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(ebp + -4), 4)); /* latched */
     PUSH32(esp, 4);
     POP32(esp, edi);
-    if (TEST_Z(MEM8(ebp + -4), 4)) goto loc_003BF8E2; /* je: equal / zero */
+    if (_rcc0) goto loc_003BF8E2; /* je: equal / zero */
 
 loc_003BF8D8: ;
     MEM32(ebp + -4) = MEM32(ebp + -4) & 0xFFFFFFFBu;
@@ -28231,6 +28540,7 @@ loc_003BF99F: ;
  */
 void sub_003BF9A9(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -28343,8 +28653,9 @@ loc_003BFA73: ;
     MEM32(eax + edx + 8) = edi;
     eax = ZX8(LO8(ecx));
     /* cmp eax, MEM32(ebp + -8) - flags set for next jcc */
+    _rcc0 = (CMP_B(eax, MEM32(ebp + -8))); /* latched */
     MEM8(ebp + -1) = LO8(ecx);
-    if (CMP_B(eax, MEM32(ebp + -8))) { RECOMP_SLICE_POINT(); goto loc_003BFA73; } /* jb: below (unsigned <) */
+    if (_rcc0) { RECOMP_SLICE_POINT(); goto loc_003BFA73; } /* jb: below (unsigned <) */
 
 loc_003BFACE: ;
     edx = MEM32(esi + 0x2C);
@@ -28558,6 +28869,7 @@ loc_003BFBE9: ;
  */
 void sub_003BFBED(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -28580,8 +28892,9 @@ loc_003BFBED: ;
 loc_003BFC0D: ;
     SET_LO8(ecx, MEM8(edi + 0x24));
     /* cmp LO8(ecx), MEM8(edi + 0x25) - flags set for next jcc */
+    _rcc0 = (CMP_NE(LO8(ecx), MEM8(edi + 0x25))); /* latched */
     MEM8(ebp + -1) = LO8(eax);
-    if (CMP_NE(LO8(ecx), MEM8(edi + 0x25))) { g_seh_ebp = ebp; sub_003BFC24(); return; } /* jne: not equal / not zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BFC24(); return; } /* jne: not equal / not zero */
 
 loc_003BFC18: ;
     MEM32(ebp + -20) = 0xC0000D00u;
@@ -28597,6 +28910,7 @@ loc_003BFC18: ;
  */
 void sub_003BFC24(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -28639,8 +28953,9 @@ loc_003BFC24: ;
     eax = MEM32(esi + 4);
     eax = eax & 0xFFF;
     /* cmp MEM32(esi), 0 - flags set for next jcc */
+    _rcc0 = (CMP_BE(MEM32(esi), 0)); /* latched */
     MEM32(ebp + -24) = eax;
-    if (CMP_BE(MEM32(esi), 0)) goto loc_003BFCB6; /* jbe: below or equal (unsigned <=) */
+    if (_rcc0) goto loc_003BFCB6; /* jbe: below or equal (unsigned <=) */
 
 loc_003BFC8B: ;
     ecx = esi + 8;
@@ -28782,6 +29097,7 @@ loc_003BFD4E: ;
  */
 void sub_003BFD54(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -28804,8 +29120,9 @@ loc_003BFD54: ;
 
 loc_003BFD74: ;
     /* test MEM8(esi + 0x10), 2 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(esi + 0x10), 2)); /* latched */
     MEM8(ebp + -1) = LO8(eax);
-    if (TEST_Z(MEM8(esi + 0x10), 2)) { g_seh_ebp = ebp; sub_003BFD87(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BFD87(); return; } /* je: equal / zero */
 
 loc_003BFD7D: ;
     esi = 0xC0000E00u;
@@ -28821,6 +29138,7 @@ loc_003BFD7D: ;
  */
 void sub_003BFD87(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -28836,8 +29154,9 @@ loc_003BFD8F: ;
 loc_003BFD97: ;
     SET_LO8(edx, LO8(edx) & 0xFB);
     /* cmp MEM32(esi + 0x1C), eax - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(esi + 0x1C), eax)); /* latched */
     MEM8(esi + 0x10) = LO8(edx);
-    if (CMP_NE(MEM32(esi + 0x1C), eax)) goto loc_003BFDC9; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003BFDC9; /* jne: not equal / not zero */
 
 loc_003BFDA2: ;
     SET_LO8(ecx, MEM8(ebp + -1));
@@ -28995,6 +29314,7 @@ loc_003BFE6C: ;
  */
 void sub_003BFE73(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -29015,8 +29335,9 @@ loc_003BFE73: ;
 
 loc_003BFE87: ;
     /* test MEM8(esi + 0x10), 2 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(esi + 0x10), 2)); /* latched */
     MEM8(esp + 0x13) = LO8(eax);
-    if (TEST_Z(MEM8(esi + 0x10), 2)) { g_seh_ebp = ebp; sub_003BFEAD(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BFEAD(); return; } /* je: equal / zero */
 
 loc_003BFE91: ;
     MEM8(esi + 1) = MEM8(esi + 1) | 0x40;
@@ -29094,6 +29415,7 @@ loc_003BFEC5: ;
  */
 void sub_003BFECD(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -29133,9 +29455,10 @@ loc_003BFECD: ;
     eax = eax << 6;
     MEM32(eax + edi + 8) = esi;
     /* test MEM8(edx + 0x10), 1 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(edx + 0x10), 1)); /* latched */
     MEM32(ebp + -4) = edx;
     MEM32(ebp + -12) = esi;
-    if (TEST_Z(MEM8(edx + 0x10), 1)) { g_seh_ebp = ebp; sub_003BFF74(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003BFF74(); return; } /* je: equal / zero */
 
 loc_003BFF2E: ;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003BF20D(); /* call 0x003BF20D */
@@ -29423,7 +29746,7 @@ loc_003C0018: ;
  */
 void sub_003C001B(void)
 {
-    int _rccf = 0; /* DOA2U: deferred condition evaluated at the compare */
+    int _rcc0 = 0; /* flag reads latched at their setter */
     int _flags = 0; /* fallback flag var */
 
 loc_003C001B: ;
@@ -29451,9 +29774,9 @@ loc_003C0041: ;
 
 loc_003C0042: ;
     /* cmp MEM8(edi + 0x11), 0 - flags set for next jcc */
-    _rccf = (CMP_NE(MEM8(edi + 0x11), 0));  /* DOA2U: x86 latched these flags at the compare above and the branch below reads them, but an operand is overwritten in between -- evaluate the condition where the guest does. */
+    _rcc0 = (CMP_NE(MEM8(edi + 0x11), 0)); /* latched */
     POP32(esp, edi);
-    if (_rccf) goto loc_003C004C; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003C004C; /* jne: not equal / not zero */
 
 loc_003C0049: ;
     eax = eax + 3;
@@ -29597,14 +29920,16 @@ loc_003C00F5: ;
  */
 void sub_003C0106(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
 
 loc_003C0106: ;
     /* cmp MEM8(ebx + 0x11), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(ebx + 0x11), 0)); /* latched */
     MEM32(ebp + -4) = esi;
-    if (CMP_NE(MEM8(ebx + 0x11), 0)) goto loc_003C0175; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003C0175; /* jne: not equal / not zero */
 
 loc_003C010F: ;
     eax = 0; /* xor self */
@@ -29771,10 +30096,11 @@ loc_003C027A: ;
 
 loc_003C028A: ;
     /* cmp MEM32(ebp + -16), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM32(ebp + -16), 0)); /* latched */
     eax = MEM32(ebp + -4);
     MEM32(ebp + -28) = eax;
     MEM32(ebp + -12) = edx;
-    if (CMP_NE(MEM32(ebp + -16), 0)) { RECOMP_SLICE_POINT(); goto loc_003C019F; } /* jne: not equal / not zero */
+    if (_rcc0) { RECOMP_SLICE_POINT(); goto loc_003C019F; } /* jne: not equal / not zero */
 
 loc_003C029D: ;
     if (CMP_EQ(MEM32(ebp + -8), 0)) goto loc_003C02B0; /* je: equal / zero */
@@ -29794,8 +30120,9 @@ loc_003C02B6: ;
     ecx = MEM32(esi);
     eax = 0; /* xor self */
     /* cmp MEM8(edi + 0x1C), 2 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(edi + 0x1C), 2)); /* latched */
     PUSH32(esp, MEM32(ebp + -24));
-    SET_LO8(eax, (CMP_NE(MEM8(edi + 0x1C), 2)) ? 1 : 0); /* setne */
+    SET_LO8(eax, (_rcc0) ? 1 : 0); /* setne */
     MEM32(ebp + -8) = esi;
     eax++;
     eax = eax << 0x13;
@@ -29842,9 +30169,10 @@ loc_003C0338: ;
     MEM32(edi + 0x14) = MEM32(edi + 0x14) & 0;
     MEM16(edi + 0x20) = LO16(eax);
     /* cmp MEM8(ebx + 0x20), 0 - flags set for next jcc */
+    _rcc0 = (CMP_NE(MEM8(ebx + 0x20), 0)); /* latched */
     eax = MEM32(esi + 0x10);
     MEM32(ebx + 4) = eax;
-    if (CMP_NE(MEM8(ebx + 0x20), 0)) goto loc_003C0358; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003C0358; /* jne: not equal / not zero */
 
 loc_003C0354: ;
     MEM8(ebx + 1) = MEM8(ebx + 1) & 0xBF;
@@ -29886,6 +30214,7 @@ loc_003C037E: ;
  */
 void sub_003C0385(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -29896,8 +30225,9 @@ loc_003C0385: ;
     PUSH32(esp, esi);
     esi = edx;
     /* cmp MEM32(esi + 0x28), 0 - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM32(esi + 0x28), 0)); /* latched */
     MEM32(ebp + -4) = ecx;
-    if (CMP_EQ(MEM32(esi + 0x28), 0)) goto loc_003C03D5; /* je: equal / zero */
+    if (_rcc0) goto loc_003C03D5; /* je: equal / zero */
 
 loc_003C0395: ;
     PUSH32(esp, ebx);
@@ -30419,6 +30749,7 @@ loc_003C059C: ;
  */
 void sub_003C05A3(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
@@ -30506,12 +30837,13 @@ loc_003C0637: ;
 
 loc_003C0643: ;
     /* test MEM8(esi + 0xB), 0x10 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(esi + 0xB), 0x10)); /* latched */
     MEM32(esi + 4) = ebx;
     SET_LO8(eax, MEM8(edi + 2));
     MEM8(esi + 0xA) = LO8(eax);
     SET_LO16(eax, MEM16(edi + 4));
     MEM16(esi + 8) = LO16(eax);
-    if (TEST_Z(MEM8(esi + 0xB), 0x10)) goto loc_003C0666; /* je: equal / zero */
+    if (_rcc0) goto loc_003C0666; /* je: equal / zero */
 
 loc_003C065A: ;
     eax = MEM32(ebp + 8);
@@ -31646,6 +31978,7 @@ loc_003C0D07: ;
  */
 void sub_003C0D0B(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     int _cf = 0; /* carry flag */
@@ -31693,9 +32026,10 @@ loc_003C0D59: ;
 
 loc_003C0D5F: ;
     /* cmp MEM8(ebp + -1), 0 - flags set for next jcc */
+    _rcc0 = (CMP_EQ(MEM8(ebp + -1), 0)); /* latched */
     ecx = (uint32_t)(int32_t)SMEM8(edx + 0x14);
     MEM32(ebp + -16) = ecx;
-    if (CMP_EQ(MEM8(ebp + -1), 0)) goto loc_003C0D80; /* je: equal / zero */
+    if (_rcc0) goto loc_003C0D80; /* je: equal / zero */
 
 loc_003C0D6C: ;
     edi = (uint32_t)(int32_t)SMEM8(eax + 0x11);
@@ -31999,6 +32333,7 @@ loc_003C0F6F: ;
  */
 void sub_003C0F72(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
 
@@ -32010,10 +32345,11 @@ loc_003C0F72: ;
     PUSH32(esp, ebx);
     ebx = MEM32(ebp + 8);
     /* test MEM8(ebx + 0xB), 0x10 - flags set for next jcc */
+    _rcc0 = (TEST_NZ(MEM8(ebx + 0xB), 0x10)); /* latched */
     PUSH32(esp, esi);
     esi = MEM32(ebp + 0x10);
     PUSH32(esp, edi);
-    if (TEST_NZ(MEM8(ebx + 0xB), 0x10)) goto loc_003C0F8C; /* jne: not equal / not zero */
+    if (_rcc0) goto loc_003C0F8C; /* jne: not equal / not zero */
 
 loc_003C0F89: ;
     esi = MEM32(ebp + 0xC);
@@ -32025,8 +32361,9 @@ loc_003C0F8C: ;
 
 loc_003C0F92: ;
     /* test MEM8(ebx + 0xB), 0x20 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(ebx + 0xB), 0x20)); /* latched */
     MEM8(ebp + 0xB) = LO8(eax);
-    if (TEST_Z(MEM8(ebx + 0xB), 0x20)) { g_seh_ebp = ebp; sub_003C0FDA(); return; } /* je: equal / zero */
+    if (_rcc0) { g_seh_ebp = ebp; sub_003C0FDA(); return; } /* je: equal / zero */
 
 loc_003C0F9B: ;
     ecx = MEM32(ebx + 0x18);
@@ -32710,6 +33047,7 @@ loc_003C1235: ;
  */
 void sub_003C11C2(void)
 {
+    int _rcc0 = 0; /* flag reads latched at their setter */
     uint32_t ebp;
     int _flags = 0; /* fallback flag var */
     ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
@@ -32722,10 +33060,11 @@ loc_003C11C2: ;
     edi = 0; /* xor self */
     MEM32(eax + 0x37C) = edi;
     /* test MEM8(esi + 0xB), 0x10 - flags set for next jcc */
+    _rcc0 = (TEST_Z(MEM8(esi + 0xB), 0x10)); /* latched */
     PUSH32(esp, 0x1C);
     eax = esi;
     POP32(esp, ecx);
-    if (TEST_Z(MEM8(esi + 0xB), 0x10)) goto loc_003C11E5; /* je: equal / zero */
+    if (_rcc0) goto loc_003C11E5; /* je: equal / zero */
 
 loc_003C11DE: ;
     eax = eax - 0xF2A670;

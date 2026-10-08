@@ -178,7 +178,15 @@ void sub_003447D0(void)
 /* Worker timeslice: every 4 ms the game thread hands the CRI server fibers a slice,
  * standing in for preemption (the game's load waits never block). */
 int doa2u_workers_may_run(void) { return 1; }
-int doa2u_guest_display_size(unsigned *w, unsigned *h) { (void)w; (void)h; return 0; }
+/* Display size from the guest's D3DPRESENT_PARAMETERS (0x00E658F0), the space of
+ * 2D overlay coordinates. Returns 0 before CreateDevice fills it. */
+int doa2u_guest_display_size(unsigned *w, unsigned *h)
+{
+    uint32_t dw = MEM32(0x00E658F0u), dh = MEM32(0x00E658F4u);
+    if (dw < 64u || dw > 4096u || dh < 64u || dh > 4096u) return 0;
+    *w = (unsigned)dw; *h = (unsigned)dh;
+    return 1;
+}
 
 /* APU interrupt delivery: run the DirectSound ISR and its DPCs as guest calls. */
 void doa2u_apu_deliver_irq(void)
