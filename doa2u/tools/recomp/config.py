@@ -47,6 +47,9 @@ ENTRY_POINT = 0x002BBB93
 # their caller; the lifter bridges it through g_seh_ebp.
 SEH_PROLOG = 0x0033720C
 SEH_EPILOG = 0x00337247
+# C++ EH frame helper (__EH_prolog): also sets its caller's ebp, which
+# operator new (0x335565) then uses for `leave`.
+EH_PROLOG = 0x003384D4
 
 
 def va_to_file_offset(va):

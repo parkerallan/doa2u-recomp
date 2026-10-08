@@ -38630,8 +38630,7 @@ loc_000ACF53: ;
     MEM32(esi) = eax;
     SET_LO8(eax, MEM8(ebp + eax * 2));
     SET_LO8(eax, LO8(eax) - 0x30);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(ecx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(ecx)); /* imul r/m8 */
     MEM8(edi) = MEM8(edi) + LO8(eax);
     edx = 0; /* xor self */
     goto loc_000AD0AA;

@@ -78776,8 +78776,7 @@ loc_000616E4: ;
     MEM16(esi + 2) = LO16(eax);
     SET_LO8(eax, LO8(ebx));
     SET_LO8(ecx, 3);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(ecx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(ecx)); /* imul r/m8 */
     MEM8(esi + 1) = LO8(eax);
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003352A4(); /* call 0x003352A4 */
 

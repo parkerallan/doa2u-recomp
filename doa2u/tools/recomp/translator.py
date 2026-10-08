@@ -266,7 +266,7 @@ class FunctionTranslator:
 
         # Ensure ebp tracked if function calls __SEH_prolog or __SEH_epilog
         # (lifter emits ebp = g_seh_ebp readback after these calls).
-        SEH_FUNCS = {self.lifter.SEH_PROLOG, self.lifter.SEH_EPILOG}
+        SEH_FUNCS = set(self.lifter.FRAME_HELPERS)
         if any(insn.call_target in SEH_FUNCS for insn in instructions):
             used_regs.add("ebp")
 
@@ -320,7 +320,7 @@ class FunctionTranslator:
         # __SEH_prolog/__SEH_epilog, and "g_seh_ebp = ebp" at the ret of the
         # helpers themselves. Both reference a local ebp that the normal
         # used-register scan may not have flagged.
-        seh_addrs = (self.lifter.SEH_PROLOG, self.lifter.SEH_EPILOG)
+        seh_addrs = self.lifter.FRAME_HELPERS
         needs_ebp = (
             "ebp" in used_regs
             or start in seh_addrs

@@ -47383,8 +47383,7 @@ loc_00333AA2: ;
     eax = eax ^ MEM32(eax);
     SET_HI8(ecx, HI8(ecx) & MEM8(0x39C40033));
     eax = eax ^ MEM32(eax);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(ebx + esi);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(ebx + esi)); /* imul r/m8 */
     MEM8(esi + -939510983) = MEM8(esi + -939510983) + LO8(ebx);
     SET_LO8(eax, LO8(eax) - 0x33);
     MEM8(esi + 0x39) = MEM8(esi + 0x39) + HI8(edx);
@@ -49498,6 +49497,7 @@ void sub_0033514D(void)
 loc_0033514D: ;
     eax = 0x340F4D;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003384D4(); /* call 0x003384D4 */
+    ebp = g_seh_ebp; /* read back frame from SEH helper */
 
 loc_00335157: ;
     esp = esp - 0x44;
@@ -49573,6 +49573,7 @@ void sub_003351A5(void)
 loc_003351A5: ;
     eax = 0x340F4D;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003384D4(); /* call 0x003384D4 */
+    ebp = g_seh_ebp; /* read back frame from SEH helper */
 
 loc_003351AF: ;
     esp = esp - 0x44;
@@ -50607,6 +50608,7 @@ void sub_00335565(void)
 loc_00335565: ;
     eax = 0x340F57;
     g_seh_ebp = ebp; PUSH32(esp, 0); sub_003384D4(); /* call 0x003384D4 */
+    ebp = g_seh_ebp; /* read back frame from SEH helper */
 
 loc_0033556F: ;
     PUSH32(esp, ecx);
@@ -61225,7 +61227,7 @@ loc_003384D4: ;
     MEM32(esp + 0xC) = ebp;
     ebp = esp + 0xC;
     PUSH32(esp, eax);
-    esp += 4; return; /* ret */
+    g_seh_ebp = ebp; esp += 4; return; /* ret */
 
 }
 

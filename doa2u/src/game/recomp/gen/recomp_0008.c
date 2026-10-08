@@ -1110,8 +1110,7 @@ loc_0016B14C: ;
 
 loc_0016B154: ;
     SET_LO8(eax, MEM8(esi + 0x10));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(edx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(edx)); /* imul r/m8 */
     SET_LO8(eax, LO8(eax) + LO8(ecx));
     goto loc_0016B161;
 
@@ -2409,17 +2408,14 @@ loc_0016BD00: ;
     MEM32(ecx + edx + 0x94) = 0;
     xmm_store_ss(ecx + edx + 0x98, xmm0); /* movss */
     SET_LO8(eax, MEM8(esi + 0x14));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(esi + 0x10);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(esi + 0x10)); /* imul r/m8 */
     ecx = ecx + edx;
     MEM8(ecx + 0x90) = LO8(eax);
     SET_LO8(eax, MEM8(esi + 0x14));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(esi + 0x10);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(esi + 0x10)); /* imul r/m8 */
     MEM8(ecx + 0x91) = LO8(eax);
     SET_LO8(eax, MEM8(esi + 0x14));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(esi + 0x10);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(esi + 0x10)); /* imul r/m8 */
     MEM8(ecx + 0x92) = LO8(eax);
     xmm_store_ss(ecx + 0x18, xmm0); /* movss */
     xmm_store_ss(ecx + 0x1C, xmm0); /* movss */
@@ -16957,8 +16953,7 @@ loc_00174258: ;
     ecx = 0; /* xor self */
     SET_LO8(eax, LO8(edx));
     SET_LO8(ebx, 0xB);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(ebx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(ebx)); /* imul r/m8 */
     esi = ebp + 2;
     MEM32(esp + 0x24) = ecx;
     MEM8(esp + 0x13) = LO8(eax);
@@ -17232,8 +17227,7 @@ loc_001744D5: ;
 loc_001744DA: ;
     SET_LO8(eax, LO8(edx));
     SET_LO8(ebx, 0xB);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(ebx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(ebx)); /* imul r/m8 */
     SET_LO8(eax, LO8(eax) + LO8(ecx));
     MEM8(esi + ebp + 0x20) = LO8(eax);
     goto loc_001744ED;
@@ -39514,8 +39508,7 @@ loc_00180405: ;
 loc_00180409: ;
     SET_LO8(eax, LO8(ebx));
     SET_LO8(edx, 5);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(edx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(edx)); /* imul r/m8 */
     SET_LO8(eax, LO8(eax) + LO8(ecx));
     ecx = MEM32(0x8A7EE4);
     MEM8(ecx + 0x60) = LO8(eax);

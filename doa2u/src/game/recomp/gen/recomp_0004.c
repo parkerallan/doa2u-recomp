@@ -39573,8 +39573,7 @@ loc_000D5B92: ;
 loc_000D5B9E: ;
     eax = 0; /* xor self */
     SET_LO8(eax, LO8(ebx));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(ecx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(ecx)); /* imul r/m8 */
     SET_LO8(eax, LO8(eax) + MEM8(esi + esi * 2 + 0x694008));
 
 loc_000D5BAB: ;

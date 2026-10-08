@@ -199,6 +199,12 @@ BOOL xbox_translate_path(const char* xbox_path, WCHAR* win_path_buf, DWORD buf_s
         goto translate;
     }
 
+    /* \??\X:\ for any other drive (XDeleteSaveGame opens \??\U:\<save>\):
+     * drop the object-manager prefix and translate the DOS path. */
+    if (match_prefix(xbox_path, "\\??\\") && xbox_path[4] && xbox_path[5] == ':' &&
+        xbox_path[6] == '\\')
+        return xbox_translate_path(xbox_path + 4, win_path_buf, buf_size);
+
     /* Unrecognized path - try to use as-is by converting to wide */
     xbox_log(XBOX_LOG_WARN, XBOX_LOG_PATH, "Unrecognized Xbox path: %s", xbox_path);
     MultiByteToWideChar(CP_ACP, 0, xbox_path, -1, win_path_buf, buf_size);

@@ -38977,8 +38977,7 @@ loc_0036C43C: ;
     eax = eax & 7;
     SET_LO8(ebx, MEM8(ebp + eax + -8));
     SET_LO8(eax, MEM8(ebp + eax + -16));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)LO8(ebx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)LO8(ebx)); /* imul r/m8 */
     esi = edi + ecx;
     ecx = MEM32(ebp + 0x18);
     SET_LO8(ecx, MEM8(ecx + esi));

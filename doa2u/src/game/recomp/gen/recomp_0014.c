@@ -5727,8 +5727,7 @@ loc_002AFBE2: ;
 
     SET_LO8(eax, LO8(eax) - MEM8(eax));
     POP32(esp, esp);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(edx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(edx)); /* imul r/m8 */
     MEM8(ecx + -8) = MEM8(ecx + -8) + LO8(ebx);
     SET_LO8(eax, LO8(eax) - MEM8(eax));
     { uint32_t _tmp = edx;
@@ -5740,8 +5739,7 @@ loc_002AFBE2: ;
     { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM32(edx);
       eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
     SET_HI8(edx, HI8(edx) + HI8(eax));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(edx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(edx)); /* imul r/m8 */
     MEM8(edx + 0x59002AF7) = MEM8(edx + 0x59002AF7) + HI8(ecx);
     /* TODO: clc  */
 
@@ -6868,8 +6866,7 @@ loc_002AFBE2: ;
 
     SET_LO8(eax, LO8(eax) - MEM8(eax));
     POP32(esp, esp);
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(edx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(edx)); /* imul r/m8 */
     MEM8(ecx + -8) = MEM8(ecx + -8) + LO8(ebx);
     SET_LO8(eax, LO8(eax) - MEM8(eax));
     { uint32_t _tmp = edx;
@@ -6881,8 +6878,7 @@ loc_002AFBE2: ;
     { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM32(edx);
       eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
     SET_HI8(edx, HI8(edx) + HI8(eax));
-    { int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t)MEM8(edx);
-      eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }
+    SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t)MEM8(edx)); /* imul r/m8 */
     MEM8(edx + 0x59002AF7) = MEM8(edx + 0x59002AF7) + HI8(ecx);
     /* TODO: clc  */
 
@@ -12778,7 +12774,7 @@ loc_002B3054: ;
     if (CMP_A(eax, 8)) goto loc_002B3230; /* ja: above (unsigned >) */
 
 loc_002B3067: ;
-    { uint32_t _jt = MEM32(eax * 4 + 0x2B37B8); /* switch: 11 entries, 10 targets */
+    { uint32_t _jt = MEM32(eax * 4 + 0x2B37B8); /* switch: 20 entries, 17 targets */
     if (_jt == 0x002B306Eu) goto loc_002B306E;
     if (_jt == 0x002B3088u) goto loc_002B3088;
     if (_jt == 0x002B30C5u) goto loc_002B30C5;
@@ -12789,6 +12785,13 @@ loc_002B3067: ;
     if (_jt == 0x002B3230u) goto loc_002B3230;
     if (_jt == 0x002B323Au) goto loc_002B323A;
     if (_jt == 0x002B3247u) goto loc_002B3247;
+    if (_jt == 0x002B3253u) goto loc_002B3253;
+    if (_jt == 0x002B3260u) goto loc_002B3260;
+    if (_jt == 0x002B34FBu) goto loc_002B34FB;
+    if (_jt == 0x002B350Eu) goto loc_002B350E;
+    if (_jt == 0x002B3521u) goto loc_002B3521;
+    if (_jt == 0x002B3534u) goto loc_002B3534;
+    if (_jt == 0x002B3770u) goto loc_002B3770;
     g_seh_ebp = ebp; RECOMP_ITAIL(_jt); return; }
 
 loc_002B306E: ;
@@ -13026,9 +13029,16 @@ loc_002B3228: ;
 
 loc_002B3230: ;
     ecx = ecx + 0xFFFFFFFEu;
-    { uint32_t _jt = MEM32(ecx * 4 + 0x2B37DC); /* switch: 2 entries, 2 targets */
+    { uint32_t _jt = MEM32(ecx * 4 + 0x2B37DC); /* switch: 11 entries, 9 targets */
     if (_jt == 0x002B323Au) goto loc_002B323A;
     if (_jt == 0x002B3247u) goto loc_002B3247;
+    if (_jt == 0x002B3253u) goto loc_002B3253;
+    if (_jt == 0x002B3260u) goto loc_002B3260;
+    if (_jt == 0x002B34FBu) goto loc_002B34FB;
+    if (_jt == 0x002B350Eu) goto loc_002B350E;
+    if (_jt == 0x002B3521u) goto loc_002B3521;
+    if (_jt == 0x002B3534u) goto loc_002B3534;
+    if (_jt == 0x002B3770u) goto loc_002B3770;
     g_seh_ebp = ebp; RECOMP_ITAIL(_jt); return; }
 
 loc_002B323A: ;
@@ -13041,10 +13051,12 @@ loc_002B3247: ;
     esi = ebp;
     goto loc_002B326B;
 
+loc_002B3253: ;
     MEM32(esp + 0x18) = 5;
     esi = ebp + 8;
     goto loc_002B326B;
 
+loc_002B3260: ;
     MEM32(esp + 0x18) = 4;
     esi = ebp + 0x10;
 

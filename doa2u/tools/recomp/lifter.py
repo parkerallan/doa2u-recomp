@@ -155,6 +155,19 @@ def _fmt_mem_write(op, value_expr):
     return f"{accessor}({addr}) = {value_expr};"
 
 
+def _one_op_mul_size(op):
+    """Operand width in bytes of a one-operand mul/imul (selects AL/AX/EAX form)."""
+    if op.type == "reg":
+        if op.reg in ("al", "ah", "bl", "bh", "cl", "ch", "dl", "dh"):
+            return 1
+        if op.reg in ("ax", "bx", "cx", "dx", "si", "di", "bp", "sp"):
+            return 2
+        return 4
+    if op.type == "mem" and op.mem_size in (1, 2):
+        return op.mem_size
+    return 4
+
+
 def _fmt_operand_read(op):
     """Format reading any operand type."""
     if op.type == "reg":
@@ -1234,8 +1247,17 @@ class Lifter:
     def _lift_imul(self, insn, ops):
         nops = len(ops)
         if nops == 1:
-            # One operand: edx:eax = eax * ops[0]
+            # One operand: AX = AL*r8, DX:AX = AX*r16, EDX:EAX = EAX*r32.
+            # The narrow forms leave the rest of eax and all of edx alone.
             src = _fmt_operand_read(ops[0])
+            size = _one_op_mul_size(ops[0])
+            if size == 1:
+                return [f"SET_LO16(eax, (int16_t)(int8_t)LO8(eax) * (int16_t)(int8_t){src}); /* imul r/m8 */"]
+            if size == 2:
+                return [
+                    f"{{ int32_t _r = (int32_t)(int16_t)LO16(eax) * (int32_t)(int16_t){src};",
+                    f"  SET_LO16(eax, _r); SET_LO16(edx, (uint32_t)_r >> 16); }} /* imul r/m16 */"
+                ]
             return [
                 f"{{ int64_t _r = (int64_t)(int32_t)eax * (int64_t)(int32_t){src};",
                 f"  eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }}"
@@ -1257,6 +1279,14 @@ class Lifter:
             return [f"/* {m}: no operand */"]
         src = _fmt_operand_read(ops[0])
         if m == "mul":
+            size = _one_op_mul_size(ops[0])
+            if size == 1:
+                return [f"SET_LO16(eax, (uint16_t)LO8(eax) * (uint16_t)(uint8_t){src}); /* mul r/m8 */"]
+            if size == 2:
+                return [
+                    f"{{ uint32_t _r = (uint32_t)LO16(eax) * (uint32_t)(uint16_t){src};",
+                    f"  SET_LO16(eax, _r); SET_LO16(edx, _r >> 16); }} /* mul r/m16 */"
+                ]
             return [
                 f"{{ uint64_t _r = (uint64_t)eax * (uint64_t){src};",
                 f"  eax = (uint32_t)_r; edx = (uint32_t)(_r >> 32); }}"
@@ -1333,6 +1363,7 @@ class Lifter:
     # from g_seh_ebp.  Before returning, __SEH_prolog writes g_seh_ebp.
     SEH_PROLOG = _cfg.SEH_PROLOG
     SEH_EPILOG = _cfg.SEH_EPILOG
+    FRAME_HELPERS = (_cfg.SEH_PROLOG, _cfg.SEH_EPILOG, _cfg.EH_PROLOG)
 
     def _lift_call(self, insn, ops):
         # x86 'call' pushes return address then jumps.
@@ -1343,7 +1374,7 @@ class Lifter:
             # publish ebp: frame-inheriting callees (fpo_leaf, SEH epilog) read it from g_seh_ebp
             lines = [f"g_seh_ebp = ebp; PUSH32(esp, 0); {name}(); /* call 0x{insn.call_target:08X} */"]
             # After __SEH_prolog/__SEH_epilog, read back the frame pointer.
-            if insn.call_target in (self.SEH_PROLOG, self.SEH_EPILOG):
+            if insn.call_target in self.FRAME_HELPERS:
                 lines.append("ebp = g_seh_ebp; /* read back frame from SEH helper */")
             return lines
         elif len(ops) >= 1:
@@ -1362,7 +1393,7 @@ class Lifter:
         # If this function IS __SEH_prolog or __SEH_epilog, bridge ebp
         # so the caller can read back the frame pointer.
         prefix = ""
-        if self.func_start in (self.SEH_PROLOG, self.SEH_EPILOG):
+        if self.func_start in self.FRAME_HELPERS:
             prefix = "g_seh_ebp = ebp; "
         if len(ops) >= 1 and ops[0].type == "imm":
             n = ops[0].imm
@@ -1408,6 +1439,19 @@ class Lifter:
         targets = self._read_jump_table(table_va)
         if not targets:
             return []
+        # Null entries are holes for unused cases (sub_002A81B0: [2] = 0 between
+        # live cases); read past a hole while in-function entries follow it.
+        while len(targets) < 256:
+            o = va_to_file_offset(table_va + len(targets) * 4)
+            if o is None or o + 8 > len(self.xbe_data):
+                break
+            val, nxt = struct.unpack_from('<II', self.xbe_data, o)
+            if val != 0 or not (self.func_start <= nxt < self.func_end):
+                break
+            more = self._read_jump_table(table_va + (len(targets) + 1) * 4)
+            if not more:
+                break
+            targets = targets + [0] + more
         # Trim at the first out-of-function entry: _read_jump_table has no size
         # bound, so it can run past the real table into adjacent data that
         # happens to look like code addresses. The switch's index is guarded by
@@ -1417,6 +1461,8 @@ class Lifter:
         # trim - it degrades to ITAIL for that index only.
         trimmed = []
         for t in targets:
+            if t == 0:
+                continue  # hole: that index falls to the RECOMP_ITAIL default
             if not (self.func_start <= t < self.func_end):
                 break
             trimmed.append(t)

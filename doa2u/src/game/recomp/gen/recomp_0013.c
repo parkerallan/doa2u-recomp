@@ -47916,9 +47916,11 @@ loc_002A81B0: ;
     PUSH32(esp, esi);
     esi = ecx;
     eax = MEM32(esi + 8);
-    { uint32_t _jt = MEM32(eax * 4 + 0x2A82BC); /* switch: 2 entries, 2 targets */
+    { uint32_t _jt = MEM32(eax * 4 + 0x2A82BC); /* switch: 5 entries, 4 targets */
     if (_jt == 0x002A81BDu) goto loc_002A81BD;
     if (_jt == 0x002A81EEu) goto loc_002A81EE;
+    if (_jt == 0x002A8247u) goto loc_002A8247;
+    if (_jt == 0x002A8286u) goto loc_002A8286;
     g_seh_ebp = ebp; RECOMP_ITAIL(_jt); return; }
 
 loc_002A81BD: ;
@@ -47983,6 +47985,10 @@ loc_002A823B: ;
     POP32(esp, esi);
     esp += 4; return; /* ret */
 
+loc_002A8247: ;
+    if (CMP_NE(eax, MEM32(esi + 0x254))) goto loc_002A8277; /* jne: not equal / not zero */
+
+loc_002A824F: ;
     edx = esi + 0x258;
     PUSH32(esp, edx);
     eax = esi + 0xC;
