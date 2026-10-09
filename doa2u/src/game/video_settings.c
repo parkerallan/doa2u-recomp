@@ -97,12 +97,19 @@ void video_set_aspect(int aspect)
     g_aspect = (aspect == VIDEO_ASPECT_4_3) ? VIDEO_ASPECT_4_3 : VIDEO_ASPECT_16_9;
 }
 
-/* Called by the d3d8 layer when it switches the guest target. This should
- * mirror the aspect into the game's cached widescreen flags; DOA2U's cache has
- * not been located yet, so the game only sees the aspect through the kernel
- * XC_VIDEO query at boot. */
+/* Mirror the aspect into the flags sub_00282570 caches from XGetVideoFlags: widescreen
+ * 0xE65A98 bit 0, present flags 0xE65918 (0x10), raw 0xE6593C. No-op before that init. */
 void video_sync_guest_widescreen(void)
 {
+    volatile uint8_t *m = (volatile uint8_t *)(uintptr_t)g_xbox_mem_offset;
+    volatile uint32_t *pp_w  = (volatile uint32_t *)(m + 0xE658F0);
+    volatile uint32_t *pp_fl = (volatile uint32_t *)(m + 0xE65918);
+    volatile uint32_t *vflag = (volatile uint32_t *)(m + 0xE6593C);
+    volatile uint32_t *ws    = (volatile uint32_t *)(m + 0xE65A98);
+    int on = (g_aspect == VIDEO_ASPECT_16_9);
+    if (!g_xbox_mem_offset || *pp_w != 0x2D0u) return;
+    if (on) { *ws |= 1u;  *pp_fl |= 0x10u;  *vflag |= 1u; }
+    else    { *ws &= ~1u; *pp_fl &= ~0x10u; *vflag &= ~1u; }
 }
 
 void video_apply_window_mode(HWND hwnd, int mode)

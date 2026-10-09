@@ -4,12 +4,8 @@
  * general settings file; controls stay in doa2u_input.ini, which
  * pad_mapping_save rewrites wholesale.
  *
- * 16:9 is the game's own widescreen mode. The game reads XC_VIDEO_FLAGS through
- * ExQueryNonVolatileSetting (kernel ordinal 24) once, in its D3D init
- * (sub_001539C0), and from then on narrows the 3D projection horizontally
- * (hor+) while leaving the 2D layer untouched -- the Xbox output it made was
- * anamorphic 720x480 for a 16:9 set. The host renders that into a 16:9 guest
- * target instead of stretching a 4:3 one.
+ * 16:9: the game reads XGetVideoFlags (sub_002BB87E) live and caches it in its D3D init
+ * (sub_00282570); the host renders that into a 16:9 guest target.
  */
 #ifndef DOA2U_VIDEO_SETTINGS_H
 #define DOA2U_VIDEO_SETTINGS_H
