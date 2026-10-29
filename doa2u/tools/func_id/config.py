@@ -11,21 +11,21 @@ confidence thresholds for each identification method.
 
 # .text section: game code + CRT (DOA2U / DOA2.xbe)
 TEXT_VA_START = 0x00011000
-TEXT_VA_SIZE = 0x00333164
+TEXT_VA_SIZE = 0x00336B54
 TEXT_VA_END = TEXT_VA_START + TEXT_VA_SIZE
 TEXT_RAW_ADDR = 0x00001000
 
 # .rdata section: read-only data (strings, vtables, constants)
-RDATA_VA_START = 0x003C14C0
-RDATA_VA_SIZE = 0x000D60B8
+RDATA_VA_START = 0x003C4EA0
+RDATA_VA_SIZE = 0x000D8658
 RDATA_VA_END = RDATA_VA_START + RDATA_VA_SIZE
-RDATA_RAW_ADDR = 0x003B5000
+RDATA_RAW_ADDR = 0x003B8000
 
 # .data section
-DATA_VA_START = 0x00497580
-DATA_VA_SIZE = 0x00BC11DC
+DATA_VA_START = 0x0049D500
+DATA_VA_SIZE = 0x00BC169C
 DATA_VA_END = DATA_VA_START + DATA_VA_SIZE
-DATA_RAW_ADDR = 0x0048C000
+DATA_RAW_ADDR = 0x00491000
 
 # XBE base address
 XBE_BASE_ADDRESS = 0x00010000
@@ -36,24 +36,24 @@ XBE_BASE_ADDRESS = 0x00010000
 
 SECTIONS = [
     # (name, va_start, raw_size, raw_addr)
-    (".text",     0x00011000, 0x00333164, 0x00001000),
-    ("D3D",       0x00344180, 0x000102A0, 0x00335000),
-    ("D3DX",      0x00357D00, 0x000094E8, 0x00346000),
-    ("XGRPH",     0x00361200, 0x0000214C, 0x00350000),
-    ("DSOUND",    0x00363360, 0x0001D8DC, 0x00353000),
-    ("XNET",      0x00380EC0, 0x00012CB8, 0x00371000),
-    ("XONLINE",   0x00393B80, 0x00021D1C, 0x00384000),
-    ("PSFD_I",    0x003B58A0, 0x00000424, 0x003A6000),
-    ("PSFD_B",    0x003B5CE0, 0x000008C4, 0x003A7000),
-    ("PSFD_P",    0x003B65C0, 0x00000640, 0x003A8000),
-    ("PSFD00",    0x003B6C00, 0x00001768, 0x003A9000),
-    ("XPP",       0x003B8380, 0x0000912C, 0x003AB000),
-    (".rdata",    0x003C14C0, 0x000D60B8, 0x003B5000),
-    (".data",     0x00497580, 0x00333238, 0x0048C000),
-    ("zressect",  0x01058760, 0x00008800, 0x007C0000),
-    ("DOLBY",     0x01060F60, 0x0000716C, 0x007C9000),
-    (".data1",    0x010680E0, 0x000000B0, 0x007D1000),
-    ("XON_RD",    0x010681C0, 0x00001710, 0x007D2000),
+    (".text",     0x00011000, 0x00336B54, 0x00001000),
+    ("D3D",       0x00347B60, 0x000102A0, 0x00338000),
+    ("D3DX",      0x0035B6E0, 0x000094E8, 0x00349000),
+    ("XGRPH",     0x00364BE0, 0x0000214C, 0x00353000),
+    ("DSOUND",    0x00366D40, 0x0001D8DC, 0x00356000),
+    ("XNET",      0x003848A0, 0x00012CB8, 0x00374000),
+    ("XONLINE",   0x00397560, 0x00021D1C, 0x00387000),
+    ("PSFD_I",    0x003B9280, 0x00000424, 0x003A9000),
+    ("PSFD_B",    0x003B96C0, 0x000008C4, 0x003AA000),
+    ("PSFD_P",    0x003B9FA0, 0x00000640, 0x003AB000),
+    ("PSFD00",    0x003BA5E0, 0x00001768, 0x003AC000),
+    ("XPP",       0x003BBD60, 0x0000912C, 0x003AE000),
+    (".rdata",    0x003C4EA0, 0x000D8658, 0x003B8000),
+    (".data",     0x0049D500, 0x00333638, 0x00491000),
+    ("zressect",  0x0105EBA0, 0x00008800, 0x007C5000),
+    ("DOLBY",     0x010673A0, 0x0000716C, 0x007CE000),
+    (".data1",    0x0106E520, 0x000000B0, 0x007D6000),
+    ("XON_RD",    0x0106E600, 0x00001710, 0x007D7000),
 ]
 
 
@@ -72,14 +72,14 @@ def va_to_file_offset(va):
 # Functions calling into these sections get classified accordingly.
 
 XDK_SECTIONS = {
-    "D3D":     (0x00344180, 0x00344180 + 0x13B6C, "game_render"),
-    "D3DX":    (0x00357D00, 0x00357D00 + 0x094F0, "game_render"),
-    "XGRPH":   (0x00361200, 0x00361200 + 0x0214C, "game_render"),
-    "DSOUND":  (0x00363360, 0x00363360 + 0x1DB44, "game_audio"),
-    "XNET":    (0x00380EC0, 0x00380EC0 + 0x12CB8, "game_network"),
-    "XONLINE": (0x00393B80, 0x00393B80 + 0x21D1C, "game_network"),
-    "PSFD":    (0x003B58A0, 0x003B8368,           "game_video"),
-    "XPP":     (0x003B8380, 0x003B8380 + 0x0912C, "game_input"),
+    "D3D":     (0x00347B60, 0x00347B60 + 0x13B6C, "game_render"),
+    "D3DX":    (0x0035B6E0, 0x0035B6E0 + 0x094F0, "game_render"),
+    "XGRPH":   (0x00364BE0, 0x00364BE0 + 0x0214C, "game_render"),
+    "DSOUND":  (0x00366D40, 0x00366D40 + 0x1DB44, "game_audio"),
+    "XNET":    (0x003848A0, 0x003848A0 + 0x12CB8, "game_network"),
+    "XONLINE": (0x00397560, 0x00397560 + 0x21D1C, "game_network"),
+    "PSFD":    (0x003B9280, 0x003B8368,           "game_video"),
+    "XPP":     (0x003BBD60, 0x003BBD60 + 0x0912C, "game_input"),
 }
 
 # ============================================================

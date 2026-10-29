@@ -1,44 +1,43 @@
 {
-  "total_functions": 22434,
+  "total_functions": 13852,
   "classification": {
     "renderware": 0,
     "crt": 12,
     "data_init": 5,
-    "game_classified": 1991,
-    "vtable_methods": 252,
-    "unknown": 20426
+    "game_classified": 1966,
+    "vtable_methods": 250,
+    "unknown": 11869
   },
   "percentages": {
     "renderware": 0.0,
     "crt": 0.1,
     "data_init": 0.0,
-    "game_classified": 8.9,
-    "unknown": 91.0
+    "game_classified": 14.2,
+    "unknown": 85.7
   },
   "by_category": {
     "crt": 12,
     "data_init": 5,
-    "game_audio": 347,
-    "game_debug": 36,
-    "game_input": 116,
-    "game_io": 17,
-    "game_network": 579,
+    "game_audio": 344,
+    "game_debug": 31,
+    "game_input": 117,
+    "game_io": 13,
+    "game_network": 578,
     "game_physics": 1,
-    "game_render": 596,
-    "game_ui": 41,
+    "game_render": 598,
+    "game_ui": 33,
     "game_vehicle": 1,
-    "game_video": 5,
-    "game_vtable": 252,
-    "unknown": 20426
+    "game_vtable": 250,
+    "unknown": 11869
   },
   "by_method": {
     "crt_signature": 12,
-    "none": 20426,
-    "string_keyword": 122,
+    "none": 11869,
+    "string_keyword": 102,
     "stub_pattern": 5,
-    "vtable_ctor": 2,
-    "vtable_scan": 250,
-    "xdk_caller": 1617
+    "vtable_ctor": 1,
+    "vtable_scan": 249,
+    "xdk_caller": 1614
   },
   "rw_modules": {},
   "rw_module_count": 0

@@ -1,61 +1,61 @@
 [
   {
-    "address": "0x000A3E70",
+    "address": "0x000A50E0",
     "name": "_purecall",
     "confidence": 0.9
   },
   {
-    "address": "0x002959E0",
+    "address": "0x00298A30",
     "name": "strcpy",
     "confidence": 0.9
   },
   {
-    "address": "0x002C947E",
+    "address": "0x002CCC5E",
     "name": "strcmp",
     "confidence": 0.9
   },
   {
-    "address": "0x002D7769",
-    "name": "_ftol",
-    "confidence": 0.9
-  },
-  {
-    "address": "0x002F38A0",
+    "address": "0x002F7080",
     "name": "memcmp",
     "confidence": 0.9
   },
   {
-    "address": "0x003354E0",
+    "address": "0x00338CFC",
     "name": "_ftol2",
     "confidence": 0.9
   },
   {
-    "address": "0x00335A80",
+    "address": "0x00339290",
     "name": "memmove",
     "confidence": 0.9
   },
   {
-    "address": "0x00336140",
+    "address": "0x00339950",
     "name": "_alldiv",
     "confidence": 0.9
   },
   {
-    "address": "0x00336DC0",
+    "address": "0x0033A5D0",
     "name": "_allmul",
     "confidence": 0.9
   },
   {
-    "address": "0x00337470",
+    "address": "0x0033AC80",
     "name": "_aullshr",
     "confidence": 0.9
   },
   {
-    "address": "0x00337F60",
+    "address": "0x0033B770",
     "name": "_allshr",
     "confidence": 0.9
   },
   {
-    "address": "0x003A4F60",
+    "address": "0x00350490",
+    "name": "_ftol",
+    "confidence": 0.9
+  },
+  {
+    "address": "0x003A8940",
     "name": "fmod",
     "confidence": 0.9
   }

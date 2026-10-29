@@ -4,7 +4,7 @@ Configuration constants for Dead or Alive 2 Ultimate disassembly tool.
 Defines address ranges, section boundaries, instruction classification,
 and other constants used throughout the disassembler.
 
-Values derived from: py -3 tools/xbe_parser/xbe_parser.py ../doa2ugamefiles/DOA2.xbe
+Values derived from: py -3 tools/xbe_parser/xbe_parser.py ../doa2ugamefiles/DOA2_261.xbe (title update, version 261)
   Title: DEAD OR ALIVE ULTIMATE (DOA2, Title ID 0x54430006), Retail, XDK 5849
 """
 
@@ -13,13 +13,13 @@ Values derived from: py -3 tools/xbe_parser/xbe_parser.py ../doa2ugamefiles/DOA2
 # ============================================================
 
 XBE_BASE_ADDRESS = 0x00010000
-XBE_IMAGE_SIZE = 0x0105DAE0  # 16.37 MB
+XBE_IMAGE_SIZE = 0x01063F20  # 16.39 MB
 
-# Entry point (retail, XOR-decoded from 0xA8D7EC38)
-ENTRY_POINT = 0x002BBB93
+# Entry point (retail, XOR-decoded from 0xA8D7A4D8)
+ENTRY_POINT = 0x002BF373
 
 # Kernel thunk table start (in .rdata)
-KERNEL_THUNK_ADDR = 0x003C14C0
+KERNEL_THUNK_ADDR = 0x003C4EA0
 
 # ============================================================
 # Section Definitions
@@ -28,29 +28,29 @@ KERNEL_THUNK_ADDR = 0x003C14C0
 # Executable code sections (name, va_start, va_size)
 # These are the sections we'll disassemble.
 EXECUTABLE_SECTIONS = [
-    (".text",    0x00011000, 0x00333164),
-    ("D3D",      0x00344180, 0x00013B6C),
-    ("D3DX",     0x00357D00, 0x000094F0),
-    ("XGRPH",    0x00361200, 0x0000214C),
-    ("DSOUND",   0x00363360, 0x0001DB44),
-    ("XNET",     0x00380EC0, 0x00012CB8),
-    ("XONLINE",  0x00393B80, 0x00021D1C),
-    ("PSFD_I",   0x003B58A0, 0x00000424),
-    ("PSFD_B",   0x003B5CE0, 0x000008C4),
-    ("PSFD_P",   0x003B65C0, 0x00000640),
-    ("PSFD00",   0x003B6C00, 0x00001768),
-    ("XPP",      0x003B8380, 0x0000912C),
-    ("DOLBY",    0x01060F60, 0x00007180),
+    (".text",    0x00011000, 0x00336B54),
+    ("D3D",      0x00347B60, 0x00013B6C),
+    ("D3DX",     0x0035B6E0, 0x000094F0),
+    ("XGRPH",    0x00364BE0, 0x0000214C),
+    ("DSOUND",   0x00366D40, 0x0001DB44),
+    ("XNET",     0x003848A0, 0x00012CB8),
+    ("XONLINE",  0x00397560, 0x00021D1C),
+    ("PSFD_I",   0x003B9280, 0x00000424),
+    ("PSFD_B",   0x003B96C0, 0x000008C4),
+    ("PSFD_P",   0x003B9FA0, 0x00000640),
+    ("PSFD00",   0x003BA5E0, 0x00001768),
+    ("XPP",      0x003BBD60, 0x0000912C),
+    ("DOLBY",    0x010673A0, 0x00007180),
 ]
 
 # Data sections
 DATA_SECTIONS = [
-    (".rdata",    0x003C14C0, 0x000D60C0),
-    (".data",     0x00497580, 0x00BC11DC),
-    ("zressect",  0x01058760, 0x00008800),
-    (".data1",    0x010680E0, 0x000000E0),
-    ("XON_RD",    0x010681C0, 0x00001710),
-    ("$$XTIMAGE", 0x010698E0, 0x00002800),
+    (".rdata",    0x003C4EA0, 0x000D8660),
+    (".data",     0x0049D500, 0x00BC169C),
+    ("zressect",  0x0105EBA0, 0x00008800),
+    (".data1",    0x0106E520, 0x000000E0),
+    ("XON_RD",    0x0106E600, 0x00001710),
+    ("$$XTIMAGE", 0x0106FD20, 0x00002800),
 ]
 
 # All sections by name for quick lookup

@@ -14,7 +14,7 @@ extern "C" {
 /* Loads doa2u_settings.ini on first use (default English). */
 int  profile_get_language(void);
 void profile_set_language(int lang);
-/* Returns non-zero on success. */
+/* Non-zero on success. */
 int  profile_settings_save(void);
 
 #ifdef __cplusplus

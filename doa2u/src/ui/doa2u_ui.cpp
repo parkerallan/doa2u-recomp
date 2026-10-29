@@ -20,7 +20,11 @@ extern "C" {
 #include "video_settings.h"
 #include "log_settings.h"
 #include "profile_settings.h"
+#include "insignia.h"
 #include "extras.h"
+int  xbox_hdd_account_list(char names[][16], int max);
+BOOL xbox_hdd_account_select(int slot);
+BOOL xbox_hdd_account_remove(int slot);
 #include "../kernel/perf.h"
 ID3D11RenderTargetView *d3d8_GetPresentRTV(void);
 UINT                    d3d8_GetPresentWidth(void);
@@ -490,6 +494,9 @@ void DrawGeneralSection()
 void DrawProfileSection()
 {
     static const char *kLanguage[] = { "English", "Japanese" };
+    static char s_gt[16], s_code[32], s_card[24], s_email[128];
+    static int s_pick;
+    char names[8][16], msg[256];
 
     switch (ResetSaveRow()) {
     case 1:
@@ -506,6 +513,49 @@ void DrawProfileSection()
     int lang = profile_get_language() == PROFILE_LANG_JAPANESE ? 1 : 0;
     if (ImGui::Combo("System language", &lang, kLanguage, IM_ARRAYSIZE(kLanguage)))
         profile_set_language(lang ? PROFILE_LANG_JAPANESE : PROFILE_LANG_ENGLISH);
+
+    ImGui::Separator();
+    ImGui::TextUnformatted("Xbox Live (Insignia)");
+
+    int st = insignia_register_state(msg, sizeof msg);
+    if (!insignia_is_registered() || st == INSIGNIA_BUSY) {
+        ImGui::BeginDisabled(st == INSIGNIA_BUSY);
+        if (ImGui::Button(st == INSIGNIA_BUSY ? "Registering..." : "Register this console"))
+            insignia_register_start();
+        ImGui::EndDisabled();
+        if (msg[0]) ImGui::TextWrapped("%s", msg);
+        return;
+    }
+
+    int n = xbox_hdd_account_list(names, 8);
+    if (n > 0) {
+        const char *items[8]; int idx[8], m = 0, cur = 0;
+        for (int i = 0; i < 8; i++)
+            if (names[i][0]) { if (i == s_pick) cur = m; idx[m] = i; items[m++] = names[i]; }
+        if (ImGui::Combo("Account", &cur, items, m)) {
+            s_pick = idx[cur];
+            if (xbox_hdd_account_select(s_pick)) s_pick = 0;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Remove")) { xbox_hdd_account_remove(idx[cur]); s_pick = 0; }
+    }
+
+    int ws = insignia_wizard_state(msg, sizeof msg);
+    ImGui::BeginDisabled(ws == INSIGNIA_BUSY);
+    ImGui::InputText("Gamertag", s_gt, sizeof s_gt);
+    ImGui::InputText("E-mail", s_email, sizeof s_email);
+    ImGui::InputText("Subscription code", s_code, sizeof s_code);
+    ImGui::BeginDisabled(!s_gt[0] || !s_code[0] || !s_email[0]);
+    if (ImGui::Button("Create account"))
+        insignia_wizard_start(0, s_gt, s_code, s_email);
+    ImGui::EndDisabled();
+    ImGui::InputText("Card number", s_card, sizeof s_card);
+    ImGui::BeginDisabled(!s_gt[0] || !s_card[0]);
+    if (ImGui::Button("Recover account"))
+        insignia_wizard_start(1, s_gt, s_card, "");
+    ImGui::EndDisabled();
+    ImGui::EndDisabled();
+    if (msg[0]) ImGui::TextWrapped("%s", msg);
 }
 
 /* ── Extras section ───────────────────────────────────────────────────────*/

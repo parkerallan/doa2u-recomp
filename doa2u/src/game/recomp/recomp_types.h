@@ -9,7 +9,7 @@
  *   Xbox data sections are mapped to their original VAs via
  *   VirtualAlloc (see xbox_memory_layout.c). Recompiled code
  *   accesses globals via pointer casts, e.g.:
- *     *(uint32_t*)0x003B2360
+ *     *(uint32_t*)0x003B5D40
  *
  * Register model:
  *   Volatile registers (eax, ecx, edx, esp) are global variables,
@@ -530,7 +530,7 @@ recomp_func_t recomp_lookup_manual(uint32_t xbox_va);
      * RW engine stores native heap pointers in Xbox memory; when code reads \
      * them back and uses as function addresses, they're native addresses \
      * pointing into our memory mirrors. Convert back to Xbox VA. */ \
-    if (_va >= 0x00400000 && _va < 0xFE000000) { \
+    if (_va >= 0x004039E0 && _va < 0xFE000000) { \
         uint32_t _off32 = (uint32_t)g_xbox_mem_offset; \
         int _resolved = 0; \
         /* Function pointers converted back must lie in the FIRST 64MB \
@@ -540,7 +540,7 @@ recomp_func_t recomp_lookup_manual(uint32_t xbox_va);
          * real function starts and get CALLED with junk registers. */ \
         if (_off32 != 0 && _va >= _off32 && (_va - _off32) < 0x04000000u) { \
             uint32_t _xva = _va - _off32; \
-            if (_xva >= 0x00011000 && _xva < 0x0106DAE0) { \
+            if (_xva >= 0x00011000 && _xva < 0x01073F20) { \
                 _va = _xva; _resolved = 1; \
             } \
         } \
@@ -581,7 +581,7 @@ void xbox_fiber_timeslice(void);
         g_esp += 4; eax = 0; break; \
       } \
     } \
-    if (_va >= 0x00400000 && _va < 0xFE000000) { \
+    if (_va >= 0x004039E0 && _va < 0xFE000000) { \
         uint32_t _off32 = (uint32_t)g_xbox_mem_offset; \
         int _resolved = 0; \
         /* Function pointers converted back must lie in the FIRST 64MB \
@@ -591,7 +591,7 @@ void xbox_fiber_timeslice(void);
          * real function starts and get CALLED with junk registers. */ \
         if (_off32 != 0 && _va >= _off32 && (_va - _off32) < 0x04000000u) { \
             uint32_t _xva = _va - _off32; \
-            if (_xva >= 0x00011000 && _xva < 0x0106DAE0) { \
+            if (_xva >= 0x00011000 && _xva < 0x01073F20) { \
                 _va = _xva; _resolved = 1; \
             } \
         } \

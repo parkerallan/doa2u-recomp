@@ -431,10 +431,10 @@ typedef VOID (*PIO_APC_ROUTINE)(
  * The thunk table is an array of function pointers at the XBE's kernel-thunk VA.
  * Game code calls kernel functions via: call [thunk_addr]
  * We fill this table at startup with our xbox_* implementations.
- * DOA2U: table at VA 0x003C14C0 (= .rdata start), 151 imports.
+ * DOA2U: table at VA 0x003C4EA0 (= .rdata start), 151 imports.
  * (Resolution is by Xbox kernel ordinal, which is game-agnostic.)
  */
-#define XBOX_KERNEL_THUNK_TABLE_BASE  0x003C14C0
+#define XBOX_KERNEL_THUNK_TABLE_BASE  0x003C4EA0
 #define XBOX_KERNEL_THUNK_TABLE_SIZE  151
 
 extern ULONG_PTR xbox_kernel_thunk_table[XBOX_KERNEL_THUNK_TABLE_SIZE];
@@ -455,6 +455,7 @@ void xbox_kernel_bridge_init(void);
 
 /* Initialize path translation with base directories */
 void xbox_path_init(const char* game_dir, const char* save_dir);
+void xbox_path_title_update_xbe(WCHAR* out, size_t count);
 
 /*
  * Translate an Xbox path to a Windows path.
@@ -467,6 +468,24 @@ BOOL xbox_translate_path(const char* xbox_path, WCHAR* win_path_buf, DWORD buf_s
  * copy of TitleData taken when it is switched on, so nothing the game saves
  * during the session reaches the player's real save files. */
 void xbox_path_set_title_redirect(int on);
+
+/* \Device\Harddisk0\partition0 (raw HDD config area) is <save>\HDDConfig.bin.
+ * Writes the Xbox Live account XOnlineGetUsers reads; NULL or "" removes it. */
+BOOL xbox_hdd_set_online_account(const uint8_t* xuid, const char* gamertag, const uint8_t* key,
+                                 const char* domain, const char* realm);
+/* Saved accounts (up to 8); slot 0 is the one the game signs in with. */
+int  xbox_hdd_account_list(char names[][16], int max);
+BOOL xbox_hdd_account_select(int slot);
+BOOL xbox_hdd_account_remove(int slot);
+
+/* Console identity, made once and kept in <save>\ConsoleIdentity.bin: the EEPROM
+ * serial and online key, and XboxHDKey. Online services identify the console by it. */
+typedef struct {
+    char    serial[12];       /* ASCII digits, XC_FACTORY_SERIAL_NUMBER */
+    uint8_t online_key[16];   /* XC_FACTORY_ONLINE_KEY */
+    uint8_t hdd_key[16];      /* XboxHDKey, never all zero */
+} xbox_console_identity;
+const xbox_console_identity* xbox_console_identity_get(void);
 
 /* ============================================================================
  * Pool Allocator (kernel_pool.c)

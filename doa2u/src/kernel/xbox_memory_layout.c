@@ -273,6 +273,18 @@ BOOL xbox_MemoryLayoutInit(const void *xbe_data, size_t xbe_size)
         }
     }
 
+    /* NIC registers at 0xFEF00000: reserved so XNET's driver accesses trap to nic.c
+     * (the VEH's catch-all would back them with a plain zero page). */
+    {
+        void *nic = (void *)((uintptr_t)0xFEF00000u + g_memory_offset);
+        LPVOID r = VirtualAlloc(nic, 0x10000u, MEM_RESERVE, PAGE_NOACCESS);
+        if (r != nic) {
+            fprintf(stderr, "xbox_MemoryLayoutInit: WARNING could not reserve the NIC "
+                            "aperture at %p (got %p, error %lu)\n", nic, r, GetLastError());
+            if (r) VirtualFree(r, 0, MEM_RELEASE);
+        }
+    }
+
     /*
      * Helper macro: convert Xbox VA to actual mapped address.
      * When g_memory_offset == 0 (ideal case), this is identity.

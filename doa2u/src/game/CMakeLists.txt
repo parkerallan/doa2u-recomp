@@ -28,6 +28,7 @@ set(GAME_SOURCES
     ${CMAKE_SOURCE_DIR}/src/ui/video_settings.c
     ${CMAKE_SOURCE_DIR}/src/ui/log_settings.c
     ${CMAKE_SOURCE_DIR}/src/ui/profile_settings.c
+    ${CMAKE_SOURCE_DIR}/src/ui/insignia.c
     ${CMAKE_SOURCE_DIR}/src/ui/extras.c
     recomp/recomp_manual.c
     burnout_compat_stubs.c   # inert stubs for burnout-only symbols the nv2a srcs need
@@ -44,6 +45,7 @@ target_link_libraries(doa2u PRIVATE
     dsound_compat
     input_compat
     apu_emu
+    nic_emu
     doa2u_ui
     kernel32
     user32
@@ -95,3 +97,7 @@ set_target_properties(doa2u PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/release"
     PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/debug"
 )
+
+# libslirp and its glib runtime (src/nic) next to DOA2U.exe.
+add_custom_command(TARGET doa2u POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${NIC_RUNTIME_DLLS} $<TARGET_FILE_DIR:doa2u>)
