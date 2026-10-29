@@ -548,14 +548,8 @@ void doa2u_nic_deliver(void)
 
     xbox_kernel_fire_timers();
     if (nic_poll_irq() && xbox_kernel_find_isr(0x34, &obj, &routine, &ctx)) {
-        static int s_logged_irq;
         fn = recomp_lookup_manual(routine);
         if (!fn) fn = recomp_lookup(routine);
-        if (!s_logged_irq) {
-            s_logged_irq = 1;
-            fprintf(stderr, "[NIC] first IRQ 4 delivered to ISR %08X\n", routine);
-            fflush(stderr);
-        }
         if (fn) {
             PUSH32(esp, ctx);
             PUSH32(esp, obj);

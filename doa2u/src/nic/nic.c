@@ -27,37 +27,13 @@ static uint32_t s_regs[NIC_SIZE / 4];
 static uint32_t s_tx_idx, s_rx_idx;
 static uint8_t  s_tx_frame[0x800];
 static uint32_t s_tx_len;
-static int      s_logged;
+static int      s_held_logged;   /* capped "RX held" warnings */
 
 /* Host-thread RX queue, moved into the guest ring on the game thread. */
 #define RXQ_MAX 64
 static struct { uint16_t len; uint8_t data[0x600]; } s_rxq[RXQ_MAX];
 static int s_rxq_head, s_rxq_count;
 static SRWLOCK s_rxq_lock = SRWLOCK_INIT;
-
-static void nic_log_frame(const char* dir, const uint8_t* f, uint32_t len)
-{
-    char what[64] = "";
-    if (s_logged >= 200)
-        return;
-    s_logged++;
-    if (len >= 34 && f[12] == 0x08 && f[13] == 0x00) {
-        const uint8_t* ip = f + 14;
-        uint32_t ihl = (ip[0] & 0xF) * 4;
-        if (ip[9] == 17 && len >= 14 + ihl + 4)
-            sprintf_s(what, sizeof(what), "UDP %u.%u.%u.%u:%u -> %u.%u.%u.%u:%u",
-                      ip[12], ip[13], ip[14], ip[15], (ip[ihl] << 8) | ip[ihl + 1],
-                      ip[16], ip[17], ip[18], ip[19], (ip[ihl + 2] << 8) | ip[ihl + 3]);
-        else
-            sprintf_s(what, sizeof(what), "IPv4 proto %u", ip[9]);
-    } else if (len >= 42 && f[12] == 0x08 && f[13] == 0x06) {
-        sprintf_s(what, sizeof(what), "ARP %s %u.%u.%u.%u -> %u.%u.%u.%u", f[21] == 1 ? "request" : "reply",
-                  f[28], f[29], f[30], f[31], f[38], f[39], f[40], f[41]);
-    } else if (len >= 14) {
-        sprintf_s(what, sizeof(what), "ethertype %02X%02X", f[12], f[13]);
-    }
-    xbox_log(XBOX_LOG_INFO, "NIC", "%s %u bytes %s", dir, len, what);
-}
 
 /* Walk the TX ring while descriptors are NIC-owned (0x8000); 0x0001 marks a frame's
  * last fragment, the length field is length - 1. Clearing 0x8000 hands it back. */
@@ -81,7 +57,6 @@ static void nic_kick_tx(void)
         }
         *(uint32_t*)(desc + 4) = ctl & ~0x80000000u;
         if (ctl & 0x00010000u) {
-            nic_log_frame("TX", s_tx_frame, s_tx_len);
             nic_net_send(s_tx_frame, s_tx_len);
             s_tx_len = 0;
         }
@@ -202,8 +177,8 @@ static void nic_deliver_rx(void)
         uint32_t buf = *(uint32_t*)desc, ctl = *(uint32_t*)(desc + 4);
         uint32_t len = s_rxq[s_rxq_head].len;
         if (!(ctl & 0x80000000u) || len > (ctl & 0xFFFF) + 1) {
-            if (s_logged < 200) {
-                s_logged++;
+            if (s_held_logged < 200) {
+                s_held_logged++;
                 xbox_log(XBOX_LOG_WARN, "NIC", "RX held: desc %u ctl %08X, %d frame(s) waiting",
                          s_rx_idx, ctl, s_rxq_count);
             }
@@ -211,7 +186,6 @@ static void nic_deliver_rx(void)
         }
         memcpy(NIC_PTR(buf), s_rxq[s_rxq_head].data, len);
         *(uint32_t*)(desc + 4) = 0x00010000u | len;
-        nic_log_frame("RX", s_rxq[s_rxq_head].data, len);
         s_rxq_head = (s_rxq_head + 1) % RXQ_MAX;
         s_rxq_count--;
         s_rx_idx = (s_rx_idx + 1) % size;
