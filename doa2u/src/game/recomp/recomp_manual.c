@@ -389,7 +389,8 @@ void doa2u_insignia_wizard_step(void)
             if (s_recover && n != 16) { insignia_wizard_report(3, "The card number has 16 digits."); return; }
             strcpy_s(s_code, sizeof s_code, c);
         }
-        if (!cxo || !(MEM32(cxo + 0x24) | MEM32(cxo + 0x28))) {
+        /* The logon itself creates the machine account on a fresh HDD (MACS reply, 0x39C776). */
+        if (!cxo) {
             insignia_wizard_report(3, "Open the game's Online screen first.");
             return;
         }

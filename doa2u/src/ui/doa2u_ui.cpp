@@ -494,7 +494,7 @@ void DrawGeneralSection()
 void DrawProfileSection()
 {
     static const char *kLanguage[] = { "English", "Japanese" };
-    static char s_gt[16], s_code[32], s_card[24], s_email[128];
+    static char s_gt[16], s_new_gt[16], s_code[32], s_card[24], s_email[128];
     static int s_pick;
     char names[8][16], msg[256];
 
@@ -542,18 +542,28 @@ void DrawProfileSection()
 
     int ws = insignia_wizard_state(msg, sizeof msg);
     ImGui::BeginDisabled(ws == INSIGNIA_BUSY);
+
+    ImGui::Spacing();
+    ImGui::TextUnformatted("Sign in with an existing account");
+    ImGui::TextDisabled("Log in at insignia.live, reveal the 16-digit card number and enter it here.");
     ImGui::InputText("Gamertag", s_gt, sizeof s_gt);
-    ImGui::InputText("E-mail", s_email, sizeof s_email);
-    ImGui::InputText("Subscription code", s_code, sizeof s_code);
-    ImGui::BeginDisabled(!s_gt[0] || !s_code[0] || !s_email[0]);
-    if (ImGui::Button("Create account"))
-        insignia_wizard_start(0, s_gt, s_code, s_email);
-    ImGui::EndDisabled();
     ImGui::InputText("Card number", s_card, sizeof s_card);
     ImGui::BeginDisabled(!s_gt[0] || !s_card[0]);
-    if (ImGui::Button("Recover account"))
+    if (ImGui::Button("Sign in"))
         insignia_wizard_start(1, s_gt, s_card, "");
     ImGui::EndDisabled();
+
+    ImGui::Spacing();
+    ImGui::TextUnformatted("Create a new account");
+    ImGui::TextDisabled("Request a subscription code at insignia.live.");
+    ImGui::InputText("Gamertag##new", s_new_gt, sizeof s_new_gt);
+    ImGui::InputText("E-mail", s_email, sizeof s_email);
+    ImGui::InputText("Subscription code", s_code, sizeof s_code);
+    ImGui::BeginDisabled(!s_new_gt[0] || !s_code[0] || !s_email[0]);
+    if (ImGui::Button("Create account"))
+        insignia_wizard_start(0, s_new_gt, s_code, s_email);
+    ImGui::EndDisabled();
+
     ImGui::EndDisabled();
     if (msg[0]) ImGui::TextWrapped("%s", msg);
 }

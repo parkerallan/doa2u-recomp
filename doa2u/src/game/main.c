@@ -37,6 +37,7 @@
 #include "ui/doa2u_ui.h"
 #include "ui/doa2u_setup.h"
 #include "xiso_extract.h"
+#include "xbe_patch.h"
 
 #define DOA2U_ENTRY_POINT  0x002BF373
 /* Game files live in assets next to the exe (the disc root); D: maps to assets. */
@@ -940,6 +941,15 @@ int main(int argc, char **argv)
         WCHAR tu[MAX_PATH], tu2[MAX_PATH]; char msg[700]; uint32_t ver = 0;
         xbox_path_title_update_xbe(tu, MAX_PATH);
         swprintf_s(tu2, MAX_PATH, L"%s\\$U\\doa2.xbe", assets_dir);   /* also accepted: next to the game files */
+        if (GetFileAttributesW(tu) == INVALID_FILE_ATTRIBUTES && GetFileAttributesW(tu2) == INVALID_FILE_ATTRIBUTES) {
+            /* First run: build the title update from the disc DOA2.xbe and the shipped patch. */
+            WCHAR disc[MAX_PATH]; char perr[300];
+            swprintf_s(disc, MAX_PATH, L"%s\\DOA2.xbe", assets_dir);
+            if (doa2u_xbe_patch_apply(disc, L"online\\doa2u_tu261.patch", tu2, perr, sizeof perr))
+                fprintf(stderr, "[SETUP] title update built: %S\n", tu2);
+            else
+                fprintf(stderr, "[SETUP] title update patch failed: %s\n", perr);
+        }
         if ((load_xbe(tu, &xbe_data, &xbe_size) || load_xbe(tu2, &xbe_data, &xbe_size)) && xbe_size > 0x200) {
             const uint8_t *x = (const uint8_t *)xbe_data;
             uint32_t base = *(const uint32_t *)(x + 0x104), cert = *(const uint32_t *)(x + 0x118) - base;
@@ -948,8 +958,8 @@ int main(int argc, char **argv)
         if (xbe_size != DOA2U_TU_SIZE || ver != DOA2U_TU_VERSION) {
             snprintf(msg, sizeof(msg),
                      "The Dead or Alive Ultimate title update was not found.\n\n"
-                     "This build runs the game's Xbox Live update (version %u). Copy doa2.xbe from "
-                     "the title update (content\\uOLD\\doa2.xbe) to:\n%S%s",
+                     "This build runs the game's Xbox Live update (version %u). Keep online\\doa2u_tu261.patch "
+                     "next to DOA2U.exe, or copy doa2.xbe from the title update to:\n%S%s",
                      DOA2U_TU_VERSION, tu,
                      xbe_data ? "\n\n(The file there is a different version.)" : "");
             fprintf(stderr, "FATAL: %s\n", msg);
