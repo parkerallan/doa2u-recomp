@@ -265,10 +265,17 @@ static int net_start(void)
     SlirpConfig cfg;
     WSADATA wsa;
 
-    /* libslirp-0.dll is delay-loaded; a missing DLL must not raise the delay-load fault. */
-    if (!LoadLibraryW(L"libslirp-0.dll")) {
-        xbox_log(XBOX_LOG_WARN, "NIC", "libslirp-0.dll not found: network unavailable");
-        return 0;
+    /* libslirp-0.dll and its glib runtime live in online\ next to the exe. Loading it by
+     * full path here satisfies the delay-load later, and a missing DLL raises no fault. */
+    {
+        WCHAR path[MAX_PATH], *slash;
+        GetModuleFileNameW(NULL, path, MAX_PATH);
+        slash = wcsrchr(path, L'\\');
+        wcscpy_s(slash ? slash + 1 : path, MAX_PATH - (slash ? (size_t)(slash + 1 - path) : 0), L"online\\libslirp-0.dll");
+        if (!LoadLibraryExW(path, NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)) {
+            xbox_log(XBOX_LOG_WARN, "NIC", "online\\libslirp-0.dll not found: network unavailable");
+            return 0;
+        }
     }
     WSAStartup(MAKEWORD(2, 2), &wsa);
     memset(&cfg, 0, sizeof(cfg));

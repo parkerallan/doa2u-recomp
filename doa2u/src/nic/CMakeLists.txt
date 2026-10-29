@@ -21,7 +21,7 @@ if(MSVC)
     target_compile_options(nic_emu PRIVATE /W3)
 endif()
 
-# The DLLs ship next to DOA2U.exe.
+# The DLLs ship in online\ next to DOA2U.exe.
 set(NIC_RUNTIME_DLLS
     ${SLIRP_DIR}/bin/libslirp-0.dll
     ${SLIRP_DIR}/bin/libglib-2.0-0.dll

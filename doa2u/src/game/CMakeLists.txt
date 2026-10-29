@@ -98,6 +98,7 @@ set_target_properties(doa2u PROPERTIES
     PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/debug"
 )
 
-# libslirp and its glib runtime (src/nic) next to DOA2U.exe.
+# libslirp and its glib runtime (src/nic) in online\ next to DOA2U.exe.
 add_custom_command(TARGET doa2u POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${NIC_RUNTIME_DLLS} $<TARGET_FILE_DIR:doa2u>)
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:doa2u>/online
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${NIC_RUNTIME_DLLS} $<TARGET_FILE_DIR:doa2u>/online)
