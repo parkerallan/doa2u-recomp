@@ -124,6 +124,17 @@ static DWORD hash_ds_states(const DWORD *rs)
            (rs[D3DRS_STENCILMASK] << 18);
 }
 
+/* Depth bias from the NV2A polygon offset, set per draw; part of the rasterizer state's key. */
+static float g_bias_slope;
+static int   g_bias_units;
+static float g_last_bias_slope;
+static int   g_last_bias_units;
+void d3d8_SetDepthBias(float slope, int units)
+{
+    g_bias_slope = slope;
+    g_bias_units = units;
+}
+
 static DWORD hash_raster_states(const DWORD *rs)
 {
     return rs[D3DRS_CULLMODE] ^
@@ -218,8 +229,11 @@ static void update_rasterizer_state(const DWORD *rs)
     D3D11_RASTERIZER_DESC rd;
     HRESULT hr;
 
-    if (hash == g_last_raster_hash && g_raster_state) return;
+    if (hash == g_last_raster_hash && g_raster_state &&
+        g_bias_slope == g_last_bias_slope && g_bias_units == g_last_bias_units) return;
     g_last_raster_hash = hash;
+    g_last_bias_slope = g_bias_slope;
+    g_last_bias_units = g_bias_units;
 
     if (g_raster_state) {
         ID3D11RasterizerState_Release(g_raster_state);
@@ -242,6 +256,9 @@ static void update_rasterizer_state(const DWORD *rs)
     }
 
     rd.FrontCounterClockwise = FALSE;
+    rd.DepthBias = g_bias_units;
+    rd.SlopeScaledDepthBias = g_bias_slope;
+    rd.DepthBiasClamp = 0.0f;
     rd.DepthClipEnable = TRUE;
     /* On, so the pgraph can honour NV097_SET_WINDOW_CLIP (the hardware
      * scissor that confines the character-select portrait to its window).

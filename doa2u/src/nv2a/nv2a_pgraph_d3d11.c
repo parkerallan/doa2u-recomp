@@ -227,6 +227,10 @@ static struct {
     uint32_t front_face;     /* 0x900 CW, 0x901 CCW */
     int stencil_enable;
     uint32_t stencil_mask, stencil_func, stencil_ref, stencil_func_mask;
+    /* Polygon offset (glPolygonOffset semantics), set by D3DRS_ZBIAS for decals such as
+     * floor reflections and projected shadows. */
+    int poly_offset_fill;
+    float poly_offset_factor, poly_offset_units;
     uint32_t stencil_fail, stencil_zfail, stencil_zpass;
     int alpha_test;
     uint32_t alpha_func;   /* NV097_SET_ALPHA_FUNC, GL constant 0x200..0x207 */
@@ -1698,6 +1702,18 @@ static void nv_apply_draw_state(IDirect3DDevice8 *dev, const NvDrawSummary *sum,
         }
     }
     dev->lpVtbl->SetRenderState(dev, D3DRS_LIGHTING, FALSE);
+    {   /* Polygon offset on filled triangles: guest z is 24-bit depth scaled to [0,1],
+         * so one offset unit is one D24 step, as D3D11's DepthBias counts it. */
+        extern void d3d8_SetDepthBias(float slope, int units);
+        const int on = g_pg.poly_offset_fill && (g_pg.poly_offset_factor != 0.0f || g_pg.poly_offset_units != 0.0f);
+        d3d8_SetDepthBias(on ? g_pg.poly_offset_factor : 0.0f, on ? (int)lroundf(g_pg.poly_offset_units) : 0);
+        {   static int logged;
+            if (on && !logged) {
+                logged = 1;
+                fprintf(stderr, "[NV2A] polygon offset in use: factor %.3f units %.3f\n", g_pg.poly_offset_factor, g_pg.poly_offset_units);
+            }
+        }
+    }
     /* Face culling. D3DCULL names the screen winding to discard, so the
      * mapping depends on which winding the game calls front-facing. Culling
      * both faces has no D3D equivalent, so that degenerates to no culling
@@ -4846,6 +4862,18 @@ int pgraph_d3d11_method(int subchannel, uint32_t method, uint32_t param)
 
     case NV097_SET_STENCIL_TEST_ENABLE:
         g_pg.stencil_enable = param ? 1 : 0;
+        return 1;
+
+    case NV097_SET_POLY_OFFSET_FILL_ENABLE:
+        g_pg.poly_offset_fill = param ? 1 : 0;
+        return 1;
+
+    case NV097_SET_POLYGON_OFFSET_SCALE_FACTOR:
+        g_pg.poly_offset_factor = u2f(param);
+        return 1;
+
+    case NV097_SET_POLYGON_OFFSET_BIAS:
+        g_pg.poly_offset_units = u2f(param);
         return 1;
 
     case NV097_SET_STENCIL_MASK:
