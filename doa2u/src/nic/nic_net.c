@@ -319,12 +319,13 @@ static int net_start(void)
     cfg.in_enabled = true;
     {   /* The guest takes this PC's LAN address so the XNADDR it reports (ina) reaches it from
          * other machines on the LAN; a /30 keeps every other LAN host off-link and routed. */
-        uint32_t ip = lan_address(), net, mask, gw, pos;
+        uint32_t ip = lan_address(), net, mask, gw;
         if (!ip) ip = 0x0A00020Fu;                                /* 10.0.2.15 without a route */
-        pos = ip & 3;
-        if (pos == 0 || pos == 3) { mask = 0xFFFFFFF8u; pos = ip & 7; gw = pos < 6 ? ip + 1 : ip - 1; }
-        else                      { mask = 0xFFFFFFFCu; gw = pos == 1 ? ip + 1 : ip - 1; }
+        /* Smallest block where the guest is neither its first nor its last address. */
+        mask = 0xFFFFFFFCu;
+        while ((ip & ~mask) == 0 || (ip & ~mask) == ~mask) mask <<= 1;
         net = ip & mask;
+        gw = (ip + 1) == (net | ~mask) ? ip - 1 : ip + 1;
         cfg.vnetwork.s_addr = htonl(net); cfg.vnetmask.s_addr = htonl(mask);
         cfg.vhost.s_addr = htonl(gw);     cfg.vdhcp_start.s_addr = htonl(ip);
         s_guest_ip = ip; s_gateway_ip = gw;
