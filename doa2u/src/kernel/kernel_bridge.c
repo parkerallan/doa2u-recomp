@@ -2838,6 +2838,11 @@ static void bridge_ExQueryNonVolatileSetting(void)
         xnet_mac[3] = (uint8_t)(h >> 16); xnet_mac[4] = (uint8_t)(h >> 8); xnet_mac[5] = (uint8_t)h;
         bin = xnet_mac;
     }
+    if (index == 0x101) {   /* TEMP */
+        const uint8_t *m = bin;
+        xbox_log(XBOX_LOG_INFO, "NIC", "MAC query from %08X len %u -> %02X:%02X:%02X:%02X:%02X:%02X",
+                 caller, len, m[0], m[1], m[2], m[3], m[4], m[5]);
+    }
     if (index == 0x100) { bin = id->serial; bin_len = 12; }      /* XC_FACTORY_SERIAL_NUMBER */
     if (index == 0x102) { bin = id->online_key; bin_len = 16; }  /* XC_FACTORY_ONLINE_KEY */
     if (index == 0xFFFF) {

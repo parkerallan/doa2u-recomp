@@ -49,9 +49,29 @@ static uint32_t lan_address(void)
 
 static int64_t now_ms(void) { return (int64_t)GetTickCount64(); }
 
+/* TEMP: pcap of every guest frame, both directions. */
+static void pcap_frame(const void *buf, uint32_t len)
+{
+    static FILE *f; static SRWLOCK lk = SRWLOCK_INIT;
+    FILETIME ft; uint64_t t; uint32_t rec[4];
+    AcquireSRWLockExclusive(&lk);
+    if (!f && (f = fopen("doa2u_net.pcap", "wb"))) {
+        uint32_t hdr[6] = { 0xa1b2c3d4u, 0x00040002u, 0, 0, 65535, 1 };
+        fwrite(hdr, 1, sizeof hdr, f);
+    }
+    if (f) {
+        GetSystemTimeAsFileTime(&ft);
+        t = ((uint64_t)ft.dwHighDateTime << 32 | ft.dwLowDateTime) / 10 - 11644473600000000ull;
+        rec[0] = (uint32_t)(t / 1000000); rec[1] = (uint32_t)(t % 1000000); rec[2] = rec[3] = len;
+        fwrite(rec, 1, sizeof rec, f); fwrite(buf, 1, len, f); fflush(f);
+    }
+    ReleaseSRWLockExclusive(&lk);
+}
+
 static slirp_ssize_t cb_send(const void* buf, size_t len, void* opaque)
 {
     (void)opaque;
+    pcap_frame(buf, (uint32_t)len);
     nic_rx_enqueue((const uint8_t*)buf, (uint32_t)len);
     return (slirp_ssize_t)len;
 }
@@ -344,6 +364,7 @@ static DWORD WINAPI net_thread(LPVOID p)
 
         AcquireSRWLockExclusive(&s_txq_lock);
         while (s_txq_count) {
+            pcap_frame(s_txq[s_txq_head].data, s_txq[s_txq_head].len);
             if (!dns_answer_local(s_txq[s_txq_head].data, s_txq[s_txq_head].len))
                 slirp_input(s_slirp, s_txq[s_txq_head].data, s_txq[s_txq_head].len);
             s_txq_head = (s_txq_head + 1) % TXQ_MAX;
