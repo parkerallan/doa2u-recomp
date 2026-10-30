@@ -89,7 +89,6 @@ void xbox_log_set_enabled(int on)
 {
     if (g_log_cs_init) EnterCriticalSection(&g_log_cs);
     if (on && !g_log_file) {
-        MoveFileExA("xbox_kernel.log", "xbox_kernel.prev.log", MOVEFILE_REPLACE_EXISTING);   /* keep the last run's log */
         g_log_file = fopen("xbox_kernel.log", "w");
     }
     if (!on && g_log_file) { fclose(g_log_file); g_log_file = NULL; }

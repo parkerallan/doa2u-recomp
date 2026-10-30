@@ -286,6 +286,26 @@ BOOL xbox_MemoryLayoutInit(const void *xbe_data, size_t xbe_size)
         }
     }
 
+    /* Remaining hardware windows (AC97, the 0xFED00000 boot page, flash): reserved so a host
+     * allocation can't land there and a first read still faults in a zero page. */
+    {
+        static const struct { uint32_t va, size; } hw[] = {
+            { 0xFE000000u, 0x00800000u },
+            { 0xFE880000u, 0x00680000u },     /* up to the NIC at 0xFEF00000 */
+            { 0xFEF10000u, 0x010E0000u },     /* NIC end up to 0xFFFF0000 */
+        };
+        for (unsigned i = 0; i < sizeof hw / sizeof hw[0]; i++) {
+            void *at = (void *)((uintptr_t)hw[i].va + g_memory_offset);
+            LPVOID r = VirtualAlloc(at, hw[i].size, MEM_RESERVE, PAGE_NOACCESS);
+            if (r != at) {
+                fprintf(stderr, "xbox_MemoryLayoutInit: WARNING could not reserve the hardware "
+                                "window at Xbox VA 0x%08X (got %p, error %lu)\n",
+                        (unsigned)hw[i].va, r, GetLastError());
+                if (r) VirtualFree(r, 0, MEM_RELEASE);
+            }
+        }
+    }
+
     /*
      * Helper macro: convert Xbox VA to actual mapped address.
      * When g_memory_offset == 0 (ideal case), this is identity.
