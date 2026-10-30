@@ -986,9 +986,25 @@ static void bridge_KeWaitForSingleObject(void)
         return;
     }
     if (xbox_fiber_active() && obj) {
+        extern void doa2u_nic_deliver(void);
+        extern void doa2u_netdiag_wait(uint32_t, uint32_t, double, int);
         long budget = 200000;   /* timed-wait yield budget before STATUS_TIMEOUT */
+        LARGE_INTEGER t0, t1, fq;
+        uint32_t caller = BRIDGE_MEM32(g_esp - 4);
+        int primary = xbox_fiber_is_primary();
+        QueryPerformanceCounter(&t0);
         for (;;) {
             int32_t sig = (int32_t)BRIDGE_MEM32(obj + 4);   /* SignalState */
+            if (sig <= 0 && !infinite) {
+                /* The NIC interrupt ends network waits on hardware; here it only ran at present,
+                 * so a wait for the next packet always ran out its budget (200 ms stalls). */
+                if (primary && (budget & 15) == 0) doa2u_nic_deliver();
+                sig = (int32_t)BRIDGE_MEM32(obj + 4);
+            }
+            if (sig > 0 || (!infinite && budget <= 1)) {
+                QueryPerformanceCounter(&t1); QueryPerformanceFrequency(&fq);
+                doa2u_netdiag_wait(obj, caller, (double)(t1.QuadPart - t0.QuadPart) * 1000.0 / (double)fq.QuadPart, sig <= 0);
+            }
             if (sig > 0) {
                 /* Consume the signal for SynchronizationEvents (auto-reset)
                  * AND for the D3D vblank event (0x001C2CF0): it is a

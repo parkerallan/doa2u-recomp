@@ -57,7 +57,9 @@ static void nic_kick_tx(void)
         }
         *(uint32_t*)(desc + 4) = ctl & ~0x80000000u;
         if (ctl & 0x00010000u) {
+            extern void doa2u_netdiag_tx(void);
             nic_net_send(s_tx_frame, s_tx_len);
+            doa2u_netdiag_tx();
             s_tx_len = 0;
         }
         s_tx_idx = (s_tx_idx + 1) % size;
@@ -166,8 +168,10 @@ void nic_rx_enqueue(const uint8_t* frame, uint32_t len)
  * the NIC writes 0x0001 (valid) | frame length, as the driver's RX loop reads it. */
 static void nic_deliver_rx(void)
 {
+    extern void doa2u_netdiag_rx(int, int);
     uint32_t ring = s_regs[REG_RX_RING / 4];
     uint32_t size = (s_regs[REG_RING_SIZES / 4] >> 16) + 1;
+    int delivered = 0, held = 0;
 
     if (!ring)
         return;
@@ -182,6 +186,7 @@ static void nic_deliver_rx(void)
                 xbox_log(XBOX_LOG_WARN, "NIC", "RX held: desc %u ctl %08X, %d frame(s) waiting",
                          s_rx_idx, ctl, s_rxq_count);
             }
+            held = s_rxq_count;
             break;
         }
         memcpy(NIC_PTR(buf), s_rxq[s_rxq_head].data, len);
@@ -190,8 +195,10 @@ static void nic_deliver_rx(void)
         s_rxq_count--;
         s_rx_idx = (s_rx_idx + 1) % size;
         s_regs[REG_IRQ_STATUS / 4] |= IRQ_RX;
+        delivered++;
     }
     ReleaseSRWLockExclusive(&s_rxq_lock);
+    doa2u_netdiag_rx(delivered, held);
 }
 
 int nic_poll_irq(void)

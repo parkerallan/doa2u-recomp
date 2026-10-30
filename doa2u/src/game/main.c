@@ -38,6 +38,7 @@
 #include "ui/doa2u_setup.h"
 #include "xiso_extract.h"
 #include "xbe_patch.h"
+#include "netdiag.h"
 
 #define DOA2U_ENTRY_POINT  0x002BF373
 /* Game files live in assets next to the exe (the disc root); D: maps to assets. */
@@ -233,6 +234,7 @@ void doa2u_present_game_side(void)
         extern void doa2u_nic_deliver(void);
         doa2u_nic_deliver();
     }
+    doa2u_netdiag_frame();
     doa2u_pump_messages();
 }
 

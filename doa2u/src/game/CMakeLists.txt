@@ -26,6 +26,7 @@ set(GAME_SOURCES
     movie_present.c
     xiso_extract.c           # first-run install of the game files from a disc image
     xbe_patch.c              # first-run build of the v261 doa2.xbe from the disc xbe + patch
+    netdiag.c                # doa2u_net.log: waits, frame gaps and NIC counters per second
     ${CMAKE_SOURCE_DIR}/src/ui/video_settings.c
     ${CMAKE_SOURCE_DIR}/src/ui/log_settings.c
     ${CMAKE_SOURCE_DIR}/src/ui/profile_settings.c
