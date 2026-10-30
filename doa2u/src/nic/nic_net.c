@@ -1,5 +1,5 @@
 /* Host side of the NIC: libslirp user-mode NAT on its own thread. Guest frames go in
- * unchanged; DHCP hands out 10.0.2.15 with Insignia's DNS server, 46.101.64.175. */
+ * unchanged; DHCP hands out this PC's LAN address with Insignia's DNS server, 46.101.64.175. */
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -30,6 +30,22 @@ static int      s_txq_head, s_txq_count;
 
 /* slirp's only timer (IPv6 router adverts, unused with IPv6 off), kept for completeness */
 static struct { int64_t expire_ms; SlirpTimerId id; void* cb_opaque; int armed; } s_timer;
+
+static uint32_t s_guest_ip, s_gateway_ip;      /* host order */
+
+/* The IPv4 address of the interface that carries the default route (no packet is sent). */
+static uint32_t lan_address(void)
+{
+    SOCKET s = socket(AF_INET, SOCK_DGRAM, 0);
+    struct sockaddr_in to, me; int len = sizeof me; uint32_t ip = 0;
+    if (s == INVALID_SOCKET) return 0;
+    memset(&to, 0, sizeof to); to.sin_family = AF_INET; to.sin_port = htons(53);
+    inet_pton(AF_INET, "8.8.8.8", &to.sin_addr);
+    if (!connect(s, (struct sockaddr *)&to, sizeof to) && !getsockname(s, (struct sockaddr *)&me, &len))
+        ip = ntohl(me.sin_addr.s_addr);
+    closesocket(s);
+    return ip;
+}
 
 static int64_t now_ms(void) { return (int64_t)GetTickCount64(); }
 
@@ -281,10 +297,18 @@ static int net_start(void)
     memset(&cfg, 0, sizeof(cfg));
     cfg.version = SLIRP_CONFIG_VERSION_MAX;
     cfg.in_enabled = true;
-    inet_pton(AF_INET, "10.0.2.0", &cfg.vnetwork);
-    inet_pton(AF_INET, "255.255.255.0", &cfg.vnetmask);
-    inet_pton(AF_INET, "10.0.2.2", &cfg.vhost);
-    inet_pton(AF_INET, "10.0.2.15", &cfg.vdhcp_start);
+    {   /* The guest takes this PC's LAN address so the XNADDR it reports (ina) reaches it from
+         * other machines on the LAN; a /30 keeps every other LAN host off-link and routed. */
+        uint32_t ip = lan_address(), net, mask, gw, pos;
+        if (!ip) ip = 0x0A00020Fu;                                /* 10.0.2.15 without a route */
+        pos = ip & 3;
+        if (pos == 0 || pos == 3) { mask = 0xFFFFFFF8u; pos = ip & 7; gw = pos < 6 ? ip + 1 : ip - 1; }
+        else                      { mask = 0xFFFFFFFCu; gw = pos == 1 ? ip + 1 : ip - 1; }
+        net = ip & mask;
+        cfg.vnetwork.s_addr = htonl(net); cfg.vnetmask.s_addr = htonl(mask);
+        cfg.vhost.s_addr = htonl(gw);     cfg.vdhcp_start.s_addr = htonl(ip);
+        s_guest_ip = ip; s_gateway_ip = gw;
+    }
     /* Advertised by DHCP; slirp's own DNS proxy is off, so queries go to it as-is. */
     inet_pton(AF_INET, INSIGNIA_DNS, &cfg.vnameserver);
     inet_pton(AF_INET, INSIGNIA_DNS, &s_dns_ip);
@@ -295,8 +319,17 @@ static int net_start(void)
         xbox_log(XBOX_LOG_WARN, "NIC", "slirp_new failed");
         return 0;
     }
-    xbox_log(XBOX_LOG_INFO, "NIC", "slirp %s up: 10.0.2.15/24, gateway 10.0.2.2, DNS %s",
-             slirp_version_string(), INSIGNIA_DNS);
+    /* Xbox Live peer traffic is UDP 3074: the host port is bound to the guest's so other
+     * machines reach it, on the LAN and through the gateway (Insignia's NAT guide). */
+    {
+        struct in_addr any; any.s_addr = INADDR_ANY;
+        if (slirp_add_hostfwd(s_slirp, SLIRP_HOSTFWD_UDP, any, 3074, cfg.vdhcp_start, 3074) < 0)
+            xbox_log(XBOX_LOG_WARN, "NIC", "UDP 3074 is in use on this PC: other players cannot reach the game");
+    }
+    xbox_log(XBOX_LOG_INFO, "NIC", "slirp %s up: guest %u.%u.%u.%u, gateway %u.%u.%u.%u, DNS %s",
+             slirp_version_string(), s_guest_ip >> 24, (s_guest_ip >> 16) & 255, (s_guest_ip >> 8) & 255,
+             s_guest_ip & 255, s_gateway_ip >> 24, (s_gateway_ip >> 16) & 255, (s_gateway_ip >> 8) & 255,
+             s_gateway_ip & 255, INSIGNIA_DNS);
     return 1;
 }
 
