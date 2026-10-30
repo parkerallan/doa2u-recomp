@@ -273,7 +273,7 @@ void mcpx_apu_monitor_frame(MCPXAPUState *d)
      * discarded, and it submitted a full 1024-sample XA2 buffer every 256
      * samples (4x oversubmission -> permanently full queue). Now the host
      * mixer voices are layered on top and 256-sample periods are staged
-     * until one 1024-sample buffer is complete. */
+     * until one XA2 buffer (xa2_get_buffer_size) is complete. */
     if (xa2_is_active()) {
         static int16_t s_stage[1024][2];   /* matches XA2_BUF_SAMPLES max */
         static int s_fill = 0;
@@ -308,8 +308,9 @@ void mcpx_apu_monitor_frame(MCPXAPUState *d)
              * (drops and dry queues both clicked). Bounded so a dead device
              * cannot wedge the APU thread. */
             extern int xa2_queued(void);
+            extern int xa2_max_queued(void);
             int spins = 0;
-            while (xa2_queued() >= 6 && spins < 200) { qemu_mutex_unlock(&d->lock); Sleep(1); qemu_mutex_lock(&d->lock); spins++; }
+            while (xa2_queued() >= xa2_max_queued() && spins < 200) { qemu_mutex_unlock(&d->lock); Sleep(1); qemu_mutex_lock(&d->lock); spins++; }
             xa2_submit_samples((const int16_t *)s_stage, buf_size);
             s_fill = 0;
         }

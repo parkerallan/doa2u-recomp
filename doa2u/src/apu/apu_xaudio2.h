@@ -20,6 +20,8 @@ int xa2_submit_samples(const int16_t *samples, int num_samples);
 
 /* Get the preferred buffer size in samples. */
 int xa2_get_buffer_size(void);
+/* Buffers the APU thread lets queue before it waits for the device. */
+int xa2_max_queued(void);
 
 /* Dedicated 48 kHz stereo voice for host-decoded movie audio. */
 int xa2_movie_start(void);

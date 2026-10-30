@@ -21,8 +21,10 @@
 
 #define XA2_SAMPLE_RATE   48000
 #define XA2_CHANNELS      2
-#define XA2_BUF_SAMPLES   1024   /* ~21ms per submission */
-#define XA2_NUM_BUFS      6   /* ~128 ms of slack; the APU thread now waits instead of dropping */
+#define XA2_BUF_SAMPLES   512    /* ~10.7 ms per submission */
+#define XA2_NUM_BUFS      8      /* ring of buffers, more than can be queued at once */
+#define XA2_MAX_QUEUED    4      /* ~43 ms queued at most: the APU thread waits beyond it
+                                    (was 6 x 1024, ~128 ms of audio behind the picture) */
 #define XA2_MOVIE_BUF_SAMPLES 2048
 #define XA2_MOVIE_NUM_BUFS 4
 
@@ -159,11 +161,12 @@ int xa2_submit_samples(const int16_t *samples, int num_samples)
         static DWORD s_next = 0; static unsigned s_bufs = 0, s_loud = 0, s_starved = 0; static int s_peak = 0;
         int i, n = copy_samples * XA2_CHANNELS;
         for (i = 0; i < n; i++) { int v = samples[i]; if (v < 0) v = -v; if (v > s_peak) s_peak = v; }
-        s_bufs++; if (state.BuffersQueued == 0) s_starved++;
+        s_bufs++; if (state.BuffersQueued == 0 && g_xa2_frames_written > 0) s_starved++;
         if (s_peak > 64) s_loud++;
         if (GetTickCount() >= s_next) {
             s_next = GetTickCount() + 2000;
-            
+            if (s_starved && s_loud)    /* the queue ran dry while sound played: a click */
+                fprintf(stderr, "[AUDIO] output queue ran dry %u times in %u buffers\n", s_starved, s_bufs);
             s_bufs = s_loud = s_starved = 0; s_peak = 0;
         }
     }
@@ -176,6 +179,11 @@ int xa2_submit_samples(const int16_t *samples, int num_samples)
 int xa2_get_buffer_size(void)
 {
     return XA2_BUF_SAMPLES;
+}
+
+int xa2_max_queued(void)
+{
+    return XA2_MAX_QUEUED;
 }
 
 int xa2_movie_start(void)
