@@ -253,6 +253,7 @@ void DrawVideoSection()
         video_set_aspect(VIDEO_ASPECT_16_9);
         video_set_scale(3);
         video_set_vsync(0);
+        video_set_msaa(1);
         SetStatus("Video settings reset to defaults");
         break;
     case 2:
@@ -276,6 +277,11 @@ void DrawVideoSection()
     if (ImGui::Combo("Internal resolution", &sc, kScale, IM_ARRAYSIZE(kScale)) &&
         sc + 1 != video_get_scale())
         video_set_scale(sc + 1);
+
+    static const char *kMsaa[] = { "Off", "2x MSAA", "4x MSAA", "8x MSAA" };
+    int aa = video_get_msaa() >= 8 ? 3 : video_get_msaa() >= 4 ? 2 : video_get_msaa() >= 2 ? 1 : 0;
+    if (ImGui::Combo("Anti-aliasing", &aa, kMsaa, IM_ARRAYSIZE(kMsaa)))
+        video_set_msaa(aa == 3 ? 8 : aa == 2 ? 4 : aa == 1 ? 2 : 1);
 
     bool vs = video_get_vsync() != 0;
     if (ImGui::Checkbox("VSync", &vs))

@@ -28,6 +28,7 @@ static UINT          g_nv2aff_idx_off;
 #include <timeapi.h>
 #include "../ui/video_settings.h"
 HWND d3d8_GetHWND(void);
+void d3d8_resolve_guest(void);
 
 /* Presentation: with VSync on, Present waits for a 60/120/240 Hz display, so the display is the
  * clock (this blt chain honours vsync where flip-model chains were seen to ignore it). */
@@ -167,6 +168,11 @@ typedef struct D3D8DeviceState {
     ID3D11RenderTargetView  *default_rtv;
     ID3D11DepthStencilView  *default_dsv;
     ID3D11Texture2D         *default_depth;
+    /* MSAA (msaa > 1): the frame is drawn into msaa_tex (default_rtv/dsv are its views) and
+     * resolved into default_tex, which everything that reads the frame uses (d3d8_resolve_guest). */
+    ID3D11Texture2D         *msaa_tex;
+    UINT                    msaa;           /* samples in use (1 = off) */
+    int                     msaa_setting;   /* the video setting the target was built for */
 
     /* Swap chain back buffer, sized to the window's client area. */
     ID3D11RenderTargetView  *swap_rtv;
@@ -308,6 +314,7 @@ void d3d8_DumpBackbufferBMP(const char *path)
         !g_device_state.d3d11_context)
         return;
     /* The guest frame (not the window-sized swap chain). */
+    d3d8_resolve_guest();
     ID3D11Texture2D *bb = g_device_state.default_tex;
     if (!bb) return;
     ID3D11Texture2D_AddRef(bb);
@@ -382,7 +389,7 @@ ID3D11Device        *d3d8_GetD3D11Device(void) { return g_device_state.d3d11_dev
 ID3D11DeviceContext *d3d8_GetD3D11Context(void) { return g_device_state.d3d11_context; }
 IDXGISwapChain      *d3d8_GetSwapChain(void) { return g_device_state.swap_chain; }
 ID3D11RenderTargetView *d3d8_GetDefaultRTV(void) { return g_device_state.default_rtv; }
-ID3D11Texture2D     *d3d8_GetGuestTexture(void) { return g_device_state.default_tex; }
+ID3D11Texture2D     *d3d8_GetGuestTexture(void) { d3d8_resolve_guest(); return g_device_state.default_tex; }
 /* The window-sized swap chain target, for the overlay drawn after the blit. */
 ID3D11RenderTargetView *d3d8_GetPresentRTV(void) { return g_device_state.swap_rtv; }
 UINT                 d3d8_GetPresentWidth(void) { return g_device_state.swap_w; }
@@ -549,6 +556,33 @@ static void d3d11_release_guest_target(D3D8DeviceState *state)
     if (state->default_srv)   { ID3D11ShaderResourceView_Release(state->default_srv);  state->default_srv = NULL; }
     if (state->default_rtv)   { ID3D11RenderTargetView_Release(state->default_rtv);    state->default_rtv = NULL; }
     if (state->default_tex)   { ID3D11Texture2D_Release(state->default_tex);           state->default_tex = NULL; }
+    if (state->msaa_tex)      { ID3D11Texture2D_Release(state->msaa_tex);              state->msaa_tex = NULL; }
+    state->msaa = 1;
+}
+
+/* The highest sample count up to `want` that the colour formats (guest and
+ * offscreen) and the depth format all support; 1 if none. */
+static UINT msaa_supported(ID3D11Device *dev, int want)
+{
+    UINT n;
+    for (n = (UINT)want; n > 1; n >>= 1) {
+        UINT q1 = 0, q2 = 0, q3 = 0;
+        if (SUCCEEDED(ID3D11Device_CheckMultisampleQualityLevels(dev, DXGI_FORMAT_R8G8B8A8_UNORM, n, &q1)) &&
+            SUCCEEDED(ID3D11Device_CheckMultisampleQualityLevels(dev, DXGI_FORMAT_B8G8R8A8_UNORM, n, &q2)) &&
+            SUCCEEDED(ID3D11Device_CheckMultisampleQualityLevels(dev, DXGI_FORMAT_D24_UNORM_S8_UINT, n, &q3)) &&
+            q1 && q2 && q3)
+            return n;
+    }
+    return 1;
+}
+
+/* Make default_tex hold the frame drawn so far (no-op without MSAA). */
+void d3d8_resolve_guest(void)
+{
+    D3D8DeviceState *s = &g_device_state;
+    if (s->msaa > 1 && s->msaa_tex && s->default_tex && s->d3d11_context)
+        ID3D11DeviceContext_ResolveSubresource(s->d3d11_context, (ID3D11Resource *)s->default_tex, 0,
+                                               (ID3D11Resource *)s->msaa_tex, 0, DXGI_FORMAT_R8G8B8A8_UNORM);
 }
 
 /* The guest's frame buffer: colour (sampled by the present blit) + depth, at
@@ -570,13 +604,22 @@ static HRESULT d3d11_create_guest_target(D3D8DeviceState *state)
     td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
     hr = ID3D11Device_CreateTexture2D(state->d3d11_device, &td, NULL, &state->default_tex);
     if (FAILED(hr)) return hr;
-    hr = ID3D11Device_CreateRenderTargetView(state->d3d11_device,
-                                             (ID3D11Resource *)state->default_tex,
-                                             NULL, &state->default_rtv);
-    if (FAILED(hr)) return hr;
     hr = ID3D11Device_CreateShaderResourceView(state->d3d11_device,
                                                (ID3D11Resource *)state->default_tex,
                                                NULL, &state->default_srv);
+    if (FAILED(hr)) return hr;
+
+    state->msaa_setting = video_get_msaa();
+    state->msaa = msaa_supported(state->d3d11_device, state->msaa_setting);
+    if (state->msaa > 1) {
+        td.SampleDesc.Count = state->msaa;
+        td.BindFlags = D3D11_BIND_RENDER_TARGET;
+        hr = ID3D11Device_CreateTexture2D(state->d3d11_device, &td, NULL, &state->msaa_tex);
+        if (FAILED(hr)) { state->msaa_tex = NULL; state->msaa = 1; td.SampleDesc.Count = 1; }
+    }
+    hr = ID3D11Device_CreateRenderTargetView(state->d3d11_device,
+                                             (ID3D11Resource *)(state->msaa > 1 ? state->msaa_tex : state->default_tex),
+                                             NULL, &state->default_rtv);
     if (FAILED(hr)) return hr;
 
     td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -863,7 +906,7 @@ static void d3d8_apply_target_size_change(void)
     unsigned w, h;
     D3D11_VIEWPORT vp;
     video_guest_target_size(video_get_aspect(), &w, &h);
-    if (w == s->width && h == s->height) return;
+    if (w == s->width && h == s->height && video_get_msaa() == s->msaa_setting) return;
 
     ID3D11DeviceContext_OMSetRenderTargets(s->d3d11_context, 0, NULL, NULL);
     d3d11_release_guest_target(s);
@@ -897,6 +940,7 @@ static HRESULT d3d8_compose_and_present(void)
     d3d8_keep_prev_frame();
 
     swap_resize_if_needed();
+    d3d8_resolve_guest();
     if (s->swap_rtv && s->default_srv && blit_init()) {
         /* save */
         ID3D11InputLayout *il = NULL; D3D11_PRIMITIVE_TOPOLOGY topo;
@@ -1163,6 +1207,13 @@ typedef struct {
     ID3D11ShaderResourceView  *srv;
     UINT w, h;
     unsigned use;                       /* last bind/sample, for eviction */
+    /* With MSAA, a target sharing the frame's depth buffer is drawn into ms_tex at the frame's
+     * sample count and resolved into tex before it is sampled. */
+    ID3D11Texture2D           *ms_tex;
+    ID3D11RenderTargetView    *ms_rtv;
+    UINT                       ms_n;
+    int                        ms_bound;    /* ms_rtv is the view bound for rendering */
+    int                        ms_dirty;    /* ms_tex holds drawing not yet resolved into tex */
 } OffRT;
 static OffRT g_offrt[OFFRT_N];
 static unsigned g_offrt_clock;
@@ -1170,8 +1221,17 @@ static int   g_off_cur = -1;            /* slot currently bound for rendering */
 
 static ID3D11RenderTargetView *cur_rtv(void)
 {
-    return (g_off_active && g_off_cur >= 0) ? g_offrt[g_off_cur].rtv
-                                            : g_device_state.default_rtv;
+    if (g_off_active && g_off_cur >= 0)
+        return g_offrt[g_off_cur].ms_bound ? g_offrt[g_off_cur].ms_rtv : g_offrt[g_off_cur].rtv;
+    return g_device_state.default_rtv;
+}
+
+static void offrt_resolve(OffRT *s)
+{
+    if (!s->ms_dirty || !s->ms_tex || !s->tex) return;
+    ID3D11DeviceContext_ResolveSubresource(g_device_state.d3d11_context, (ID3D11Resource *)s->tex, 0,
+                                           (ID3D11Resource *)s->ms_tex, 0, DXGI_FORMAT_B8G8R8A8_UNORM);
+    s->ms_dirty = 0;
 }
 static int g_off_share_depth;   /* offscreen target uses the frame's depth buffer */
 void d3d8_SetOffscreenShareDepth(int share) { g_off_share_depth = share; }
@@ -1183,6 +1243,9 @@ static ID3D11DepthStencilView *cur_dsv(void)
 
 static void offrt_free(OffRT *s)
 {
+    if (s->ms_rtv) { ID3D11RenderTargetView_Release(s->ms_rtv); s->ms_rtv = NULL; }
+    if (s->ms_tex) { ID3D11Texture2D_Release(s->ms_tex);        s->ms_tex = NULL; }
+    s->ms_n = 0; s->ms_bound = 0; s->ms_dirty = 0;
     if (s->srv)   { ID3D11ShaderResourceView_Release(s->srv);   s->srv = NULL; }
     if (s->rtv)   { ID3D11RenderTargetView_Release(s->rtv);     s->rtv = NULL; }
     if (s->tex)   { ID3D11Texture2D_Release(s->tex);            s->tex = NULL; }
@@ -1240,8 +1303,30 @@ int d3d8_SetOffscreenTarget(uint32_t key, UINT w, UINT h)
     if (!g_device_state.d3d11_device || !w || !h) return 0;
     slot = offrt_slot(key, w, h);
     if (slot < 0) return 0;
-    ID3D11DeviceContext_OMSetRenderTargets(g_device_state.d3d11_context, 1, &g_offrt[slot].rtv,
-                                           g_off_share_depth ? g_device_state.default_dsv : g_offrt[slot].dsv);
+    {
+        OffRT *s = &g_offrt[slot];
+        const int ms = g_off_share_depth && g_device_state.msaa > 1;
+        if (ms && (!s->ms_tex || s->ms_n != g_device_state.msaa)) {
+            D3D11_TEXTURE2D_DESC td;
+            if (s->ms_rtv) { ID3D11RenderTargetView_Release(s->ms_rtv); s->ms_rtv = NULL; }
+            if (s->ms_tex) { ID3D11Texture2D_Release(s->ms_tex); s->ms_tex = NULL; }
+            memset(&td, 0, sizeof td);
+            td.Width = w; td.Height = h; td.MipLevels = 1; td.ArraySize = 1;
+            td.Format = DXGI_FORMAT_B8G8R8A8_UNORM; td.SampleDesc.Count = g_device_state.msaa;
+            td.Usage = D3D11_USAGE_DEFAULT; td.BindFlags = D3D11_BIND_RENDER_TARGET;
+            if (FAILED(ID3D11Device_CreateTexture2D(g_device_state.d3d11_device, &td, NULL, &s->ms_tex)) ||
+                FAILED(ID3D11Device_CreateRenderTargetView(g_device_state.d3d11_device, (ID3D11Resource *)s->ms_tex, NULL, &s->ms_rtv))) {
+                if (s->ms_tex) { ID3D11Texture2D_Release(s->ms_tex); s->ms_tex = NULL; }
+                return 0;
+            }
+            s->ms_n = g_device_state.msaa;
+        }
+        if (!ms) offrt_resolve(s);          /* drawn into at 1x now: keep what the multisampled pass drew */
+        s->ms_bound = ms;
+        if (ms) s->ms_dirty = 1;
+        ID3D11DeviceContext_OMSetRenderTargets(g_device_state.d3d11_context, 1, ms ? &s->ms_rtv : &s->rtv,
+                                               g_off_share_depth ? g_device_state.default_dsv : s->dsv);
+    }
     {   /* The translator maps the guest surface onto -1..1 NDC, so the
          * viewport has to be this target's own size. Left at the back
          * buffer's, a 256x512 target (the beach's palm-shadow surface) got
@@ -1309,6 +1394,7 @@ int d3d8_BindOffscreenTexture(uint32_t key, UINT stage)
      * silently unbind it and the draw would sample nothing. */
     if (g_off_active && g_off_cur == slot) return 0;
     g_offrt[slot].use = ++g_offrt_clock;
+    offrt_resolve(&g_offrt[slot]);
     if (!g_offrt[slot].srv) {
         if (FAILED(ID3D11Device_CreateShaderResourceView(g_device_state.d3d11_device,
                 (ID3D11Resource *)g_offrt[slot].tex, NULL, &g_offrt[slot].srv)))
@@ -1361,6 +1447,7 @@ static int fbcopy_ensure(FbCopy *c)
 int d3d8_BindFramebufferCopy(UINT stage)
 {
     if (!fbcopy_ensure(&g_fbcopy)) return 0;   /* copying is fine with or without default_tex bound */
+    d3d8_resolve_guest();
     ID3D11DeviceContext_CopyResource(g_device_state.d3d11_context,
                                      (ID3D11Resource *)g_fbcopy.tex,
                                      (ID3D11Resource *)g_device_state.default_tex);
@@ -1396,6 +1483,7 @@ void d3d8_SnapshotSceneForAfterImage(void)
 {
     if (g_prevframe_want <= 0 || g_prevframe_snapped || g_off_active) return;
     if (!fbcopy_ensure(&g_prevframe)) return;
+    d3d8_resolve_guest();
     ID3D11DeviceContext_CopyResource(g_device_state.d3d11_context,
                                      (ID3D11Resource *)g_prevframe.tex,
                                      (ID3D11Resource *)g_device_state.default_tex);
@@ -1410,6 +1498,7 @@ static void d3d8_keep_prev_frame(void)
     if (g_prevframe_want <= 0) return;
     InterlockedDecrement(&g_prevframe_want);
     if (snapped || !fbcopy_ensure(&g_prevframe)) return;
+    d3d8_resolve_guest();
     ID3D11DeviceContext_CopyResource(g_device_state.d3d11_context,
                                      (ID3D11Resource *)g_prevframe.tex,
                                      (ID3D11Resource *)g_device_state.default_tex);

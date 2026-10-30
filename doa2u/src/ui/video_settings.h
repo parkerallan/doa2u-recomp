@@ -49,6 +49,11 @@ void video_set_scale(int scale);
 int  video_get_vsync(void);
 void video_set_vsync(int on);
 
+/* Multisample anti-aliasing of the guest frame: 1 (off), 2, 4 or 8 samples,
+ * capped at what the GPU supports. Applied at the next frame boundary. */
+int  video_get_msaa(void);
+void video_set_msaa(int samples);
+
 /* Host size of the guest render target for an aspect at the current internal
  * resolution: 480 lines at 1x, 960 at 2x, 1440 at 3x. */
 void video_guest_target_size(int aspect, unsigned *w, unsigned *h);
