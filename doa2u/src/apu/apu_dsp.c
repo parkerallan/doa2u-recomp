@@ -70,6 +70,11 @@ void mcpx_apu_dsp_frame(MCPXAPUState *d,
     const float g_front[2] = { (float)(1 << d->vp.submix_headroom[0]),
                                (float)(1 << d->vp.submix_headroom[1]) };
     const float g_xtlk = (float)(1 << d->vp.hrtf_headroom);
+    /* Centre (bin 2) and surround (4/5) into stereo at -3 dB. LFE (3) is dropped: adding it
+     * clipped the output in the attract demo. */
+    const float g_c  = (float)(1 << d->vp.submix_headroom[2]) * 0.70710678f;
+    const float g_sl = (float)(1 << d->vp.submix_headroom[4]) * 0.70710678f;
+    const float g_sr = (float)(1 << d->vp.submix_headroom[5]) * 0.70710678f;
     if (d->monitor.point != MCPX_APU_DEBUG_MON_VP) {
         for (int i = 0; i < NUM_SAMPLES_PER_FRAME; i++) {
             /* Output stage: undo the headroom each voice was mixed with, as
@@ -82,8 +87,11 @@ void mcpx_apu_dsp_frame(MCPXAPUState *d,
              * 1 << hrtf_headroom. The earlier fixed +18 dB on bins 0/1 alone
              * put the music 12 dB above the game's mix and buried the
              * dialogue. */
-            float left = mixbins[0][i] * g_front[0] + (mixbins[6][i] + mixbins[8][i]) * g_xtlk;
-            float right = mixbins[1][i] * g_front[1] + (mixbins[7][i] + mixbins[9][i]) * g_xtlk;
+            const float centre = mixbins[2][i] * g_c;
+            float left = mixbins[0][i] * g_front[0] + centre + mixbins[4][i] * g_sl
+                       + (mixbins[6][i] + mixbins[8][i]) * g_xtlk;
+            float right = mixbins[1][i] * g_front[1] + centre + mixbins[5][i] * g_sr
+                        + (mixbins[7][i] + mixbins[9][i]) * g_xtlk;
             if (left > 1.0f) left = 1.0f;
             if (left < -1.0f) left = -1.0f;
             if (right > 1.0f) right = 1.0f;
