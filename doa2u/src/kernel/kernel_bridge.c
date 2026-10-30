@@ -2826,9 +2826,18 @@ static void bridge_ExQueryNonVolatileSetting(void)
     static const uint8_t mac[6] = { 0x00, 0x50, 0xF2, 0x44, 0x32, 0x55 };
     const xbox_console_identity *id = xbox_console_identity_get();
     const void *bin = NULL;
-    uint32_t bin_len = 0;
-    uint8_t eeprom[0x100];
+    uint32_t bin_len = 0, caller = BRIDGE_MEM32(g_esp - 4);
+    uint8_t eeprom[0x100], xnet_mac[6];
     if (index == 0x101) { bin = mac; bin_len = 6; }
+    if (index == 0x101 && caller >= 0x003848A0u && caller < 0x00397560u) {
+        /* XNET's own query (0x38D62C): a per-console MAC from the serial, or XNetXnAddrToInAddr
+         * takes every other port for this console (same abEnet -> 127.0.0.1) and no join starts. */
+        uint32_t h = 2166136261u, i;
+        for (i = 0; i < 12; i++) h = (h ^ (uint8_t)id->serial[i]) * 16777619u;
+        memcpy(xnet_mac, mac, 3);
+        xnet_mac[3] = (uint8_t)(h >> 16); xnet_mac[4] = (uint8_t)(h >> 8); xnet_mac[5] = (uint8_t)h;
+        bin = xnet_mac;
+    }
     if (index == 0x100) { bin = id->serial; bin_len = 12; }      /* XC_FACTORY_SERIAL_NUMBER */
     if (index == 0x102) { bin = id->online_key; bin_len = 16; }  /* XC_FACTORY_ONLINE_KEY */
     if (index == 0xFFFF) {
