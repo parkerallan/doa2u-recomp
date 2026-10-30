@@ -1,6 +1,6 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 14
- * Functions: 1000 (0x0038AC5A - 0x003BC94A)
+ * Functions: 1000 (0x0038AC5A - 0x003BC93E)
  */
 
 #define RECOMP_GENERATED_CODE
@@ -51764,6 +51764,49 @@ loc_003A15EC: ;
     eax = 0; /* xor self */
     POP32(esp, edi);
     { RECOMP_SLICE_POINT(); goto loc_003A15E6; }
+
+}
+
+/**
+ * sub_003A1626
+ * Original: 0x003A1626 - 0x003A166A (68 bytes, 18 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_003A1626(void)
+{
+    uint32_t ebp;
+    int _flags = 0; /* fallback flag var */
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_003A1626: ;
+    PUSH32(esp, esi);
+    PUSH32(esp, MEM32(esp + 8));
+    esi = ecx;
+    ecx = MEM32(esi + 0x18A4);
+    g_seh_ebp = ebp; PUSH32(esp, 0x3A1638); sub_003A14A9(); /* call 0x003A14A9 */
+
+loc_003A1638: ;
+    if (CMP_NE(eax, 1)) goto loc_003A1656; /* jne: not equal / not zero */
+
+loc_003A163D: ;
+    PUSH32(esp, 0x802B);
+    PUSH32(esp, MEM32(esi + 0x18A4));
+    ecx = esi;
+    g_seh_ebp = ebp; PUSH32(esp, 0x3A164F); sub_003AF0F8(); /* call 0x003AF0F8 */
+
+loc_003A164F: ;
+    MEM32(esi + 0x18A4) = MEM32(esi + 0x18A4) & 0;
+
+loc_003A1656: ;
+    PUSH32(esp, 0x802C);
+    PUSH32(esp, MEM32(esp + 0xC));
+    ecx = esi;
+    g_seh_ebp = ebp; PUSH32(esp, 0x3A1666); sub_003AF0F8(); /* call 0x003AF0F8 */
+
+loc_003A1666: ;
+    POP32(esp, esi);
+    esp += 8; return; /* ret 4 */
 
 }
 
@@ -114492,49 +114535,5 @@ loc_003BC93E: ;
 
 loc_003BC947: ;
     esp += 8; return; /* ret 4 */
-
-}
-
-/**
- * sub_003BC94A
- * Original: 0x003BC94A - 0x003BC98C (66 bytes, 20 insns)
- * Category: game_input
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_003BC94A(void)
-{
-    uint32_t ebp;
-    int _flags = 0; /* fallback flag var */
-
-loc_003BC94A: ;
-    PUSH32(esp, ebp);
-    ebp = esp;
-    esp = esp - 0x28;
-    eax = MEM32(0x3C5000);
-    if (CMP_EQ(MEM8(eax + 5), 0xA1)) goto loc_003BC98A; /* je: equal / zero */
-
-loc_003BC95B: ;
-    eax = ebp + -4;
-    { uint32_t _icall_esp = g_esp;
-    PUSH32(esp, eax);
-    PUSH32(esp, 1);
-    MEM8(ebp + -24) = 3;
-    MEM32(ebp + -16) = 0x1000;
-    MEM32(ebp + -20) = 0xFED00000u;
-    { uint32_t _icall_t = MEM32(0x3C5028); g_seh_ebp = ebp; PUSH32(esp, 0x3BC979); RECOMP_ICALL_SAFE(_icall_t, _icall_esp); } /* indirect call */
-    }
-
-loc_003BC979: ;
-    MEM32(ebp + -12) = eax;
-    PUSH32(esp, 0x4E0);
-    eax = ebp + -40;
-    PUSH32(esp, eax);
-    g_seh_ebp = ebp; PUSH32(esp, 0x3BC98A); sub_003BC20C(); /* call 0x003BC20C */
-
-loc_003BC98A: ;
-    esp = ebp;
-    POP32(esp, ebp); /* leave */
-    esp += 4; return; /* ret */
 
 }

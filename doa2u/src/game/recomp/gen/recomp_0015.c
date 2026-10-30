@@ -1,11 +1,55 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 15
- * Functions: 255 (0x003BC98C - 0x003C4E4C)
+ * Functions: 256 (0x003BC94A - 0x003C4E4C)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_003BC94A
+ * Original: 0x003BC94A - 0x003BC98C (66 bytes, 20 insns)
+ * Category: game_input
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_003BC94A(void)
+{
+    uint32_t ebp;
+    int _flags = 0; /* fallback flag var */
+
+loc_003BC94A: ;
+    PUSH32(esp, ebp);
+    ebp = esp;
+    esp = esp - 0x28;
+    eax = MEM32(0x3C5000);
+    if (CMP_EQ(MEM8(eax + 5), 0xA1)) goto loc_003BC98A; /* je: equal / zero */
+
+loc_003BC95B: ;
+    eax = ebp + -4;
+    { uint32_t _icall_esp = g_esp;
+    PUSH32(esp, eax);
+    PUSH32(esp, 1);
+    MEM8(ebp + -24) = 3;
+    MEM32(ebp + -16) = 0x1000;
+    MEM32(ebp + -20) = 0xFED00000u;
+    { uint32_t _icall_t = MEM32(0x3C5028); g_seh_ebp = ebp; PUSH32(esp, 0x3BC979); RECOMP_ICALL_SAFE(_icall_t, _icall_esp); } /* indirect call */
+    }
+
+loc_003BC979: ;
+    MEM32(ebp + -12) = eax;
+    PUSH32(esp, 0x4E0);
+    eax = ebp + -40;
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0x3BC98A); sub_003BC20C(); /* call 0x003BC20C */
+
+loc_003BC98A: ;
+    esp = ebp;
+    POP32(esp, ebp); /* leave */
+    esp += 4; return; /* ret */
+
+}
 
 /**
  * sub_003BC98C

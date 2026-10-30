@@ -284117,6 +284117,19 @@
   ]
  },
  {
+  "start": "0x003A1626",
+  "end": "0x003A166A",
+  "size": 68,
+  "name": "sub_003A1626",
+  "section": "XONLINE",
+  "confidence": 0.5,
+  "detection_method": "link_seed",
+  "num_instructions": 0,
+  "has_prologue": false,
+  "calls_to": [],
+  "called_by": []
+ },
+ {
   "start": "0x003A166A",
   "end": "0x003A1717",
   "size": 173,
