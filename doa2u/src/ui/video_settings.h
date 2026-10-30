@@ -40,8 +40,8 @@ int  video_settings_save(void);
 void video_set_window_mode(int mode);
 void video_set_aspect(int aspect);
 
-/* Internal resolution: 1 = 480 lines, 2 = 960, 3 = 1440 (default). Applied at the next
- * frame boundary. */
+/* Internal resolution: 1 = 480 lines, 2 = 960, 3 = 1440 (default), 4 = 2160 (4K). Applied at
+ * the next frame boundary. */
 int  video_get_scale(void);
 void video_set_scale(int scale);
 

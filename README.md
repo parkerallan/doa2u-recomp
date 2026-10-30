@@ -6,9 +6,9 @@ that compiles and runs on Windows as a native x86-64 executable.
 **Status:** Work in progress. Matches are now playable in all modes, but there are some bugs and slowdowns.
 
 ## Features
-- Capped at 60 FPS
+- Capped 60 FPS
 - Windowed/Borderless and 4:3/16:9 options
-- Internal resolution scaling to 1440p (3x)
+- Internal resolution scaling to 4k, MSAA, VSync
 - Online matches and leaderboard through [Insignia](https://insignia.live/)
 
 <img width="974" height="582" alt="Screenshot 2026-10-14 214555" src="https://github.com/user-attachments/assets/06569c91-d377-4dd4-b723-37fee6a7d98c" />

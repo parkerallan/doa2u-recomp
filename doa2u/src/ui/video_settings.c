@@ -53,7 +53,7 @@ int video_settings_load(void)
     int sc = (int)GetPrivateProfileIntA("Video", "InternalResolution", 3, p);
     g_window_mode = (wm == VIDEO_WINDOWED) ? VIDEO_WINDOWED : VIDEO_BORDERLESS;
     g_aspect      = (ar == VIDEO_ASPECT_4_3) ? VIDEO_ASPECT_4_3 : VIDEO_ASPECT_16_9;
-    g_scale       = (sc >= 1 && sc <= 3) ? sc : 3;
+    g_scale       = (sc >= 1 && sc <= 4) ? sc : 3;
     g_vsync       = GetPrivateProfileIntA("Video", "VSync", 0, p) != 0;
     video_set_msaa((int)GetPrivateProfileIntA("Video", "MSAA", 1, p));
     return GetFileAttributesA(p) != INVALID_FILE_ATTRIBUTES;
@@ -64,13 +64,13 @@ int video_settings_save(void)
     const char *p = doa2u_settings_ini_path();
     /* WindowMode: 0 = windowed, 1 = borderless fullscreen.
      * Widescreen: 0 = 4:3, 1 = 16:9.
-     * InternalResolution: 1 = 480 lines, 2 = 960, 3 = 1440. VSync: 1 = on. MSAA: 1 = off, 2/4/8. */
+     * InternalResolution: 1 = 480 lines, 2 = 960, 3 = 1440, 4 = 2160. VSync: 1 = on. MSAA: 1 = off, 2/4/8. */
     return WritePrivateProfileStringA("Video", "WindowMode",
                                       g_window_mode ? "1" : "0", p) &&
            WritePrivateProfileStringA("Video", "Widescreen",
                                       g_aspect ? "1" : "0", p) &&
            WritePrivateProfileStringA("Video", "InternalResolution",
-                                      g_scale == 3 ? "3" : g_scale == 2 ? "2" : "1", p) &&
+                                      g_scale == 4 ? "4" : g_scale == 3 ? "3" : g_scale == 2 ? "2" : "1", p) &&
            WritePrivateProfileStringA("Video", "VSync", g_vsync ? "1" : "0", p) &&
            WritePrivateProfileStringA("Video", "MSAA", g_msaa == 8 ? "8" : g_msaa == 4 ? "4" : g_msaa == 2 ? "2" : "1", p);
 }
@@ -86,6 +86,11 @@ static void video_base_size(int aspect, unsigned *w, unsigned *h)
 
 void video_guest_target_size(int aspect, unsigned *w, unsigned *h)
 {
+    if (g_scale == 4) {   /* 4K: 2160 lines (4.5x) */
+        *h = 2160;
+        *w = (aspect == VIDEO_ASPECT_16_9) ? 3840 : 2880;
+        return;
+    }
     video_base_size(aspect, w, h);
     *w *= (unsigned)g_scale;
     *h *= (unsigned)g_scale;
@@ -94,7 +99,7 @@ void video_guest_target_size(int aspect, unsigned *w, unsigned *h)
 void video_set_scale(int scale)
 {
     /* Applied at the next frame boundary, like the aspect. */
-    g_scale = (scale >= 1 && scale <= 3) ? scale : 3;
+    g_scale = (scale >= 1 && scale <= 4) ? scale : 3;
 }
 
 /* XC_VIDEO dword: XGetVideoFlags returns (value >> 16) & 0x5F, and

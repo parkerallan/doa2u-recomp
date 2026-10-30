@@ -981,7 +981,7 @@ static HRESULT d3d8_compose_and_present(void)
 
         /* Zoom one 480p line past each edge to hide the 2D overlays' border gap. */
         {
-            float lines = (float)(s->height / (unsigned)video_get_scale());
+            float lines = 480.0f;   /* the guest's own lines, at any internal resolution */
             float zoom  = lines / (lines - 2.0f);
             float zw = vp.Width * zoom, zh = vp.Height * zoom;
             clip.left   = (LONG)vp.TopLeftX;
