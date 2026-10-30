@@ -75,6 +75,17 @@ extern double  g_fp_stack[8];       /* GLOBAL x87 FPU stack (recomp bug #8: was 
                                      * locals, breaking every cross-function ST0 transfer) */
 extern int     g_fp_top;
 extern uint16_t g_x87_cw;          /* x87 control word (fnstcw/fldcw); default 0x007F */
+extern uint16_t g_x87_sw;          /* x87 status word as fxam leaves it (C0 0x100, C1 0x200, C2 0x400, C3 0x4000) */
+/* fxam: C3 C2 C0 = 000 unsupported, 001 NaN, 010 normal, 011 infinity, 100 zero, 110 denormal; C1 = sign */
+static inline uint16_t x87_fxam(double v)
+{
+    uint16_t c1 = signbit(v) ? 0x200 : 0;
+    if (isnan(v)) return c1 | 0x100;
+    if (isinf(v)) return c1 | 0x500;
+    if (v == 0.0) return c1 | 0x4000;
+    if (fabs(v) < 2.2250738585072014e-308) return c1 | 0x4400;
+    return c1 | 0x400;
+}
 /* x87 result rounded per the control word's precision bits (PC=00: 24-bit float) */
 static inline double x87_prec(double v) { return (g_x87_cw & 0x300) ? v : (double)(float)v; }
 /* rdtsc: Xbox time-stamp counter at 733.33 MHz (kernel_bridge.c) */

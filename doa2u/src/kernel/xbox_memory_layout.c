@@ -53,6 +53,7 @@ uint32_t g_str_a = 0, g_str_b = 0;
  * per-function locals broke every cross-function ST0 value transfer. */
 double g_fp_stack[8];
 int    g_fp_top;
+uint16_t g_x87_sw;
 uint16_t g_x87_cw = 0x007F;   /* Xbox default (measured in cxbx): masked, 24-bit, round-nearest */
 
 /* GLOBAL SSE registers (see recomp_types.h); xbox_fiber.c swaps them per

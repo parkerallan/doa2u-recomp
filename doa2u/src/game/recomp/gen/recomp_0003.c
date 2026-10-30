@@ -1,11 +1,129 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 3
- * Functions: 1000 (0x000D8E10 - 0x00114520)
+ * Functions: 1000 (0x000D8D50 - 0x00114500)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_000D8D50
+ * Original: 0x000D8D50 - 0x000D8E03 (179 bytes, 71 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_000D8D50(void)
+{
+    uint32_t ebp;
+    int _flags = 0; /* fallback flag var */
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_000D8D50: ;
+    PUSH32(esp, ebx);
+    PUSH32(esp, esi);
+    ecx = 0; /* xor self */
+    PUSH32(esp, edi);
+    esi = 0x8AB97C;
+    ebx = 0; /* xor self */
+    /* nop */
+
+loc_000D8D60: ;
+    if (CMP_EQ(MEM32(esi + 0x10), ecx)) goto loc_000D8D6E; /* je: equal / zero */
+
+loc_000D8D65: ;
+    ebx++;
+    esi = esi + 0x14;
+    if (CMP_L(ebx, 3)) { RECOMP_SLICE_POINT(); goto loc_000D8D60; } /* jl: less (signed <) */
+
+loc_000D8D6E: ;
+    SET_LO16(eax, MEM16(esp + 0x10));
+    edi = ZX16(LO16(eax));
+    PUSH32(esp, ebp);
+    ebp = MEM32(esp + 0x18);
+    PUSH32(esp, edi);
+    MEM16(esi) = LO16(eax);
+    MEM16(esi + 2) = LO16(ecx);
+    MEM32(esi + 4) = ebp;
+    MEM32(esi + 0xC) = ecx;
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8D8E); sub_000F8DD0(); /* call 0x000F8DD0 */
+
+loc_000D8D8E: ;
+    esp = esp + 4;
+    PUSH32(esp, eax);
+    PUSH32(esp, edi);
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8D98); sub_000F8DC0(); /* call 0x000F8DC0 */
+
+loc_000D8D98: ;
+    esp = esp + 4;
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8DA1); sub_002FF0B0(); /* call 0x002FF0B0 */
+
+loc_000D8DA1: ;
+    esp = esp + 8;
+    /* test eax, eax - flags set for next jcc */
+    MEM32(esi + 0x10) = eax;
+    if (TEST_NZ(eax, eax)) goto loc_000D8DD3; /* jne: not equal / not zero */
+
+loc_000D8DAB: ;
+    goto loc_000D8DB0;
+
+    /* nop */
+
+loc_000D8DB0: ;
+    PUSH32(esp, edi);
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8DB6); sub_000F8DD0(); /* call 0x000F8DD0 */
+
+loc_000D8DB6: ;
+    esp = esp + 4;
+    PUSH32(esp, eax);
+    PUSH32(esp, edi);
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8DC0); sub_000F8DC0(); /* call 0x000F8DC0 */
+
+loc_000D8DC0: ;
+    esp = esp + 4;
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8DC9); sub_002FF0B0(); /* call 0x002FF0B0 */
+
+loc_000D8DC9: ;
+    esp = esp + 8;
+    /* test eax, eax - flags set for next jcc */
+    MEM32(esi + 0x10) = eax;
+    if (TEST_Z(eax, eax)) { RECOMP_SLICE_POINT(); goto loc_000D8DB0; } /* je: equal / zero */
+
+loc_000D8DD3: ;
+    eax = MEM32(esi + 0x10);
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8DDC); sub_002FEA40(); /* call 0x002FEA40 */
+
+loc_000D8DDC: ;
+    ecx = MEM32(esi + 0x10);
+    edi = eax;
+    PUSH32(esp, ebp);
+    PUSH32(esp, edi);
+    PUSH32(esp, ecx);
+    g_seh_ebp = ebp; PUSH32(esp, 0xD8DE9); sub_002FE8B0(); /* call 0x002FE8B0 */
+
+loc_000D8DE9: ;
+    eax = MEM32(esp + 0x2C);
+    esp = esp + 0x10;
+    edi = edi << 0xB;
+    /* test eax, eax - flags set for next jcc */
+    MEM32(esi + 8) = edi;
+    POP32(esp, ebp);
+    if (TEST_Z(eax, eax)) goto loc_000D8DFD; /* je: equal / zero */
+
+loc_000D8DFB: ;
+    MEM32(eax) = edi;
+
+loc_000D8DFD: ;
+    POP32(esp, edi);
+    POP32(esp, esi);
+    eax = ebx;
+    POP32(esp, ebx);
+    esp += 4; return; /* ret */
+
+}
 
 /**
  * sub_000D8E10
@@ -110849,30 +110967,6 @@ loc_0011450D: ;
     esp += 4; return; /* ret */
 
 loc_00114516: ;
-    eax = 0; /* xor self */
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_00114520
- * Original: 0x00114520 - 0x00114539 (25 bytes, 7 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_00114520(void)
-{
-    int _flags = 0; /* fallback flag var */
-
-loc_00114520: ;
-    eax = MEM32(esp + 4);
-    if (CMP_NE(MEM8(eax + 0xDF9C60), 1)) goto loc_00114536; /* jne: not equal / not zero */
-
-loc_0011452D: ;
-    eax = ZX16(MEM16(eax * 2 + 0xDFA010));
-    esp += 4; return; /* ret */
-
-loc_00114536: ;
     eax = 0; /* xor self */
     esp += 4; return; /* ret */
 

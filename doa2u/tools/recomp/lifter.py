@@ -902,6 +902,7 @@ class Lifter:
         self.rcc_needed = 0       # _rccN latches the current function needs
         self.unlatched_reads = [] # clobbered flag reads whose setter is in an earlier block
         self.entry_condition = None
+        self._fpu_src = None      # last status-word source: "cmp" (fcom/ftst) or "fxam"
 
     def _call_target_name(self, addr):
         """Get the name for a call target address."""
@@ -1096,6 +1097,9 @@ class Lifter:
         # ── FPU ──
         if m.startswith("f"):
             return self._lift_fpu(insn, m, ops)
+
+        if m == "xlatb":
+            return ["SET_LO8(eax, MEM8(ebx + LO8(eax))); /* xlatb */"]
 
         # ── Unhandled ──
         return [f"/* TODO: {m} {insn.op_str} */"]
@@ -1935,8 +1939,12 @@ class Lifter:
         if m == "fldln2":
             return ["fp_push(0.69314718055994530942); /* fldln2 */"]
         if m == "ftst":
+            self._fpu_src = "cmp"
             return ["_fpu_cmp = (fp_top() < 0.0) ? -1 : (fp_top() > 0.0) ? 1 : 0;"
                     " /* ftst */"]
+        if m == "fxam":
+            self._fpu_src = "fxam"
+            return ["g_x87_sw = x87_fxam(fp_top()); /* fxam */"]
         if m == "fisttp":
             if len(ops) >= 1 and ops[0].type == "mem":
                 mem_acc = _mem_accessor(ops[0].mem_size)
@@ -1991,6 +1999,7 @@ class Lifter:
                 pops = " fp_popp();"
             elif m in ("fcompp", "fucompp"):
                 pops = " fp_popp(); fp_popp();"
+            self._fpu_src = "cmp"
             return [f"_fpu_cmp = (fp_top() < {rhs}) ? -1 : (fp_top() > {rhs}) ? 1 : 0;"
                     f"{pops} /* {m} {insn.op_str} */"]
         if m in ("fcompi", "fcomip", "fucomi", "fucompi", "fucomip", "fcomi"):
@@ -1998,6 +2007,7 @@ class Lifter:
             # fcompi/fucompi pop st(0) after comparing; fcomi/fucomi do not
             pops = m.endswith("pi") or m.endswith("ip")
             pop_code = " fp_pop();" if pops else ""
+            self._fpu_src = "cmp"
             return [f"_fpu_cmp = (fp_top() < fp_st1()) ? -1 : (fp_top() > fp_st1()) ? 1 : 0;"
                     f"{pop_code} /* {m} */"]
         if m == "fnstsw":
@@ -2007,6 +2017,11 @@ class Lifter:
             # jcc` read whatever happened to be in eax.)
             if (insn.op_str or "").strip() == "ax":
                 return [f"SET_HI8(eax, (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* fnstsw ax */"]
+            # To memory: fxam's word (x87_fxam) or the compare's C0/C3 (bits 8/14).
+            if len(ops) >= 1 and ops[0].type == "mem":
+                if self._fpu_src == "fxam":
+                    return [f"MEM16({_fmt_mem(ops[0])}) = g_x87_sw; /* fnstsw */"]
+                return [f"MEM16({_fmt_mem(ops[0])}) = (_fpu_cmp < 0 ? 0x100 : 0) | (_fpu_cmp == 0 ? 0x4000 : 0); /* fnstsw */"]
             return [f"/* fnstsw {insn.op_str} - store FPU status word */"]
         if m == "fnstcw":
             # The control word is real state: the CRT's _ctrlfp reads it back

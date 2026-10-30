@@ -1,11 +1,37 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 1
- * Functions: 1000 (0x0005D8C0 - 0x000998C0)
+ * Functions: 1000 (0x0005D890 - 0x00099850)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_0005D890
+ * Original: 0x0005D890 - 0x0005D8B3 (35 bytes, 9 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_0005D890(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_0005D890: ;
+    eax = MEM32(esp + 4);
+    PUSH32(esp, eax);
+    g_seh_ebp = ebp; PUSH32(esp, 0x5D89A); sub_0005C540(); /* call 0x0005C540 */
+
+loc_0005D89A: ;
+    eax = (uint32_t)((int32_t)eax * (int32_t)0xDC);
+    SET_LO8(ecx, MEM8(esp + 0xC));
+    MEM8(eax + 0x856DDC) = LO8(ecx);
+    esp = esp + 4;
+    eax = 1;
+    esp += 4; return; /* ret */
+
+}
 
 /**
  * sub_0005D8C0
@@ -113335,55 +113361,6 @@ loc_00099855: ;
 loc_000998B7: ;
     esp = esp + 4;
     eax = 1;
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_000998C0
- * Original: 0x000998C0 - 0x000998F5 (53 bytes, 20 insns)
- * CC: thiscall_cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_000998C0(void)
-{
-    uint32_t ebp;
-    int _flags = 0; /* fallback flag var */
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_000998C0: ;
-    PUSH32(esp, 0xA);
-    g_seh_ebp = ebp; PUSH32(esp, 0x998C7); sub_0006AC10(); /* call 0x0006AC10 */
-
-loc_000998C7: ;
-    ecx = MEM32(esp + 8);
-    esp = esp + 4;
-    if (TEST_Z(ecx, ecx)) goto loc_000998D6; /* je: equal / zero */
-
-loc_000998D2: ;
-    ecx = MEM32(ecx);
-    goto loc_000998DB;
-
-loc_000998D6: ;
-    ecx = 0x1E;
-
-loc_000998DB: ;
-    eax = MEM32(eax);
-    if (CMP_EQ(eax, 1)) goto loc_000998E7; /* je: equal / zero */
-
-loc_000998E2: ;
-    if (CMP_NE(eax, 2)) goto loc_000998F4; /* jne: not equal / not zero */
-
-loc_000998E7: ;
-    PUSH32(esp, 0);
-    PUSH32(esp, ecx);
-    PUSH32(esp, 0xA);
-    g_seh_ebp = ebp; PUSH32(esp, 0x998F1); sub_0006ABC0(); /* call 0x0006ABC0 */
-
-loc_000998F1: ;
-    esp = esp + 0xC;
-
-loc_000998F4: ;
     esp += 4; return; /* ret */
 
 }

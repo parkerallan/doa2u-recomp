@@ -14327,6 +14327,19 @@
   "called_by": []
  },
  {
+  "start": "0x00044270",
+  "end": "0x000442B0",
+  "size": 64,
+  "name": "sub_00044270",
+  "section": ".text",
+  "confidence": 0.5,
+  "detection_method": "link_seed",
+  "num_instructions": 0,
+  "has_prologue": false,
+  "calls_to": [],
+  "called_by": []
+ },
+ {
   "start": "0x000442B0",
   "end": "0x000442F9",
   "size": 73,

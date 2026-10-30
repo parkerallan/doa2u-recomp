@@ -1,6 +1,6 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 0
- * Functions: 1000 (0x00011000 - 0x0005D890)
+ * Functions: 1000 (0x00011000 - 0x0005D870)
  */
 
 #define RECOMP_GENERATED_CODE
@@ -106119,6 +106119,36 @@ loc_00044248: ;
 }
 
 /**
+ * sub_00044270
+ * Original: 0x00044270 - 0x000442B0 (64 bytes, 24 insns)
+ * CC: cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_00044270(void)
+{
+    uint32_t ebp;
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_00044270: ;
+    eax = MEM32(esp + 4);
+    ecx = MEM32(eax + 0x75C);
+    SET_LO8(edx, MEM8(ecx + 4));
+    MEM8(eax + 0x767) = LO8(edx);
+    edx = (uint32_t)(int32_t)SMEM16(ecx + 2);
+    ecx = ecx + edx * 4;
+    MEM32(eax + 0x75C) = ecx;
+    PUSH32(esp, eax);
+    SET_LO8(eax, MEM8(eax + 0x767));
+    g_seh_ebp = ebp; PUSH32(esp, 0x4429C); sub_000438E0(); /* call 0x000438E0 */
+
+loc_0004429C: ;
+    esp = esp + 4;
+    eax = 1;
+    esp += 4; return; /* ret */
+
+}
+
+/**
  * sub_000442B0
  * Original: 0x000442B0 - 0x000442F9 (73 bytes, 20 insns)
  * CC: cdecl, 0 params, returns int_or_void
@@ -149785,32 +149815,6 @@ loc_0005D870: ;
     edx = eax + ecx * 2;
     edx = (uint32_t)((int32_t)edx * (int32_t)0x70);
     eax = (uint32_t)(int32_t)SMEM16(edx + 0x8592C6);
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_0005D890
- * Original: 0x0005D890 - 0x0005D8B3 (35 bytes, 9 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_0005D890(void)
-{
-    uint32_t ebp;
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_0005D890: ;
-    eax = MEM32(esp + 4);
-    PUSH32(esp, eax);
-    g_seh_ebp = ebp; PUSH32(esp, 0x5D89A); sub_0005C540(); /* call 0x0005C540 */
-
-loc_0005D89A: ;
-    eax = (uint32_t)((int32_t)eax * (int32_t)0xDC);
-    SET_LO8(ecx, MEM8(esp + 0xC));
-    MEM8(eax + 0x856DDC) = LO8(ecx);
-    esp = esp + 4;
-    eax = 1;
     esp += 4; return; /* ret */
 
 }

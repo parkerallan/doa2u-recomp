@@ -1,11 +1,60 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled code chunk 2
- * Functions: 1000 (0x00099900 - 0x000D8D50)
+ * Functions: 1000 (0x000998C0 - 0x000D8CF0)
  */
 
 #define RECOMP_GENERATED_CODE
 #include "recomp_funcs.h"
 #include <math.h>
+
+/**
+ * sub_000998C0
+ * Original: 0x000998C0 - 0x000998F5 (53 bytes, 20 insns)
+ * CC: thiscall_cdecl, 0 params, returns int_or_void
+ * Frame: fpo_leaf
+ */
+void sub_000998C0(void)
+{
+    uint32_t ebp;
+    int _flags = 0; /* fallback flag var */
+    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
+
+loc_000998C0: ;
+    PUSH32(esp, 0xA);
+    g_seh_ebp = ebp; PUSH32(esp, 0x998C7); sub_0006AC10(); /* call 0x0006AC10 */
+
+loc_000998C7: ;
+    ecx = MEM32(esp + 8);
+    esp = esp + 4;
+    if (TEST_Z(ecx, ecx)) goto loc_000998D6; /* je: equal / zero */
+
+loc_000998D2: ;
+    ecx = MEM32(ecx);
+    goto loc_000998DB;
+
+loc_000998D6: ;
+    ecx = 0x1E;
+
+loc_000998DB: ;
+    eax = MEM32(eax);
+    if (CMP_EQ(eax, 1)) goto loc_000998E7; /* je: equal / zero */
+
+loc_000998E2: ;
+    if (CMP_NE(eax, 2)) goto loc_000998F4; /* jne: not equal / not zero */
+
+loc_000998E7: ;
+    PUSH32(esp, 0);
+    PUSH32(esp, ecx);
+    PUSH32(esp, 0xA);
+    g_seh_ebp = ebp; PUSH32(esp, 0x998F1); sub_0006ABC0(); /* call 0x0006ABC0 */
+
+loc_000998F1: ;
+    esp = esp + 0xC;
+
+loc_000998F4: ;
+    esp += 4; return; /* ret */
+
+}
 
 /**
  * sub_00099900
@@ -114195,124 +114244,6 @@ loc_000D8CF0: ;
     MEM32(0x8AB9A8) = ecx;
     MEM32(0x8AB9AC) = eax;
     MEM32(0x8AB9B0) = eax;
-    esp += 4; return; /* ret */
-
-}
-
-/**
- * sub_000D8D50
- * Original: 0x000D8D50 - 0x000D8E03 (179 bytes, 71 insns)
- * CC: cdecl, 0 params, returns int_or_void
- * Frame: fpo_leaf
- */
-void sub_000D8D50(void)
-{
-    uint32_t ebp;
-    int _flags = 0; /* fallback flag var */
-    ebp = g_seh_ebp; /* fpo_leaf: inherit caller's frame */
-
-loc_000D8D50: ;
-    PUSH32(esp, ebx);
-    PUSH32(esp, esi);
-    ecx = 0; /* xor self */
-    PUSH32(esp, edi);
-    esi = 0x8AB97C;
-    ebx = 0; /* xor self */
-    /* nop */
-
-loc_000D8D60: ;
-    if (CMP_EQ(MEM32(esi + 0x10), ecx)) goto loc_000D8D6E; /* je: equal / zero */
-
-loc_000D8D65: ;
-    ebx++;
-    esi = esi + 0x14;
-    if (CMP_L(ebx, 3)) { RECOMP_SLICE_POINT(); goto loc_000D8D60; } /* jl: less (signed <) */
-
-loc_000D8D6E: ;
-    SET_LO16(eax, MEM16(esp + 0x10));
-    edi = ZX16(LO16(eax));
-    PUSH32(esp, ebp);
-    ebp = MEM32(esp + 0x18);
-    PUSH32(esp, edi);
-    MEM16(esi) = LO16(eax);
-    MEM16(esi + 2) = LO16(ecx);
-    MEM32(esi + 4) = ebp;
-    MEM32(esi + 0xC) = ecx;
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8D8E); sub_000F8DD0(); /* call 0x000F8DD0 */
-
-loc_000D8D8E: ;
-    esp = esp + 4;
-    PUSH32(esp, eax);
-    PUSH32(esp, edi);
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8D98); sub_000F8DC0(); /* call 0x000F8DC0 */
-
-loc_000D8D98: ;
-    esp = esp + 4;
-    PUSH32(esp, eax);
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8DA1); sub_002FF0B0(); /* call 0x002FF0B0 */
-
-loc_000D8DA1: ;
-    esp = esp + 8;
-    /* test eax, eax - flags set for next jcc */
-    MEM32(esi + 0x10) = eax;
-    if (TEST_NZ(eax, eax)) goto loc_000D8DD3; /* jne: not equal / not zero */
-
-loc_000D8DAB: ;
-    goto loc_000D8DB0;
-
-    /* nop */
-
-loc_000D8DB0: ;
-    PUSH32(esp, edi);
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8DB6); sub_000F8DD0(); /* call 0x000F8DD0 */
-
-loc_000D8DB6: ;
-    esp = esp + 4;
-    PUSH32(esp, eax);
-    PUSH32(esp, edi);
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8DC0); sub_000F8DC0(); /* call 0x000F8DC0 */
-
-loc_000D8DC0: ;
-    esp = esp + 4;
-    PUSH32(esp, eax);
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8DC9); sub_002FF0B0(); /* call 0x002FF0B0 */
-
-loc_000D8DC9: ;
-    esp = esp + 8;
-    /* test eax, eax - flags set for next jcc */
-    MEM32(esi + 0x10) = eax;
-    if (TEST_Z(eax, eax)) { RECOMP_SLICE_POINT(); goto loc_000D8DB0; } /* je: equal / zero */
-
-loc_000D8DD3: ;
-    eax = MEM32(esi + 0x10);
-    PUSH32(esp, eax);
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8DDC); sub_002FEA40(); /* call 0x002FEA40 */
-
-loc_000D8DDC: ;
-    ecx = MEM32(esi + 0x10);
-    edi = eax;
-    PUSH32(esp, ebp);
-    PUSH32(esp, edi);
-    PUSH32(esp, ecx);
-    g_seh_ebp = ebp; PUSH32(esp, 0xD8DE9); sub_002FE8B0(); /* call 0x002FE8B0 */
-
-loc_000D8DE9: ;
-    eax = MEM32(esp + 0x2C);
-    esp = esp + 0x10;
-    edi = edi << 0xB;
-    /* test eax, eax - flags set for next jcc */
-    MEM32(esi + 8) = edi;
-    POP32(esp, ebp);
-    if (TEST_Z(eax, eax)) goto loc_000D8DFD; /* je: equal / zero */
-
-loc_000D8DFB: ;
-    MEM32(eax) = edi;
-
-loc_000D8DFD: ;
-    POP32(esp, edi);
-    POP32(esp, esi);
-    eax = ebx;
-    POP32(esp, ebx);
     esp += 4; return; /* ret */
 
 }
