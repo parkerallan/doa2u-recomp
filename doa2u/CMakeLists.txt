@@ -26,6 +26,7 @@ add_subdirectory(src/d3d)      # D3D8 -> D3D11
 add_subdirectory(src/audio)    # DirectSound host backend
 add_subdirectory(src/input)    # Xbox input -> XInput / keyboard
 add_subdirectory(src/apu)      # MCPX APU emulation (from xemu)
+add_subdirectory(src/nic)      # nForce NIC for XNET's driver (Xbox Live)
 add_subdirectory(src/ui)       # Overlay menu (Esc key)
 
 # Recompiled game executable

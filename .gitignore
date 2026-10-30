@@ -17,3 +17,8 @@
 /doa2u/xbox_kernel.log
 /doa2u/*_err.txt
 /doa2u/*_out.txt
+
+# Title update archive and user data at the repo root
+/Dead or Alive Ultimate update*
+*.rar
+/HDDConfig*.bin

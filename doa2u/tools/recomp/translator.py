@@ -271,7 +271,7 @@ class FunctionTranslator:
                     continue
                 first_statement = False
                 spin = re.match(rf"if \((.+)\) goto loc_{current:08X}; (/\*.*\*/)?", s)
-                if spin and ("MEM" not in spin[1] or 0x344180 <= current < 0x3C14C0):
+                if spin and ("MEM" not in spin[1] or 0x347B60 <= current < 0x3C4EA0):
                     indent = line[:len(line) - len(line.lstrip())]
                     lines[i] = (indent + "/* hw busy-wait forced through (was: if ("
                                 + spin[1][:70] + f") goto loc_{current:08X}) */")

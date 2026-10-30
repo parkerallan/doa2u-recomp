@@ -53,6 +53,7 @@ uint32_t g_str_a = 0, g_str_b = 0;
  * per-function locals broke every cross-function ST0 value transfer. */
 double g_fp_stack[8];
 int    g_fp_top;
+uint16_t g_x87_sw;
 uint16_t g_x87_cw = 0x007F;   /* Xbox default (measured in cxbx): masked, 24-bit, round-nearest */
 
 /* GLOBAL SSE registers (see recomp_types.h); xbox_fiber.c swaps them per
@@ -269,6 +270,18 @@ BOOL xbox_MemoryLayoutInit(const void *xbe_data, size_t xbe_size)
             fprintf(stderr, "xbox_MemoryLayoutInit: WARNING could not reserve the APU "
                             "MMIO aperture at %p (got %p, error %lu) -- audio register "
                             "writes may be lost\n", apu, r, GetLastError());
+            if (r) VirtualFree(r, 0, MEM_RELEASE);
+        }
+    }
+
+    /* NIC registers at 0xFEF00000: reserved so XNET's driver accesses trap to nic.c
+     * (the VEH's catch-all would back them with a plain zero page). */
+    {
+        void *nic = (void *)((uintptr_t)0xFEF00000u + g_memory_offset);
+        LPVOID r = VirtualAlloc(nic, 0x10000u, MEM_RESERVE, PAGE_NOACCESS);
+        if (r != nic) {
+            fprintf(stderr, "xbox_MemoryLayoutInit: WARNING could not reserve the NIC "
+                            "aperture at %p (got %p, error %lu)\n", nic, r, GetLastError());
             if (r) VirtualFree(r, 0, MEM_RELEASE);
         }
     }

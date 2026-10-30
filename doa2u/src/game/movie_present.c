@@ -78,10 +78,10 @@ static struct {
 extern ptrdiff_t g_xbox_mem_offset;
 
 /* The game's Sofdec CSC table: [Y|Cb|Cr][256] x {B,G,R,A} int16 in 1/64 units,
- * at +0x3C of converter handle 0x1056638; used only as sub_00323670 decides. */
+ * at +0x3C of converter handle 0x105CA78; used only as sub_00323670 decides. */
 static const int16_t *movie_guest_csc_table(void)
 {
-    const uint8_t *cnv = (const uint8_t *)(g_xbox_mem_offset + 0x1056638);
+    const uint8_t *cnv = (const uint8_t *)(g_xbox_mem_offset + 0x105CA78);
     uint32_t fmt = *(volatile const uint32_t *)(cnv + 0x04);
     uint32_t va  = *(volatile const uint32_t *)(cnv + 0x3C);
     const int16_t *t;

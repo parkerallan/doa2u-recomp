@@ -168,8 +168,9 @@ static void kernel_data_init(void)
         BRIDGE_MEM32(XBOX_KERNEL_DATA_BASE + KDATA_SMC_VIDEO_MODE) = 1;   /* NTSC */
         memset((void *)((uintptr_t)(XBOX_KERNEL_DATA_BASE + KDATA_IDEX_CHANNEL) + g_xbox_mem_offset), 0, 0x100);
     }
-    /* XboxHDKey (ordinal 323) - 16 bytes of zeros (no key) */
-    memset((void*)((uintptr_t)(XBOX_KERNEL_DATA_BASE + KDATA_HD_KEY) + g_xbox_mem_offset), 0, 16);
+    /* XboxHDKey (ordinal 323) - this console's key; Insignia rejects an all-zero one */
+    memcpy((void*)((uintptr_t)(XBOX_KERNEL_DATA_BASE + KDATA_HD_KEY) + g_xbox_mem_offset),
+           xbox_console_identity_get()->hdd_key, 16);
 
     /* XboxSignatureKey (ordinal 325) - 16 bytes of zeros */
     memset((void*)((uintptr_t)(XBOX_KERNEL_DATA_BASE + KDATA_SIGNATURE_KEY) + g_xbox_mem_offset), 0, 16);
@@ -360,8 +361,9 @@ static void bridge_NtWaitForSingleObject(void)
  * the KINTERRUPT's service routine + context; KeInsertQueueDpc queues the
  * DPC (routine/context live in the KDPC written by KeInitializeDpc). The
  * game thread drains both from doa2u_apu_deliver_irq once per frame. */
-typedef struct { uint32_t obj, routine, ctx; } XboxIsr;
-static XboxIsr  s_isr[4];
+typedef struct { uint32_t obj, routine, ctx, vector; } XboxIsr;
+#define ISR_MAX 8                 /* five drivers connect at boot; the NIC is the fifth */
+static XboxIsr  s_isr[ISR_MAX];
 static int      s_isr_n;
 typedef struct { uint32_t dpc, a1, a2; } XboxDpc;
 static XboxDpc  s_dpcq[16];
@@ -369,19 +371,48 @@ static int      s_dpcq_n;
 
 static void bridge_KeInitializeInterrupt(void)
 {
-    uint32_t obj = STACK_ARG(0), routine = STACK_ARG(1), ctx = STACK_ARG(2);
-    if (s_isr_n < 4) { s_isr[s_isr_n].obj = obj; s_isr[s_isr_n].routine = routine; s_isr[s_isr_n].ctx = ctx; s_isr_n++; }
+    uint32_t obj = STACK_ARG(0), routine = STACK_ARG(1), ctx = STACK_ARG(2), vector = STACK_ARG(3);
+    int i;
+    /* Re-initialising the same KINTERRUPT replaces it: XNET restarts with a new
+     * context when Online opens, and the old one is freed. */
+    for (i = 0; i < s_isr_n && s_isr[i].obj != obj; i++)
+        ;
+    if (i < ISR_MAX) {
+        s_isr[i].obj = obj; s_isr[i].routine = routine;
+        s_isr[i].ctx = ctx; s_isr[i].vector = vector;
+        if (i == s_isr_n) s_isr_n++;
+    }
+    xbox_log(XBOX_LOG_INFO, "HAL", "KeInitializeInterrupt obj %08X routine %08X ctx %08X vector %02X",
+             obj, routine, ctx, vector);
     g_eax = 0;
+}
+
+/* The ISR XNET's NIC driver connected for a vector (IRQ 4 = 0x34). */
+int xbox_kernel_find_isr(uint32_t vector, uint32_t *obj, uint32_t *routine, uint32_t *ctx)
+{
+    int i;
+    for (i = 0; i < s_isr_n; i++) {
+        if (s_isr[i].vector == vector) {
+            *obj = s_isr[i].obj; *routine = s_isr[i].routine; *ctx = s_isr[i].ctx;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/* Returns 0 if that DPC is already queued. */
+static int dpc_queue(uint32_t dpc, uint32_t a1, uint32_t a2)
+{
+    int i;
+    for (i = 0; i < s_dpcq_n; i++)
+        if (s_dpcq[i].dpc == dpc) return 0;
+    if (s_dpcq_n < 16) { s_dpcq[s_dpcq_n].dpc = dpc; s_dpcq[s_dpcq_n].a1 = a1; s_dpcq[s_dpcq_n].a2 = a2; s_dpcq_n++; }
+    return 1;
 }
 
 static void bridge_KeInsertQueueDpc(void)
 {
-    uint32_t dpc = STACK_ARG(0), a1 = STACK_ARG(1), a2 = STACK_ARG(2);
-    int i;
-    for (i = 0; i < s_dpcq_n; i++)
-        if (s_dpcq[i].dpc == dpc) { g_eax = 0; return; }   /* already queued */
-    if (s_dpcq_n < 16) { s_dpcq[s_dpcq_n].dpc = dpc; s_dpcq[s_dpcq_n].a1 = a1; s_dpcq[s_dpcq_n].a2 = a2; s_dpcq_n++; }
-    g_eax = 1;
+    g_eax = (uint32_t)dpc_queue(STACK_ARG(0), STACK_ARG(1), STACK_ARG(2));
 }
 
 int xbox_kernel_get_isr(int i, uint32_t *obj, uint32_t *routine, uint32_t *ctx)
@@ -404,6 +435,21 @@ int xbox_kernel_pop_dpc(uint32_t *dpc, uint32_t *a1, uint32_t *a2)
  * NTSTATUS NtClose(HANDLE Handle)
  * Handle is a value (not a pointer), so safe for generic call.
  */
+/* Host handles handed to the guest as raw values (events, duplicates): NtClose only
+ * closes one of these. A guest value that is not ours may equal a handle Windows
+ * itself holds in this process (CoreMessaging's ALPC port), and closing that is fatal. */
+static uint8_t s_owned_handle[0x10000 / 4];
+static void bridge_own_handle(HANDLE h)
+{
+    uint32_t v = (uint32_t)(uintptr_t)h;
+    if (v && v < 0x10000) s_owned_handle[v / 4] = 1;
+}
+static int bridge_disown_handle(uint32_t v)
+{
+    if (v && v < 0x10000 && s_owned_handle[v / 4]) { s_owned_handle[v / 4] = 0; return 1; }
+    return v >= 0x10000;                    /* out of range: not a value we track */
+}
+
 static void bridge_NtClose(void)
 {
     uint32_t raw_handle = STACK_ARG(0);
@@ -421,7 +467,10 @@ static void bridge_NtClose(void)
     /* Close real handles but skip fake/synthetic ones */
     if (raw_handle && raw_handle != 0xDEAD0001u &&
         raw_handle != 0xBEEF0010u && h != INVALID_HANDLE_VALUE) {
-        CloseHandle(h);
+        if (bridge_disown_handle(raw_handle))
+            CloseHandle(h);
+        else
+            fprintf(stderr, "[KERNEL] NtClose(%08X): not a handle this port issued, ignored%c", raw_handle, 10);
     }
     g_eax = 0; /* STATUS_SUCCESS */
 }
@@ -823,6 +872,7 @@ static void bridge_NtCreateEvent(void)
         event_type, initial_state);
 
     if (handle_ptr) {
+        bridge_own_handle(local_handle);
         BRIDGE_MEM32(handle_ptr) = (uint32_t)(uintptr_t)local_handle;
     }
 
@@ -860,11 +910,14 @@ static void bridge_KeSynchronizeExecution(void)
 /* ── KeSetEvent (ordinal 145) ──────────────────────────────
  * Set the KEVENT's signal-state and wake any fiber blocked on it (the CRI worker
  * that's parked in KeWaitForSingleObject). Returns the previous signal-state. */
+#define EVENT_PROXY_MAGIC 0x58505645u   /* 'EVPX' at +0x10, host handle at +0x14 */
 static void bridge_KeSetEvent(void)
 {
     uint32_t event_ptr = STACK_ARG(0);
     int32_t prev = event_ptr ? (int32_t)BRIDGE_MEM32(event_ptr + 4) : 0;
     if (event_ptr) BRIDGE_MEM32(event_ptr + 4) = 1;        /* signaled */
+    if (event_ptr && BRIDGE_MEM32(event_ptr + 0x10) == EVENT_PROXY_MAGIC)
+        SetEvent((HANDLE)(uintptr_t)BRIDGE_MEM32(event_ptr + 0x14));
     if (xbox_fiber_active() && event_ptr) xbox_fiber_wake(event_ptr);
     g_eax = (uint32_t)prev;
 }
@@ -1125,8 +1178,9 @@ static void bridge_KeInitializeDpc(void)
     uint32_t routine = STACK_ARG(1);
     uint32_t context = STACK_ARG(2);
 
-    /* Zero the structure (32 bytes) */
-    memset(XBOX_TO_NATIVE(dpc_va), 0, 32);
+    /* Zero the Xbox KDPC (0x1C bytes); a 32-byte clear wiped the field after it
+     * (XNET's interrupt vector at dpc + 0x1C, so its NIC ISR never ran). */
+    memset(XBOX_TO_NATIVE(dpc_va), 0, 0x1C);
 
     /* Set Type (0x13 = DpcObject) and fields */
     BRIDGE_MEM16(dpc_va + 0) = 0x13;   /* Type */
@@ -1159,11 +1213,80 @@ static void bridge_KeInitializeTimerEx(void)
  * Sets a timer. We don't actually start timers - just record the state.
  * Returns FALSE (timer was not already set).
  */
+/* Timers with a DPC (XNET's 200 ms tick, 0x388FA4): fired on the game thread by
+ * xbox_kernel_fire_timers into the DPC queue. Timers without a DPC stay unsignalled. */
+typedef struct { uint32_t timer, dpc, period_ms; ULONGLONG due_ms; } XboxTimer;
+static XboxTimer s_timers[16];
+static int       s_timers_n;
+
+static int timer_remove(uint32_t timer)
+{
+    int i;
+    for (i = 0; i < s_timers_n; i++) {
+        if (s_timers[i].timer == timer) {
+            s_timers[i] = s_timers[--s_timers_n];
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void timer_set(uint32_t timer, uint32_t due_lo, uint32_t due_hi, uint32_t period_ms, uint32_t dpc)
+{
+    int64_t due = (int64_t)(((uint64_t)due_hi << 32) | due_lo);
+    ULONGLONG now = GetTickCount64(), at;
+    g_eax = (uint32_t)timer_remove(timer);
+    if (due < 0) {
+        at = now + (ULONGLONG)(-due / 10000);
+    } else {
+        FILETIME ft;
+        int64_t cur;
+        GetSystemTimeAsFileTime(&ft);
+        cur = (int64_t)(((uint64_t)ft.dwHighDateTime << 32) | ft.dwLowDateTime);
+        at = now + (ULONGLONG)(due > cur ? (due - cur) / 10000 : 0);
+    }
+    if (dpc && s_timers_n < 16) {
+        s_timers[s_timers_n].timer = timer; s_timers[s_timers_n].dpc = dpc;
+        s_timers[s_timers_n].period_ms = period_ms; s_timers[s_timers_n].due_ms = at;
+        s_timers_n++;
+    }
+}
+
+/* KeSetTimer(Timer, DueTime, Dpc) / KeSetTimerEx(Timer, DueTime, Period, Dpc) */
 static void bridge_KeSetTimer(void)
 {
-    /* Timer functionality is not needed for basic execution.
-     * Return FALSE = timer was not previously set. */
-    g_eax = 0;
+    timer_set(STACK_ARG(0), STACK_ARG(1), STACK_ARG(2), 0, STACK_ARG(3));
+}
+static void bridge_KeSetTimerEx(void)
+{
+    timer_set(STACK_ARG(0), STACK_ARG(1), STACK_ARG(2), STACK_ARG(3), STACK_ARG(4));
+}
+static void bridge_KeCancelTimer(void)
+{
+    g_eax = (uint32_t)timer_remove(STACK_ARG(0));
+}
+
+/* PhyGetLinkState: link up, 100 Mbit, full duplex (0xB, what cxbx returns). */
+static void bridge_PhyGetLinkState(void)
+{
+    g_eax = 0xB;
+}
+
+void xbox_kernel_fire_timers(void)
+{
+    ULONGLONG now = GetTickCount64();
+    int i;
+    for (i = 0; i < s_timers_n; i++) {
+        if (now < s_timers[i].due_ms)
+            continue;
+        dpc_queue(s_timers[i].dpc, 0, 0);
+        if (s_timers[i].period_ms) {
+            s_timers[i].due_ms = now + s_timers[i].period_ms;
+        } else {
+            s_timers[i] = s_timers[--s_timers_n];
+            i--;
+        }
+    }
 }
 
 /* ── Ordinal 24 ───────────────────────────────────────────
@@ -1208,7 +1331,15 @@ static void bridge_RtlNtStatusToDosError(void)
     case 0xC0000008: g_eax = 6; break;          /* STATUS_INVALID_HANDLE → ERROR_INVALID_HANDLE */
     case 0xC0000017: g_eax = 8; break;          /* STATUS_NO_MEMORY → ERROR_NOT_ENOUGH_MEMORY */
     case 0xC000000D: g_eax = 87; break;         /* STATUS_INVALID_PARAMETER → ERROR_INVALID_PARAMETER */
-    default:         g_eax = 317; break;         /* ERROR_MR_MID_NOT_FOUND (generic) */
+    case 0x00000103: g_eax = 997; break;        /* STATUS_PENDING → ERROR_IO_PENDING */
+    default:
+        /* Win32 codes wrapped as HRESULT (0x8007xxxx, XNET's WSA errors such as
+         * WSA_IO_PENDING) or NT status (0xC007xxxx) map back to the low word. */
+        if ((status & 0xFFFF0000u) == 0x80070000u || (status & 0xFFFF0000u) == 0xC0070000u)
+            g_eax = status & 0xFFFF;
+        else
+            g_eax = 317;                         /* ERROR_MR_MID_NOT_FOUND (generic) */
+        break;
     }
 }
 
@@ -1314,6 +1445,7 @@ static uint32_t xbox_fh_publish(HANDLE h, const WCHAR *win_path)
         static int told = 0;
         if (!told) { told = 1;
              }
+        bridge_own_handle(h);
         return (uint32_t)(uintptr_t)h;
     }
     s_fh[s_fh_next] = h;
@@ -1383,6 +1515,7 @@ static int xbox_fh_release(uint32_t gh)
 
 static void bridge_write_handle(uint32_t handle_va, HANDLE h)
 {
+    bridge_own_handle(h);
     if (handle_va)
         BRIDGE_MEM32(handle_va) = (uint32_t)(uintptr_t)h;
 }
@@ -2422,6 +2555,28 @@ static void bridge_IoCreateSymbolicLink(void)
 }
 
 /* ── ObReferenceObjectByHandle (ordinal 246) ─────────────── */
+/* Event handles are host handles; a driver that references one (XNET's DNS lookup,
+ * XPP) gets a guest KEVENT proxy, and KeSetEvent on the proxy sets the host event. */
+static struct { uint32_t handle, proxy; } s_event_proxy[64];
+static int s_event_proxy_n;
+
+static uint32_t event_proxy_for(uint32_t handle)
+{
+    uint32_t p;
+    int i;
+    for (i = 0; i < s_event_proxy_n; i++)
+        if (s_event_proxy[i].handle == handle) return s_event_proxy[i].proxy;
+    if (s_event_proxy_n >= 64 || !(p = xbox_HeapAlloc(0x20, 16)))
+        return 0;
+    memset(XBOX_TO_NATIVE(p), 0, 0x20);
+    BRIDGE_MEM32(p + 0x10) = EVENT_PROXY_MAGIC;
+    BRIDGE_MEM32(p + 0x14) = handle;
+    s_event_proxy[s_event_proxy_n].handle = handle;
+    s_event_proxy[s_event_proxy_n].proxy = p;
+    s_event_proxy_n++;
+    return p;
+}
+
 static void bridge_ObReferenceObjectByHandle(void)
 {
     /* Xbox: NTSTATUS ObReferenceObjectByHandle(HANDLE Handle, PVOID ObjectType, PVOID* Object)
@@ -2446,6 +2601,8 @@ static void bridge_ObReferenceObjectByHandle(void)
             BRIDGE_MEM32(object_ptr) = s_kthread;
         }
     }
+    if (object_ptr && handle && type == XBOX_KERNEL_DATA_BASE + KDATA_EVENT_OBJ_TYPE)
+        BRIDGE_MEM32(object_ptr) = event_proxy_for(handle);
     g_eax = 0;  /* STATUS_SUCCESS */
     /* A game-task coroutine polling a thread in a tight
      * ObReferenceObjectByHandle + wait loop (e.g. the mwPly frame-sync in
@@ -2608,11 +2765,13 @@ static void bridge_KeConnectInterrupt_98(void)
 /* ── HalGetInterruptVector (ordinal 44) ─────────────
  * ULONG HalGetInterruptVector(ULONG BusInterruptLevel, OUT PKIRQL Irql, ...)
  * cxbx returns 33. Return a non-zero vector and write an IRQL out. */
+/* HalGetInterruptVector(level, &irql): vector 0x30 + level, as the console kernel
+ * reports it (cxbx: IRQ 4 -> 0x34), so each driver's ISR is found by its vector. */
 static void bridge_HalGetInterruptVector_44(void)
 {
     uint32_t irql_ptr = STACK_ARG(1);
     if (irql_ptr) BRIDGE_MEM32(irql_ptr) = 0x0B; /* a plausible DIRQL */
-    g_eax = 33;
+    g_eax = 0x30 + STACK_ARG(0);
 }
 
 /* HalRegisterShutdownNotification (ordinal 47): nothing to do on the host. */
@@ -2648,8 +2807,8 @@ static void bridge_ExFreePool(void)
     if (STACK_ARG(0)) xbox_HeapFree(STACK_ARG(0));
 }
 
-/* ExQueryNonVolatileSetting: XC_LANGUAGE (7) from the Profile settings, XC_VIDEO (8) from
- * the video settings (bit 16 = widescreen); any other index reads back as zeros. */
+/* ExQueryNonVolatileSetting: XC_LANGUAGE (7) and XC_VIDEO (8, bit 16 = widescreen) from the
+ * settings, factory MAC/serial/online key and EEPROM from the console identity; else zeros. */
 extern unsigned video_xc_video_value(void);
 extern int profile_get_language(void);
 static void bridge_ExQueryNonVolatileSetting(void)
@@ -2664,11 +2823,36 @@ static void bridge_ExQueryNonVolatileSetting(void)
     }
     /* XC_FACTORY_ETHERNET_ADDR (0x101): fixed MAC. The save encryption key uses it
      * (sub_00021280); a random per-boot MAC made saves unreadable next session. */
-    if (index == 0x101 && value && len >= 6) {
-        static const uint8_t mac[6] = { 0x00, 0x50, 0xF2, 0x44, 0x32, 0x55 };
-        memcpy(XBOX_TO_NATIVE(value), mac, 6);
+    static const uint8_t mac[6] = { 0x00, 0x50, 0xF2, 0x44, 0x32, 0x55 };
+    const xbox_console_identity *id = xbox_console_identity_get();
+    const void *bin = NULL;
+    uint32_t bin_len = 0, caller = BRIDGE_MEM32(g_esp - 4);
+    uint8_t eeprom[0x100], xnet_mac[6];
+    if (index == 0x101) { bin = mac; bin_len = 6; }
+    if (index == 0x101 && caller >= 0x003848A0u && caller < 0x00397560u) {
+        /* XNET's own query (0x38D62C): a per-console MAC from the serial, or XNetXnAddrToInAddr
+         * takes every other port for this console (same abEnet -> 127.0.0.1) and no join starts. */
+        uint32_t h = 2166136261u, i;
+        for (i = 0; i < 12; i++) h = (h ^ (uint8_t)id->serial[i]) * 16777619u;
+        memcpy(xnet_mac, mac, 3);
+        xnet_mac[3] = (uint8_t)(h >> 16); xnet_mac[4] = (uint8_t)(h >> 8); xnet_mac[5] = (uint8_t)h;
+        bin = xnet_mac;
+    }
+    if (index == 0x100) { bin = id->serial; bin_len = 12; }      /* XC_FACTORY_SERIAL_NUMBER */
+    if (index == 0x102) { bin = id->online_key; bin_len = 16; }  /* XC_FACTORY_ONLINE_KEY */
+    if (index == 0xFFFF) {
+        /* Whole EEPROM: factory section only (serial 0x34, MAC 0x40, online key 0x48).
+         * XNET only seeds its RNG with it (0x390902); the encrypted section stays zero. */
+        memset(eeprom, 0, sizeof(eeprom));
+        memcpy(eeprom + 0x34, id->serial, 12);
+        memcpy(eeprom + 0x40, mac, 6);
+        memcpy(eeprom + 0x48, id->online_key, 16);
+        bin = eeprom; bin_len = sizeof(eeprom);
+    }
+    if (bin && value && len >= bin_len) {
+        memcpy(XBOX_TO_NATIVE(value), bin, bin_len);
         if (type) BRIDGE_MEM32(type) = 3;        /* REG_BINARY */
-        if (result) BRIDGE_MEM32(result) = 6;
+        if (result) BRIDGE_MEM32(result) = bin_len;
         g_eax = 0;
         return;
     }
@@ -2692,7 +2876,14 @@ static void bridge_HalReturnToFirmware(void)
 {
     /* 2 = quick reboot (XAPI startup): can't restart the guest here, so carry on. */
     if (STACK_ARG(0) == 2) {
-        fprintf(stderr, "[KERNEL] HalReturnToFirmware(quick reboot) ignored%c", 10);
+        /* The launch data page says what the title wanted to boot: type, title id,
+         * path (520 bytes) and the LD_LAUNCH_DASHBOARD reason/context/parameters. */
+        uint32_t ld = BRIDGE_MEM32(XBOX_KERNEL_DATA_BASE + KDATA_LAUNCH_DATA_PAGE), i;
+        if (!ld) { fprintf(stderr, "[KERNEL] HalReturnToFirmware(quick reboot) ignored, no launch data%c", 10); return; }
+        fprintf(stderr, "[KERNEL] HalReturnToFirmware(quick reboot) ignored: launch type %u title %08X path \"%s\" data",
+                BRIDGE_MEM32(ld), BRIDGE_MEM32(ld + 4), (const char *)(uintptr_t)(ld + 8 + g_xbox_mem_offset));
+        for (i = 0; i < 8; i++) fprintf(stderr, " %08X", BRIDGE_MEM32(ld + 0x210 + i * 4));
+        fprintf(stderr, "%c", 10);
         return;
     }
     fprintf(stderr, "[EXIT] HalReturnToFirmware(%u)%c", STACK_ARG(0), 10);
@@ -2945,6 +3136,30 @@ static void bridge_XcHMAC(void)
                 XBOX_TO_NATIVE(STACK_ARG(4)), STACK_ARG(5),
                 XBOX_TO_NATIVE(STACK_ARG(6)));
 }
+static void bridge_XcModExp(void)
+{
+    g_eax = xbox_XcModExp(XBOX_TO_NATIVE(STACK_ARG(0)), XBOX_TO_NATIVE(STACK_ARG(1)),
+                          XBOX_TO_NATIVE(STACK_ARG(2)), XBOX_TO_NATIVE(STACK_ARG(3)), STACK_ARG(4));
+}
+static void bridge_XcDESKeyParity(void)
+{
+    xbox_XcDESKeyParity(XBOX_TO_NATIVE(STACK_ARG(0)), STACK_ARG(1));
+}
+static void bridge_XcKeyTable(void)
+{
+    xbox_XcKeyTable(STACK_ARG(0), XBOX_TO_NATIVE(STACK_ARG(1)), XBOX_TO_NATIVE(STACK_ARG(2)));
+}
+static void bridge_XcBlockCrypt(void)
+{
+    xbox_XcBlockCrypt(STACK_ARG(0), XBOX_TO_NATIVE(STACK_ARG(1)), XBOX_TO_NATIVE(STACK_ARG(2)),
+                      XBOX_TO_NATIVE(STACK_ARG(3)), STACK_ARG(4));
+}
+static void bridge_XcBlockCryptCBC(void)
+{
+    xbox_XcBlockCryptCBC(STACK_ARG(0), STACK_ARG(1), XBOX_TO_NATIVE(STACK_ARG(2)),
+                         XBOX_TO_NATIVE(STACK_ARG(3)), XBOX_TO_NATIVE(STACK_ARG(4)),
+                         STACK_ARG(5), XBOX_TO_NATIVE(STACK_ARG(6)));
+}
 
 /* ── Ordinal tables ─────────────────────────────────────────────────── */
 
@@ -3021,7 +3236,7 @@ static bridge_func_t bridge_for_ordinal(ULONG ordinal)
     case  87: return bridge_void;                     /* IofCompleteRequest */
     case  91: return bridge_return_zero;              /* IoDismountVolumeByName */
     case  95: return bridge_KeBugCheck;
-    case  97: return bridge_return_zero;              /* KeCancelTimer -> was not queued */
+    case  97: return bridge_KeCancelTimer;
     case  98: return bridge_KeConnectInterrupt_98;
     case  99: return bridge_KeDelayExecutionThread;
     case 100: return bridge_return_true;              /* KeDisconnectInterrupt */
@@ -3039,7 +3254,7 @@ static bridge_func_t bridge_for_ordinal(ULONG ordinal)
     case 143: case 144: return bridge_return_zero;    /* KeSetBasePriorityThread, KeSetDisableBoostThread */
     case 145: return bridge_KeSetEvent;
     case 149: return bridge_KeSetTimer;
-    case 150: return bridge_KeSetTimer;               /* KeSetTimerEx */
+    case 150: return bridge_KeSetTimerEx;
     case 151: return bridge_KeStallExecutionProcessor;
     case 153: return bridge_KeSynchronizeExecution;
     case 158: return bridge_KeWaitForMultipleObjects;
@@ -3094,7 +3309,7 @@ static bridge_func_t bridge_for_ordinal(ULONG ordinal)
     case 246: return bridge_ObReferenceObjectByHandle;
     case 247: return bridge_ObReferenceObjectByName;
     case 250: return bridge_ObfDereferenceObject;
-    case 252: return bridge_return_zero;              /* PhyGetLinkState: no link */
+    case 252: return bridge_PhyGetLinkState;
     case 253: return bridge_return_zero;              /* PhyInitialize */
     case 255: return bridge_PsCreateSystemThreadEx;
     case 258: return bridge_PsTerminateSystemThread;
@@ -3118,7 +3333,11 @@ static bridge_func_t bridge_for_ordinal(ULONG ordinal)
     case 339: return bridge_XcRC4Crypt;
     case 340: return bridge_XcHMAC;
     case 344: return bridge_return_true;              /* XcVerifyPKCS1Signature */
-    case 345: case 346: case 347: case 349: return bridge_return_zero;  /* XcModExp, XcDESKeyParity, XcKeyTable, XcBlockCryptCBC */
+    case 345: return bridge_XcModExp;
+    case 346: return bridge_XcDESKeyParity;
+    case 347: return bridge_XcKeyTable;
+    case 348: return bridge_XcBlockCrypt;
+    case 349: return bridge_XcBlockCryptCBC;
     case 358: return bridge_return_zero;              /* HalIsResetOrShutdownPending */
     case 359: return bridge_void;                     /* IoMarkIrpMustComplete */
     case 360: return bridge_HalReturnToFirmware;      /* HalInitiateShutdown */

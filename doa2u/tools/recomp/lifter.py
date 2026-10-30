@@ -779,6 +779,11 @@ def _make_cmovcc_cond(cmov_mnemonic, flag_setter, flag_ops):
 
 LOOP_MNEMONICS = ("loop", "loope", "loopne")
 
+# Readers of CF alone, which inc/dec do not touch.
+_CF_ONLY_JCC = frozenset({"jb", "jc", "jnae", "jae", "jnb", "jnc"})
+_CF_ONLY_CMOV = frozenset({"cmovb", "cmovc", "cmovnae", "cmovae", "cmovnb", "cmovnc"})
+_CF_ONLY_SETCC = frozenset({"setb", "setc", "setnae", "setae", "setnb", "setnc"})
+
 
 def _lift_loop(insn, flag_setter, flag_ops, lifter):
     """--ecx, then branch while ecx != 0 (and ZF set/clear for loope/loopne).
@@ -897,6 +902,7 @@ class Lifter:
         self.rcc_needed = 0       # _rccN latches the current function needs
         self.unlatched_reads = [] # clobbered flag reads whose setter is in an earlier block
         self.entry_condition = None
+        self._fpu_src = None      # last status-word source: "cmp" (fcom/ftst) or "fxam"
 
     def _call_target_name(self, addr):
         """Get the name for a call target address."""
@@ -1091,6 +1097,9 @@ class Lifter:
         # ── FPU ──
         if m.startswith("f"):
             return self._lift_fpu(insn, m, ops)
+
+        if m == "xlatb":
+            return ["SET_LO8(eax, MEM8(ebx + LO8(eax))); /* xlatb */"]
 
         # ── Unhandled ──
         return [f"/* TODO: {m} {insn.op_str} */"]
@@ -1377,7 +1386,7 @@ class Lifter:
         # since game code reads stale stack slots that hold old return addresses.
         if insn.call_target:
             name = self._call_target_name(insn.call_target)
-            if insn.call_target == 0x003354E0 and name == "sub_003354E0":
+            if insn.call_target == 0x00338CFC and name == "sub_00338CFC":
                 return [
                     "{ int64_t _ft = (int64_t)g_fp_stack[g_fp_top & 7]; g_fp_top++; "
                     "eax = (uint32_t)_ft; edx = (uint32_t)((uint64_t)_ft >> 32); } "
@@ -1930,8 +1939,12 @@ class Lifter:
         if m == "fldln2":
             return ["fp_push(0.69314718055994530942); /* fldln2 */"]
         if m == "ftst":
+            self._fpu_src = "cmp"
             return ["_fpu_cmp = (fp_top() < 0.0) ? -1 : (fp_top() > 0.0) ? 1 : 0;"
                     " /* ftst */"]
+        if m == "fxam":
+            self._fpu_src = "fxam"
+            return ["g_x87_sw = x87_fxam(fp_top()); /* fxam */"]
         if m == "fisttp":
             if len(ops) >= 1 and ops[0].type == "mem":
                 mem_acc = _mem_accessor(ops[0].mem_size)
@@ -1986,6 +1999,7 @@ class Lifter:
                 pops = " fp_popp();"
             elif m in ("fcompp", "fucompp"):
                 pops = " fp_popp(); fp_popp();"
+            self._fpu_src = "cmp"
             return [f"_fpu_cmp = (fp_top() < {rhs}) ? -1 : (fp_top() > {rhs}) ? 1 : 0;"
                     f"{pops} /* {m} {insn.op_str} */"]
         if m in ("fcompi", "fcomip", "fucomi", "fucompi", "fucomip", "fcomi"):
@@ -1993,6 +2007,7 @@ class Lifter:
             # fcompi/fucompi pop st(0) after comparing; fcomi/fucomi do not
             pops = m.endswith("pi") or m.endswith("ip")
             pop_code = " fp_pop();" if pops else ""
+            self._fpu_src = "cmp"
             return [f"_fpu_cmp = (fp_top() < fp_st1()) ? -1 : (fp_top() > fp_st1()) ? 1 : 0;"
                     f"{pop_code} /* {m} */"]
         if m == "fnstsw":
@@ -2002,6 +2017,11 @@ class Lifter:
             # jcc` read whatever happened to be in eax.)
             if (insn.op_str or "").strip() == "ax":
                 return [f"SET_HI8(eax, (_fpu_cmp < 0 ? 0x01 : 0) | (_fpu_cmp == 0 ? 0x40 : 0)); /* fnstsw ax */"]
+            # To memory: fxam's word (x87_fxam) or the compare's C0/C3 (bits 8/14).
+            if len(ops) >= 1 and ops[0].type == "mem":
+                if self._fpu_src == "fxam":
+                    return [f"MEM16({_fmt_mem(ops[0])}) = g_x87_sw; /* fnstsw */"]
+                return [f"MEM16({_fmt_mem(ops[0])}) = (_fpu_cmp < 0 ? 0x100 : 0) | (_fpu_cmp == 0 ? 0x4000 : 0); /* fnstsw */"]
             return [f"/* fnstsw {insn.op_str} - store FPU status word */"]
         if m == "fnstcw":
             # The control word is real state: the CRT's _ctrlfp reads it back
@@ -2150,10 +2170,25 @@ def lift_basic_block(lifter, bb, flag_state=None):
     latch_pos = None
     latch_n = 0
     setter_regs, setter_mem = set(), False
+    # inc/dec leave CF alone: the compare before them still answers carry-only
+    # reads (jb/jae, cmovb/cmovae, setb/setae, adc/sbb). Kept here while inc/dec
+    # are the last setters; latched before the inc/dec if they overwrote an operand.
+    cf_rec = None
 
     def new_setter(insn):
         nonlocal last_flag_setter, last_flag_ops, clobbered, latch_pos, latch_n
-        nonlocal setter_regs, setter_mem
+        nonlocal setter_regs, setter_mem, cf_rec
+        if insn.mnemonic in ("inc", "dec"):
+            if last_flag_setter and last_flag_setter not in ("inc", "dec"):
+                cf_rec = {"setter": last_flag_setter, "ops": last_flag_ops,
+                          "regs": setter_regs, "mem": setter_mem,
+                          "latch_pos": latch_pos, "clobbered": clobbered}
+            if cf_rec and not cf_rec["clobbered"]:
+                regs, mem = _insn_writes(insn)
+                if regs & cf_rec["regs"] or (mem and cf_rec["mem"]):
+                    cf_rec["clobbered"] = True
+        else:
+            cf_rec = None
         last_flag_setter = insn.mnemonic
         last_flag_ops = list(insn.operands)
         clobbered = False
@@ -2166,9 +2201,12 @@ def lift_basic_block(lifter, bb, flag_state=None):
 
     def note_writes(insn):
         nonlocal clobbered
+        regs, mem = _insn_writes(insn)
+        if cf_rec and not cf_rec["clobbered"]:
+            if regs & cf_rec["regs"] or (mem and cf_rec["mem"]):
+                cf_rec["clobbered"] = True
         if not last_flag_setter or clobbered:
             return
-        regs, mem = _insn_writes(insn)
         if regs & setter_regs or (mem and setter_mem):
             clobbered = True
 
@@ -2186,6 +2224,30 @@ def lift_basic_block(lifter, bb, flag_state=None):
         latch_pos += 1
         latch_n += 1
         lifter.rcc_needed = max(lifter.rcc_needed, latch_n)
+        return name
+
+    def cf_setter_for(mnemonic, cf_only):
+        """The compare behind an inc/dec, for a carry-only reader."""
+        if cf_rec and last_flag_setter in ("inc", "dec") and mnemonic in cf_only:
+            return cf_rec["setter"], cf_rec["ops"]
+        return None
+
+    def latched_cf(cond):
+        """cond at the compare, latched before the inc/dec that overwrote an operand."""
+        nonlocal latch_pos, latch_n
+        if not cf_rec["clobbered"]:
+            return cond
+        if cf_rec["latch_pos"] is None:
+            lifter.unlatched_reads.append(insns[i].address)
+            return cond
+        n = lifter.rcc_needed
+        name = f"_rcc{n}"
+        lifter.rcc_needed = n + 1
+        latch_n = max(latch_n, n + 1)          # the inc/dec's own latches stay distinct
+        stmts.insert(cf_rec["latch_pos"], f"{name} = ({cond}); /* latched */")
+        cf_rec["latch_pos"] += 1
+        if latch_pos is not None and latch_pos >= cf_rec["latch_pos"] - 1:
+            latch_pos += 1
         return name
 
     while i < len(insns):
@@ -2221,11 +2283,15 @@ def lift_basic_block(lifter, bb, flag_state=None):
         if curr.is_cond_jump and last_flag_setter:
             result = _make_condition(
                 curr.mnemonic, last_flag_setter, last_flag_ops)
+            cf_src = None if result else cf_setter_for(curr.mnemonic, _CF_ONLY_JCC)
+            if cf_src:
+                result = _make_condition(curr.mnemonic, *cf_src)
             if result:
                 cond_expr, desc = result
                 target = curr.jump_target
                 stmt = _emit_cond_goto(
-                    latched(cond_expr), curr.mnemonic, desc, target, lifter)
+                    latched_cf(cond_expr) if cf_src else latched(cond_expr),
+                    curr.mnemonic, desc, target, lifter)
                 stmts.append(stmt)
                 i += 1
                 continue
@@ -2236,10 +2302,13 @@ def lift_basic_block(lifter, bb, flag_state=None):
                 and last_flag_setter and len(curr.operands) >= 1):
             cond = _make_setcc_value(
                 curr.mnemonic, last_flag_setter, last_flag_ops)
+            cf_src = None if cond else cf_setter_for(curr.mnemonic, _CF_ONLY_SETCC)
+            if cf_src:
+                cond = _make_setcc_value(curr.mnemonic, *cf_src)
             if cond:
                 stmts.append(
                     _fmt_operand_write(curr.operands[0],
-                                       f"({latched(cond)}) ? 1 : 0")
+                                       f"({latched_cf(cond) if cf_src else latched(cond)}) ? 1 : 0")
                     + f" /* {curr.mnemonic} */")
                 note_writes(curr)
                 i += 1
@@ -2251,10 +2320,13 @@ def lift_basic_block(lifter, bb, flag_state=None):
                 and last_flag_setter and len(curr.operands) >= 2):
             cond = _make_cmovcc_cond(
                 curr.mnemonic, last_flag_setter, last_flag_ops)
+            cf_src = None if cond else cf_setter_for(curr.mnemonic, _CF_ONLY_CMOV)
+            if cf_src:
+                cond = _make_cmovcc_cond(curr.mnemonic, *cf_src)
             if cond:
                 src = _fmt_operand_read(curr.operands[1])
                 stmts.append(
-                    f"if ({latched(cond)}) "
+                    f"if ({latched_cf(cond) if cf_src else latched(cond)}) "
                     + _fmt_operand_write(curr.operands[0], src)
                     + f" /* {curr.mnemonic} */")
                 note_writes(curr)
@@ -2266,6 +2338,21 @@ def lift_basic_block(lifter, bb, flag_state=None):
         # neg/sbb/cmp+sbb boolean idiom computed with CF=0).
         if curr.mnemonic in ("sbb", "adc") and last_flag_setter:
             cf_expr = _make_cf_expr(last_flag_setter, last_flag_ops)
+            cf_src = None if cf_expr is not None else cf_setter_for(curr.mnemonic, ("sbb", "adc"))
+            if cf_src:
+                cf_expr = _make_cf_expr(*cf_src)
+                if cf_expr is not None:
+                    cf_stmt = f"_cf = {cf_expr}; /* CF from {cf_src[0]} */"
+                    if cf_rec["clobbered"] and cf_rec["latch_pos"] is not None:
+                        stmts.insert(cf_rec["latch_pos"], cf_stmt)
+                        cf_rec["latch_pos"] += 1
+                        if latch_pos is not None and latch_pos >= cf_rec["latch_pos"] - 1:
+                            latch_pos += 1
+                    else:
+                        if cf_rec["clobbered"]:
+                            lifter.unlatched_reads.append(curr.address)
+                        stmts.append(cf_stmt)
+                cf_expr = None
             if cf_expr is not None:
                 cf_stmt = f"_cf = {cf_expr}; /* CF from {last_flag_setter} */"
                 if clobbered and latch_pos is not None:

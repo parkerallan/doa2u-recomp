@@ -1,13 +1,13 @@
 /**
  * Dead or Alive 2 Ultimate - Recompiled Game Host Entry Point
  *
- * Boots the statically-recompiled DOA2.xbe on Windows:
+ * Boots the statically-recompiled DOA2.xbe (title update, version 261) on Windows:
  *   load XBE -> map Xbox memory -> kernel init -> install fault-skip VEH ->
  *   host window + D3D8->D3D11 device + APU/DirectSound -> fibers ->
- *   call recompiled entry point (xbe_entry_point = mainCRTStartup @ 0x002BBB93).
+ *   call recompiled entry point (xbe_entry_point = mainCRTStartup @ 0x002BF373).
  *
  * Shared runtime libraries with the other compatibility layers. The XDK 5849
- * CRT startup (mainXapiStartup @ 0x002BBB1F) runs _rtinit/_cinit itself, so
+ * CRT startup (mainXapiStartup @ 0x002BF2FF) runs _rtinit/_cinit itself, so
  * the static initializer tables are not walked here.
  *
  * The VEH decoders (veh_skip_faulting_read / _write) come from the burnout3
@@ -18,6 +18,7 @@
 
 #include <windows.h>
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -36,10 +37,14 @@
 #include "ui/doa2u_ui.h"
 #include "ui/doa2u_setup.h"
 #include "xiso_extract.h"
+#include "xbe_patch.h"
 
-#define DOA2U_ENTRY_POINT  0x002BBB93
+#define DOA2U_ENTRY_POINT  0x002BF373
 /* Game files live in assets next to the exe (the disc root); D: maps to assets. */
-#define DOA2U_XBE_PATH     "assets/DOA2.xbe"
+/* The game program this build is recompiled from: the Xbox Live title update
+ * (version 261), kept where a console keeps it (xbox_path_title_update_xbe). */
+#define DOA2U_TU_VERSION   261u
+#define DOA2U_TU_SIZE      8249344u
 
 static HWND          g_hwnd;
 static IDirect3D8   *g_d3d8;
@@ -223,6 +228,10 @@ void doa2u_present_game_side(void)
         perf_begin(PERF_AUDIO);
         doa2u_apu_deliver_irq();
         perf_end(PERF_AUDIO);
+    }
+    {
+        extern void doa2u_nic_deliver(void);
+        doa2u_nic_deliver();
     }
     doa2u_pump_messages();
 }
@@ -748,6 +757,12 @@ static LONG WINAPI crash_veh(PEXCEPTION_POINTERS info)
                 if (apu_hook_handle_mmio(info->ContextRecord, fault, fault_xbox_va, is_write))
                     return EXCEPTION_CONTINUE_EXECUTION;
             }
+            /* nForce NIC registers (XNET's driver). */
+            if (fault_xbox_va >= 0xFEF00000u && fault_xbox_va < 0xFEF00400u) {
+                extern int nic_hook_handle_mmio(PCONTEXT ctx, uint32_t fault_xbox_va);
+                if (nic_hook_handle_mmio(info->ContextRecord, fault_xbox_va))
+                    return EXCEPTION_CONTINUE_EXECUTION;
+            }
             /* Other GPU/MCPX memory: back with a zero page. */
             uintptr_t alloc_base = fault & ~(uintptr_t)0xFFFF;
             LPVOID p = VirtualAlloc((LPVOID)alloc_base, 0x10000,
@@ -830,10 +845,10 @@ static LONG WINAPI crash_veh(PEXCEPTION_POINTERS info)
 
 /* ── XBE loading ────────────────────────────────────────────────── */
 
-static BOOL load_xbe(const char *path, void **out_data, size_t *out_size)
+static BOOL load_xbe(const WCHAR *path, void **out_data, size_t *out_size)
 {
-    FILE *f = fopen(path, "rb");
-    if (!f) { fprintf(stderr, "Cannot open XBE: %s\n", path); return FALSE; }
+    FILE *f = _wfopen(path, L"rb");
+    if (!f) { fprintf(stderr, "Cannot open XBE: %S (errno %d)\n", path, errno); return FALSE; }
     fseek(f, 0, SEEK_END); long size = ftell(f); fseek(f, 0, SEEK_SET);
     if (size <= 0) { fclose(f); return FALSE; }
     void *data = malloc((size_t)size);
@@ -922,16 +937,35 @@ int main(int argc, char **argv)
         fprintf(stderr, "[SETUP] game files installed\n");
     }
 
-    if (!load_xbe(DOA2U_XBE_PATH, &xbe_data, &xbe_size)) {
-        char cwd[MAX_PATH] = {0}, msg[512];
-        GetCurrentDirectoryA(MAX_PATH, cwd);
-        snprintf(msg, sizeof(msg),
-                 "Could not load %s\n(working directory: %s)\n\n"
-                 "Expected the disc contents (DOA2.xbe and the doa2 folder) in the "
-                 "assets folder next to DOA2U.exe.", DOA2U_XBE_PATH, cwd);
-        fprintf(stderr, "FATAL: %s\n", msg);
-        MessageBoxA(NULL, msg, "DOA2U recomp - startup error", 0x10);
-        return 1;
+    {   /* The title update's doa2.xbe: wrong size or version means a different build. */
+        WCHAR tu[MAX_PATH], tu2[MAX_PATH]; char msg[700]; uint32_t ver = 0;
+        xbox_path_title_update_xbe(tu, MAX_PATH);
+        swprintf_s(tu2, MAX_PATH, L"%s\\$U\\doa2.xbe", assets_dir);   /* also accepted: next to the game files */
+        if (GetFileAttributesW(tu) == INVALID_FILE_ATTRIBUTES && GetFileAttributesW(tu2) == INVALID_FILE_ATTRIBUTES) {
+            /* First run: build the title update from the disc DOA2.xbe and the shipped patch. */
+            WCHAR disc[MAX_PATH]; char perr[300];
+            swprintf_s(disc, MAX_PATH, L"%s\\DOA2.xbe", assets_dir);
+            if (doa2u_xbe_patch_apply(disc, L"online\\doa2u_tu261.patch", tu2, perr, sizeof perr))
+                fprintf(stderr, "[SETUP] title update built: %S\n", tu2);
+            else
+                fprintf(stderr, "[SETUP] title update patch failed: %s\n", perr);
+        }
+        if ((load_xbe(tu, &xbe_data, &xbe_size) || load_xbe(tu2, &xbe_data, &xbe_size)) && xbe_size > 0x200) {
+            const uint8_t *x = (const uint8_t *)xbe_data;
+            uint32_t base = *(const uint32_t *)(x + 0x104), cert = *(const uint32_t *)(x + 0x118) - base;
+            if (cert + 0xB0 <= xbe_size) ver = *(const uint32_t *)(x + cert + 0xAC);
+        }
+        if (xbe_size != DOA2U_TU_SIZE || ver != DOA2U_TU_VERSION) {
+            snprintf(msg, sizeof(msg),
+                     "The Dead or Alive Ultimate title update was not found.\n\n"
+                     "This build runs the game's Xbox Live update (version %u). Keep online\\doa2u_tu261.patch "
+                     "next to DOA2U.exe, or copy doa2.xbe from the title update to:\n%S%s",
+                     DOA2U_TU_VERSION, tu,
+                     xbe_data ? "\n\n(The file there is a different version.)" : "");
+            fprintf(stderr, "FATAL: %s\n", msg);
+            MessageBoxA(NULL, msg, "DOA2U recomp - title update missing", 0x10);
+            return 1;
+        }
     }
     fprintf(stderr, "XBE loaded: %zu bytes\n", xbe_size);
 

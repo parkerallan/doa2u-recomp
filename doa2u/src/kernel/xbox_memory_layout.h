@@ -6,9 +6,9 @@
  * The game's code and data were linked expecting specific address ranges:
  *
  *   0x00010000 - 0x002BD000  .text (code)       ~2.73 MB
- *   0x002CC200 - 0x00362AE0  XDK library code   ~600 KB
- *   0x0036B7C0 - 0x003B2354  .rdata (constants) ~280 KB
- *   0x003B2360 - 0x0076F000  .data + BSS        ~3.9 MB
+ *   0x002CC200 - 0x003664C0  XDK library code   ~600 KB
+ *   0x0036F1A0 - 0x003B5D34  .rdata (constants) ~280 KB
+ *   0x003B5D40 - 0x0076F000  .data + BSS        ~3.9 MB
  *
  * On Windows, we need to:
  * 1. Reserve the same virtual address range (0x00010000+)
@@ -46,10 +46,10 @@ extern "C" {
 
 /* .text section */
 /* DOA2U (DOA2.xbe): the image, including .data BSS, zressect, DOLBY, .data1,
- * XON_RD and the $$XTIMAGE/$$XSIMAGE/.XTLID tails, ends at 0x0106DAE0
- * (base 0x10000 + image size 0x105DAE0). Section contents are copied from
+ * XON_RD and the $$XTIMAGE/$$XSIMAGE/.XTLID tails, ends at 0x01073F20
+ * (base 0x10000 + image size 0x1063F20). Section contents are copied from
  * the XBE header at load time; only the end of the image matters here. */
-#define XBOX_IMAGE_END          0x0106DAE0u
+#define XBOX_IMAGE_END          0x01073F20u
 
 #define XBOX_TOTAL_RAM          (64 * 1024 * 1024)  /* 64 MB */
 #define XBOX_GPU_RESERVED       (4 * 1024 * 1024)   /* ~4 MB for GPU */
@@ -182,7 +182,7 @@ ptrdiff_t xbox_GetMemoryOffset(void);
                                                  * a surface it computed as one pixel wide. */
 
 /** Base VA of the stack area (above last XBE section and the runtime pages).
- *  DOA2U's image extends to 0x0106DAE0.
+ *  DOA2U's image extends to 0x01073F20.
  *
  *  Sits directly above the fake TLS/RW-data pages (xbox_memory_layout.c) with
  *  no padding, because everything below XBOX_HEAP_BASE is low-heap space the

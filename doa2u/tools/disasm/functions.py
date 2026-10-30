@@ -323,6 +323,7 @@ class FunctionDetector:
         through fall-through and internal jumps.
         """
         max_addr = start
+        max_target = start   # furthest branch target still to be walked
         addr = start
 
         # Upper bound
@@ -340,15 +341,18 @@ class FunctionDetector:
                 max_addr = end
 
             # Track internal forward jumps to extend function bounds
-            if insn.is_cond_jump and insn.jump_target is not None:
+            if (insn.is_jump or insn.is_cond_jump) and insn.jump_target is not None:
                 target = insn.jump_target
                 if start <= target < upper and target > max_addr:
                     # This jump goes forward within bounds, extend
                     max_addr = target
+                if start <= target < upper and target > max_target:
+                    max_target = target
 
             if insn.is_ret or (insn.is_jump and not insn.is_cond_jump):
-                # Check if we've covered all internal jump targets
-                if addr + insn.size >= max_addr:
+                # Stop only once every forward target's block has been walked:
+                # a target equal to this end still begins a block of ours.
+                if end > max_target:
                     break
                 # There might be more code after (jumped over)
                 addr = insn.end_address

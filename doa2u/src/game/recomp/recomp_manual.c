@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <windows.h>
 #include <mmsystem.h>
 #include "../../kernel/perf.h"
@@ -20,15 +21,15 @@ extern int  xbox_fiber_is_primary(void);
 extern int  xbox_fiber_is_coroutine(void);
 
 /* ── Guest addresses (DOA2.xbe) ─────────────────────────────────────── */
-#define D3D_G_PDEVICE        0x003554F8u   /* D3D_g_pDevice */
-#define D3D_FAKE_CHANNEL     0x00355000u   /* XDK's GPU-less FIFO control block (+0x40 PUT, +0x44 GET) */
+#define D3D_G_PDEVICE        0x00358ED8u   /* D3D_g_pDevice */
+#define D3D_FAKE_CHANNEL     0x003589E0u   /* XDK's GPU-less FIFO control block (+0x40 PUT, +0x44 GET) */
 static void rt_sync(void);
 extern void nv2a_pgraph_set_reg(uint32_t addr, uint32_t val);
 #define DEV_VBLANK_EVENT_OFS 0x1DBCu       /* D3DDevice__m_VerticalBlankEvent_OFFSET */
 #define DEV_VBLANK_CB_OFS    0x1DB8u       /* D3DDevice__m_VBlankCallback_OFFSET */
 #define DEV_SWAP_CB_OFS      0x1DB4u       /* D3DDevice__m_SwapCallback_OFFSET */
-#define DSOUND_LO            0x00363360u   /* DSOUND section (APU interrupt routines live here) */
-#define DSOUND_HI            0x00380EA4u
+#define DSOUND_LO            0x00366D40u   /* DSOUND section (APU interrupt routines live here) */
+#define DSOUND_HI            0x00384884u
 
 /* ── Flags carried across a generated-fragment boundary ─────────────── */
 /* Exact x86 flag semantics for CMP (a - b) and TEST (a & b) at the operand
@@ -146,29 +147,36 @@ recomp_func_t recomp_lookup_manual(uint32_t xbox_va)
         fprintf(stderr, "[GARBAGE] call to non-code target 0x" #va "\n"); \
         esp += 4; \
     }
-GARBAGE_TARGET(02888C16)
-GARBAGE_TARGET(97336EEB)
-GARBAGE_TARGET(003C14DA)
-GARBAGE_TARGET(003C14EA)
-GARBAGE_TARGET(E91CEB10)
-GARBAGE_TARGET(E970EB1C)
-GARBAGE_TARGET(EE2A2E3C)
+GARBAGE_TARGET(003C4EBA)
+GARBAGE_TARGET(003C4ECA)
+GARBAGE_TARGET(10B04273)
+GARBAGE_TARGET(247E66EE)
+GARBAGE_TARGET(2633A713)
+GARBAGE_TARGET(433A5795)
+GARBAGE_TARGET(553A57AD)
+GARBAGE_TARGET(842B1F11)
+GARBAGE_TARGET(BC336B0C)
+GARBAGE_TARGET(E8BFE9CF)
+GARBAGE_TARGET(E92EE9DB)
+GARBAGE_TARGET(E93EE9E7)
+GARBAGE_TARGET(EE2A1C3E)
+GARBAGE_TARGET(F488295D)
 
 /* ── Runtime symbols the shared libraries expect from the game layer ── */
 volatile int g_doa2u_post_movie = 0;      /* fiber timeslicing gate (kept off) */
 void (*g_kernel_ptinfo_hook)(const char *where);   /* NtReadFile diagnostic hook (unused) */
 uint32_t g_doa2u_offrt_offs[32]; int g_doa2u_offrt_n;
 
-/* D3DDevice_SetRenderTarget (0x003447D0): record the colour offset of every
+/* D3DDevice_SetRenderTarget (0x003481B0): record the colour offset of every
  * texture surface used as a render target (D3DSurface.Parent at +0x14 is set
  * only for texture surfaces), so the pgraph translator routes it offscreen.
  * The stage glow target is 720x480 with the frame buffer's pitch, and without
  * this its clear landed on the back buffer and blacked out the scene. */
-void sub_003447D0(void)
+void sub_003481B0(void)
 {
-    extern void sub_003447D0_gen(void);
+    extern void sub_003481B0_gen(void);
     uint32_t surf = MEM32(esp + 4);
-    sub_003447D0_gen();
+    sub_003481B0_gen();
     if (surf && MEM32(surf + 0x14)) {
         uint32_t data = MEM32(surf + 4) & 0x07FFFFFFu;
         static int s_next = 0;   /* oldest entry, once the table is full */
@@ -181,10 +189,10 @@ void sub_003447D0(void)
 /* Worker timeslice: every 4 ms the game thread hands the CRI server fibers a slice,
  * standing in for preemption (the game's load waits never block). */
 int doa2u_workers_may_run(void) { return 1; }
-/* A worker that entered the CRI server (guard 0xF2BC38) or took its file lock keeps the CPU:
+/* A worker that entered the CRI server (guard 0xF32078) or took its file lock keeps the CPU:
  * the load coroutine spins on both without yielding, so a handoff there never comes back. */
 static int s_cri_owner[2] = { -1, -1 }, s_cri_set_in[2];
-static const uint32_t s_cri_flag[2] = { 0xF2BC38u, 0xF2AF50u };
+static const uint32_t s_cri_flag[2] = { 0xF32078u, 0xF31390u };
 void doa2u_fiber_switch_in(int idx)
 {
     int k;
@@ -210,11 +218,11 @@ int doa2u_worker_may_yield(int idx)
     }
     return ok;
 }
-/* Display size from the guest's D3DPRESENT_PARAMETERS (0x00E658F0), the space of
+/* Display size from the guest's D3DPRESENT_PARAMETERS (0x00E6BC40), the space of
  * 2D overlay coordinates. Returns 0 before CreateDevice fills it. */
 int doa2u_guest_display_size(unsigned *w, unsigned *h)
 {
-    uint32_t dw = MEM32(0x00E658F0u), dh = MEM32(0x00E658F4u);
+    uint32_t dw = MEM32(0x00E6BC40u), dh = MEM32(0x00E6BC44u);
     if (dw < 64u || dw > 4096u || dh < 64u || dh > 4096u) return 0;
     *w = (unsigned)dw; *h = (unsigned)dh;
     return 1;
@@ -267,13 +275,315 @@ void doa2u_apu_deliver_irq(void)
     s_delivering = 0;
 }
 
-/* DirectSound's wait for a voice to go off (0x0036A38C, thiscall ecx = voice):
+/* XNET's IP checksum (0x00396B7C, stdcall initial, buf, len): hand-written adc chain entered
+ * through a jump table mid-loop; lifted it lost every carry. Same ones'-complement sum here. */
+void sub_00396B7C(void)
+{
+    uint32_t init = MEM32(esp + 4), buf = MEM32(esp + 8), len = MEM32(esp + 12), i;
+    uint64_t s = 0;
+    for (i = 0; i + 1 < len; i += 2)
+        s += (uint32_t)MEM8(buf + i) | ((uint32_t)MEM8(buf + i + 1) << 8);
+    if (len & 1)
+        s += MEM8(buf + len - 1);
+    while (s >> 16)
+        s = (s & 0xFFFF) + (s >> 16);
+    s += init & 0xFFFF;                     /* add ax, initial; adc eax, 0 */
+    s = (s & 0xFFFF) + (s >> 16);
+    eax = (uint32_t)s;
+    esp += 16;                              /* ret 12 */
+}
+
+/* ── Insignia account wizard (game thread) ────────────────────────────── */
+/* Runs the dashboard's /xuacs requests through DOA2's own XOnline code: a console-only
+ * logon with service 5 (UACS), then XRL uploads via 0x3A7C45, the routine xmatch uses. */
+#define XO_CXO          0x00F31074u   /* CXo* the XOnline export stubs load */
+#define XO_TASK_DONE    0x001500F0u   /* XONLINETASK_S_SUCCESS; 0x1500F1 = results */
+#define XO_LOGON_UP     0x001510F0u   /* XONLINE_S_LOGON_CONNECTION_ESTABLISHED */
+enum { WIZ_IDLE, WIZ_LOGON, WIZ_RESERVE, WIZ_VOUCHER, WIZ_OFFER, WIZ_DETAILS, WIZ_CREATE, WIZ_CLOSE };
+
+static uint32_t guest_call(void (*fn)(void), uint32_t this_ecx, int n, const uint32_t *args)
+{
+    uint32_t r_eax = eax, r_ecx = ecx, r_edx = edx, r_ebx = ebx, r_esi = esi,
+             r_edi = edi, r_esp = esp, r_seh = g_seh_ebp, ret;
+    int i;
+    for (i = n - 1; i >= 0; i--) PUSH32(esp, args[i]);
+    PUSH32(esp, 0);
+    ecx = this_ecx;
+    fn();
+    ret = eax;
+    eax = r_eax; ecx = r_ecx; edx = r_edx; ebx = r_ebx; esi = r_esi;
+    edi = r_edi; esp = r_esp; g_seh_ebp = r_seh;
+    return ret;
+}
+
+/* u16 length + UTF-8 (ASCII here), as the dashboard's string writer 0x120ADF. */
+static uint32_t put_str(uint32_t dst, const char *s)
+{
+    uint32_t n = (uint32_t)strlen(s), i;
+    MEM16(dst) = (uint16_t)n;
+    for (i = 0; i < n; i++) MEM8(dst + 2 + i) = (uint8_t)s[i];
+    return dst + 2 + n;
+}
+
+extern void xbox_log(int level, const char *subsystem, const char *fmt, ...);
+
+/* The dashboard's requests carry the dashboard's identity: for the wizard's own logon
+ * the XBE certificate reads as xonlinedash (title FFFE0000, version 0x185EAD00). */
+#define DASH_TITLE_ID     0xFFFE0000u
+#define DASH_TITLE_VER    0x185EAD00u
+static uint32_t s_cert_title, s_cert_ver, s_xonl_flags;
+static void wiz_dash_identity(int on)
+{
+    /* The Kerberos "Xbox Version=1.00.5849.q" stamp is the XONLINES entry of the XBE
+     * library table (QFE in the flags' low bits): 7 in the game, 3 in the dashboard. */
+    uint32_t cert = MEM32(0x10118), lib = MEM32(0x10164), n = MEM32(0x10160), i, xonl = 0;
+    for (i = 0; i < n && i < 32; i++)
+        if (MEM32(lib + i * 16) == 0x4C4E4F58u && MEM32(lib + i * 16 + 4) == 0x53454E49u) xonl = lib + i * 16 + 14;
+    if (on) {
+        s_cert_title = MEM32(cert + 8); s_cert_ver = MEM32(cert + 0xAC);
+        MEM32(cert + 8) = DASH_TITLE_ID; MEM32(cert + 0xAC) = DASH_TITLE_VER;
+        if (xonl) { s_xonl_flags = MEM16(xonl); MEM16(xonl) = (uint16_t)((s_xonl_flags & 0xE000u) | 3u); }
+    } else {
+        MEM32(cert + 8) = s_cert_title; MEM32(cert + 0xAC) = s_cert_ver;
+        if (xonl) MEM16(xonl) = (uint16_t)s_xonl_flags;
+    }
+}
+
+/* One XRL request on the wizard's logon: path, body, reply size; the task in s_req. */
+static uint32_t wiz_send(uint32_t cxo, uint32_t mem, int svc, const char *route, uint32_t body,
+                         uint32_t body_len, uint32_t reply_len, uint32_t *task)
+{
+    uint32_t path = mem + 0x2E00, i, hr;
+    for (i = 0; route[i]; i++) MEM8(path + i) = (uint8_t)route[i];
+    MEM8(path + i) = 0;
+    MEM32(mem + 8) = reply_len;
+    memset(XBOX_PTR(mem + 0x400), 0, 0x2000);
+    {   uint32_t a[13] = { (uint32_t)svc, 0, path, mem + 0x400, mem + 8, 0, 0, body, body_len, 30000, 0, 0, mem + 0xC };
+        hr = guest_call(sub_003A7C45, cxo, 13, a);
+    }
+    *task = MEM32(mem + 0xC);
+    return hr;
+}
+
+void doa2u_insignia_wizard_step(void)
+{
+    extern int  insignia_wizard_take(int *, char *, size_t, char *, size_t, char *, size_t);
+    extern void insignia_wizard_report(int, const char *, ...);
+    extern uint32_t xbox_HeapAlloc(uint32_t size, uint32_t alignment);
+    extern BOOL xbox_hdd_set_online_account(const uint8_t*, const char*, const uint8_t*, const char*, const char*);
+    static int s_state = WIZ_IDLE, s_recover;
+    static char s_gt[16], s_code[32], s_email[128];
+    static uint32_t s_mem, s_logon, s_req, s_offer[2];
+    const int country = 103;                                /* the dashboard's country byte: United States */
+    uint32_t cxo = MEM32(XO_CXO), hr, body, p, i;
+
+    if (s_state == WIZ_IDLE) {
+        if (!insignia_wizard_take(&s_recover, s_gt, sizeof s_gt, s_code, sizeof s_code, s_email, sizeof s_email))
+            return;
+        {   /* As the dashboard's code entry (0x5B713): no spaces, dashes or dots, 25 characters. */
+            char c[32]; size_t n = 0;
+            for (i = 0; s_code[i] && n < sizeof c - 1; i++)
+                if (isalnum((unsigned char)s_code[i])) c[n++] = (char)toupper((unsigned char)s_code[i]);
+            c[n] = 0;
+            if (!s_recover && n != 25) { insignia_wizard_report(3, "The subscription code has 25 characters."); return; }
+            if (s_recover && n != 16) { insignia_wizard_report(3, "The card number has 16 digits."); return; }
+            strcpy_s(s_code, sizeof s_code, c);
+        }
+        /* The logon itself creates the machine account on a fresh HDD (MACS reply, 0x39C776). */
+        if (!cxo) {
+            insignia_wizard_report(3, "Open the game's Online screen first.");
+            return;
+        }
+        if (!s_mem && !(s_mem = xbox_HeapAlloc(0x3000, 16))) {
+            insignia_wizard_report(3, "Out of guest memory.");
+            return;
+        }
+        memset(XBOX_PTR(s_mem), 0, 0x3000);
+        /* As the dashboard's account logon (xonlinedash 0x6AB81): services 4, 5 (UACS), 11, 20
+         * and one all-zero XONLINE_USER (0x70 bytes, at +0x800). */
+        MEM32(s_mem + 0x10) = 4; MEM32(s_mem + 0x14) = 5; MEM32(s_mem + 0x18) = 0xB; MEM32(s_mem + 0x1C) = 0x14;
+        wiz_dash_identity(1);
+        {   uint32_t a[5] = { s_mem + 0x800, s_mem + 0x10, 4, 0, s_mem + 4 };
+            hr = guest_call(sub_00397581, 0, 5, a);
+        }
+        if ((int32_t)hr < 0) {
+            wiz_dash_identity(0);
+            insignia_wizard_report(3, "Sign-in failed to start (%08X).", hr);
+            return;
+        }
+        s_logon = MEM32(s_mem + 4);
+        insignia_wizard_report(1, "Signing in to Insignia...");
+        s_state = WIZ_LOGON;
+        return;
+    }
+
+    /* Pump the logon or the request in flight. As the dashboard's UACS wrapper (0x120B3B), a
+     * request is finished once XOnlineTaskContinue returns non-zero, and that is its result. */
+    {
+        uint32_t task = s_state == WIZ_LOGON ? s_logon : s_req, a1[1] = { task };
+        hr = guest_call(sub_00397560, 0, 1, a1);
+        if (s_state == WIZ_LOGON) {
+            if (hr == XO_LOGON_UP) hr = 0;
+            else if ((int32_t)hr >= 0 && hr != XO_TASK_DONE && hr != XO_TASK_DONE + 1) return;
+        } else {
+            if (hr == 0) return;
+            xbox_log(2, "INSIGNIA", "step %d -> %08X", s_state, hr);
+            guest_call(sub_0039756B, 0, 1, a1);             /* XOnlineTaskClose */
+        }
+        if ((int32_t)hr < 0 && s_state != WIZ_CREATE && s_state != WIZ_DETAILS) {
+            insignia_wizard_report(3, "%s failed (%08X).", s_state == WIZ_LOGON ? "Sign-in" :
+                                   s_state == WIZ_RESERVE ? "Gamertag check" : "Subscription code check", hr);
+            s_state = WIZ_CLOSE;
+        } else if (s_state == WIZ_OFFER) {
+            /* The dashboard (0x5FE4B) takes the offer id from the reply's first 8 bytes; Insignia
+             * answers this step with 1, and offer id 0 gets its free offer. */
+            s_offer[0] = hr == XO_TASK_DONE ? MEM32(s_mem + 0x400) : 0;
+            s_offer[1] = hr == XO_TASK_DONE ? MEM32(s_mem + 0x404) : 0;
+        } else if (s_state == WIZ_CREATE) {
+            const char *why = hr == 0x80154007u ? "Insignia rejected the subscription code for this e-mail." :
+                              hr == 0x80154009u ? "This subscription code was already used." :
+                              hr == 0x820003F3u ? "Insignia rejected the gamertag." :
+                              hr == 0x80151006u ? "Insignia found no account with this gamertag and card number." : NULL;
+            if (why) insignia_wizard_report(3, "%s (%08X)", why, hr);
+            else if (hr == XO_TASK_DONE && (MEM32(s_mem + 0x400) | MEM32(s_mem + 0x404))) {
+                /* The 68-byte reply, as the dashboard's 0x121F40 reads it: XUID, key, domain, realm. */
+                uint8_t r[68]; char domain[21] = {0}, realm[25] = {0};
+                for (i = 0; i < 68; i++) r[i] = MEM8(s_mem + 0x400 + i);
+                memcpy(domain, r + 0x18, 20); memcpy(realm, r + 0x2C, 24);
+                if (xbox_hdd_set_online_account(r, s_gt, r + 8, domain, realm))
+                    insignia_wizard_report(2, "%s is ready. Sign in on the Online screen.", s_gt);
+                else insignia_wizard_report(3, "%s exists on Insignia but could not be saved here.", s_gt);
+            }
+            else insignia_wizard_report(3, "Insignia answered %08X.", hr);
+            s_state = WIZ_CLOSE;
+        }
+    }
+
+    body = s_mem + 0x100;
+    memset(XBOX_PTR(body), 0, 0x300);
+    if (s_state == WIZ_LOGON && s_recover) {
+        /* Account Recovery, as the dashboard's 0x12287B builds it: PUID, then gamertag, three
+         * short fields, phone, full name and the card number; the reply is the account. */
+        const char *strs[7] = { s_gt, "", "", "", "4255551212", s_gt, s_code };
+        MEM32(body) = MEM32(cxo + 0x24); MEM32(body + 4) = MEM32(cxo + 0x28);
+        for (p = body + 8, i = 0; i < 7; i++) p = put_str(p, strs[i]);
+        hr = wiz_send(cxo, s_mem, 5, "/xuacs/restoreaccount.ashx", body, p - body, 0x244, &s_req);
+        insignia_wizard_report(1, "Recovering the account...");
+        s_state = WIZ_CREATE;
+    } else if (s_state == WIZ_LOGON) {
+        /* The dashboard's step 1 (0x5B33F): reservename, as 0x121DBC builds it: PUID, country,
+         * u16 5 (alternatives wanted), the gamertag; reply 5 * 20 + 0x202 bytes. */
+        MEM32(body) = MEM32(cxo + 0x24); MEM32(body + 4) = MEM32(cxo + 0x28);
+        MEM8(body + 8) = (uint8_t)country;
+        MEM16(body + 9) = 5;
+        p = put_str(body + 0xB, s_gt);
+        hr = wiz_send(cxo, s_mem, 5, "/xuacs/reservename.ashx", body, p - body, 0x266, &s_req);
+        insignia_wizard_report(1, "Checking the gamertag...");
+        s_state = WIZ_RESERVE;
+    } else if (s_state == WIZ_RESERVE || s_state == WIZ_VOUCHER) {
+        /* The code screen runs step 0xD, verifyvoucher (0x1216EB); its completion (0x5FE05)
+         * chains step 0x28, verifyvouchergetoffer. Both carry {country, code} in 0x4E bytes. */
+        MEM8(body) = (uint8_t)country;
+        put_str(body + 1, s_code);
+        hr = wiz_send(cxo, s_mem, 5, s_state == WIZ_RESERVE ? "/xuacs/verifyvoucher.ashx" : "/xuacs/verifyvouchergetoffer.ashx",
+                      body, 0x4E, 0x400, &s_req);
+        insignia_wizard_report(1, "Checking the subscription code...");
+        s_state = s_state == WIZ_RESERVE ? WIZ_VOUCHER : WIZ_OFFER;
+    } else if (s_state == WIZ_OFFER) {
+        /* OfferingDetailsNoUser on service 4, as the dashboard's 0x11A5DB builds it: country,
+         * PUID, title id, offer id, u32 language - 1, u16 language. */
+        MEM8(body) = (uint8_t)country;
+        MEM32(body + 1) = MEM32(cxo + 0x24); MEM32(body + 5) = MEM32(cxo + 0x28);
+        MEM32(body + 9) = DASH_TITLE_ID;
+        MEM32(body + 0xD) = s_offer[0]; MEM32(body + 0x11) = s_offer[1];
+        MEM32(body + 0x15) = 0; MEM16(body + 0x19) = 1;
+        hr = wiz_send(cxo, s_mem, 4, "/xbos/OfferingDetailsNoUser.ashx", body, 0x1B, 0x400, &s_req);
+        insignia_wizard_report(1, "Fetching the offer...");
+        s_state = WIZ_DETAILS;
+    } else if (s_state == WIZ_DETAILS) {
+        /* createowneracct, as the dashboard's 0x12248A builds it: PUID, 0, birth date, two
+         * opt-in bytes, country, u16 language, card type, card expiry, then 19 strings. */
+        SYSTEMTIME st = { 1990, 1, 0, 1, 0, 0, 0, 0 }; FILETIME ft;
+        const char *strs[19] = { s_gt, s_gt, "", "1 Main St", "", "Redmond", "WA", "98052",
+                                 "4255551212", "425", "5551212", s_email, s_gt, "4111111111111111",
+                                 s_email, s_email, s_email, s_email, s_code };
+        MEM32(body) = MEM32(cxo + 0x24); MEM32(body + 4) = MEM32(cxo + 0x28);
+        SystemTimeToFileTime(&st, &ft);
+        MEM32(body + 0xC) = ft.dwLowDateTime; MEM32(body + 0x10) = ft.dwHighDateTime;
+        MEM8(body + 0x14) = 1; MEM8(body + 0x15) = 1;
+        MEM8(body + 0x16) = (uint8_t)country;
+        MEM16(body + 0x17) = 1;
+        MEM8(body + 0x19) = 0;
+        st.wYear = 2030; st.wDay = 15;
+        SystemTimeToFileTime(&st, &ft);
+        MEM32(body + 0x1A) = ft.dwLowDateTime; MEM32(body + 0x1E) = ft.dwHighDateTime;
+        for (p = body + 0x22, i = 0; i < 19; i++) p = put_str(p, strs[i]);
+        hr = wiz_send(cxo, s_mem, 5, "/xuacs/createowneracct.ashx", body, p - body, 0x244, &s_req);
+        insignia_wizard_report(1, "Creating the account...");
+        s_state = WIZ_CREATE;
+    }
+    if (s_state != WIZ_CLOSE && s_state != WIZ_IDLE) {
+        if ((int32_t)hr >= 0) return;
+        insignia_wizard_report(3, "The request could not be sent (%08X).", hr);
+    }
+    {   uint32_t a1[1] = { s_logon };
+        if (s_logon) guest_call(sub_0039756B, 0, 1, a1);    /* end the console logon */
+    }
+    s_logon = 0;
+    s_state = WIZ_IDLE;
+    wiz_dash_identity(0);
+}
+
+/* Once per frame: due kernel timers (XNET's 200 ms tick), the NIC's IRQ 4 ISR
+ * (vector 0x34, 0x38CD74) and then the queued DPCs; guest registers preserved. */
+void doa2u_nic_deliver(void)
+{
+    extern void xbox_kernel_fire_timers(void);
+    extern int nic_poll_irq(void);
+    extern int xbox_kernel_find_isr(uint32_t, uint32_t *, uint32_t *, uint32_t *);
+    extern int xbox_kernel_pop_dpc(uint32_t *, uint32_t *, uint32_t *);
+    uint32_t r_eax = eax, r_ecx = ecx, r_edx = edx, r_ebx = ebx, r_esi = esi,
+             r_edi = edi, r_esp = esp, r_seh = g_seh_ebp;
+    uint32_t obj, routine, ctx, dpc, a1, a2;
+    recomp_func_t fn;
+
+    xbox_kernel_fire_timers();
+    if (nic_poll_irq() && xbox_kernel_find_isr(0x34, &obj, &routine, &ctx)) {
+        fn = recomp_lookup_manual(routine);
+        if (!fn) fn = recomp_lookup(routine);
+        if (fn) {
+            PUSH32(esp, ctx);
+            PUSH32(esp, obj);
+            PUSH32(esp, 0);
+            fn();
+            esp = r_esp;
+        }
+    }
+    while (xbox_kernel_pop_dpc(&dpc, &a1, &a2)) {
+        uint32_t droutine = MEM32(dpc + 12), dctx = MEM32(dpc + 16);
+        fn = recomp_lookup_manual(droutine);
+        if (!fn) fn = recomp_lookup(droutine);
+        if (!fn) continue;
+        PUSH32(esp, a2);
+        PUSH32(esp, a1);
+        PUSH32(esp, dctx);
+        PUSH32(esp, dpc);
+        PUSH32(esp, 0);
+        fn();
+        esp = r_esp;
+    }
+    doa2u_insignia_wizard_step();
+    eax = r_eax; ecx = r_ecx; edx = r_edx; ebx = r_ebx; esi = r_esi;
+    edi = r_edi; esp = r_esp; g_seh_ebp = r_seh;
+}
+
+/* DirectSound's wait for a voice to go off (0x0036DD6C, thiscall ecx = voice):
  * spins on flag 0x8000 at +0x12, which the APU ISR clears when the hardware
  * reports the voice stopped. On the console that interrupt arrives during the
  * spin; here interrupts were only delivered at Present, so every voice waited
- * out sub_00369B74's 500 ms timeout and a stage change froze for seconds.
+ * out sub_0036D554's 500 ms timeout and a stage change froze for seconds.
  * Deliver the interrupt from inside the wait; guest registers are preserved. */
-void sub_0036A38C(void)
+void sub_0036DD6C(void)
 {
     uint32_t v = ecx;
     if (MEM8(v + 0x12) & 1) {
@@ -286,12 +596,35 @@ void sub_0036A38C(void)
             if (!(MEM16(v + 0x12) & 0x8000)) break;
             ecx = v;
             PUSH32(esp, 0);
-            sub_00369B74();                 /* keeps the driver's 500 ms timeout */
+            sub_0036D554();                 /* keeps the driver's 500 ms timeout */
             if (MEM16(v + 0x12) & 0x8000) Sleep(1);
         }
     }
     ecx = v;
     esp += 4;                               /* ret */
+}
+
+/* XAPI non-roamable signature key (0x002BB5E5, stdcall ctx, digest, out): HMAC keyed by
+ * XboxHDKey. Saves were signed when that key was zero; keep a zero key for them. */
+void sub_002BB5E5(void)
+{
+    uint32_t ctx = MEM32(esp + 4) + 8, digest = MEM32(esp + 8), out = MEM32(esp + 12);
+    uint32_t ret_esp = esp, sv_ebx = ebx, sv_esi = esi, sv_edi = edi, sv_seh = g_seh_ebp;
+    uint32_t key, base;
+    esp -= 16;
+    key = base = esp;
+    MEM32(key) = 0; MEM32(key + 4) = 0; MEM32(key + 8) = 0; MEM32(key + 12) = 0;
+    PUSH32(esp, ctx); PUSH32(esp, 0x10); PUSH32(esp, key); PUSH32(esp, 0);
+    sub_002BB50C();
+    esp = base;
+    PUSH32(esp, 0x14); PUSH32(esp, digest); PUSH32(esp, ctx); PUSH32(esp, 0);
+    sub_002FE380();
+    esp = base;
+    PUSH32(esp, out); PUSH32(esp, 0x10); PUSH32(esp, key); PUSH32(esp, ctx); PUSH32(esp, 0);
+    sub_002BB573();
+    ebx = sv_ebx; esi = sv_esi; edi = sv_edi; g_seh_ebp = sv_seh;
+    eax = 1;
+    esp = ret_esp + 16;                     /* ret 12 */
 }
 
 /* ── Game hooks called by the kernel bridge ─────────────────────────── */
@@ -310,13 +643,13 @@ void game_on_file_open(const char *xbox_path)
     (void)n;
 }
 
-/* mwPlyStartFname (0x0031BBB0): the host presenter shows the movie with its ADX track
+/* mwPlyStartFname (0x0031F380): the host presenter shows the movie with its ADX track
  * while the guest player runs alongside. The guest's audio is muted with
- * mwSfdSetOutVol (0x0030E0E0, -96 dB) so the soundtrack does not echo; not
+ * mwSfdSetOutVol (0x003118A0, -96 dB) so the soundtrack does not echo; not
  * mwPlySetAudioSw(0), which makes the guest player end the movie early. */
-void sub_0031BBB0(void)
+void sub_0031F380(void)
 {
-    extern void sub_0031BBB0_gen(void);
+    extern void sub_0031F380_gen(void);
     extern void doa2u_movie_select(const char *guest_path);
     extern int doa2u_movies_enabled(void);
     uint32_t fname = MEM32(esp + 8);
@@ -326,7 +659,7 @@ void sub_0031BBB0(void)
         PUSH32(esp, (uint32_t)-960);        /* vol: -96 dB (CRI minimum) */
         PUSH32(esp, handle);
         PUSH32(esp, 0);                     /* dummy return */
-        sub_0030E0E0();
+        sub_003118A0();
         esp = saved_esp; ebx = sv_ebx; esi = sv_esi; edi = sv_edi; g_seh_ebp = sv_seh;
     }
     if (fname) {
@@ -346,19 +679,19 @@ void sub_0031BBB0(void)
             g_doa2u_host_movie_ended = 1;
         }
     }
-    sub_0031BBB0_gen();
+    sub_0031F380_gen();
 }
 
-/* Movie teardown (0x000F9A10): stops and destroys the mwPly handle at 0xA942D8, on
+/* Movie teardown (0x000FB8B0): stops and destroys the mwPly handle at 0xA9A678, on
  * both end of stream and START pressed. The host presenter runs on its own clock and
  * only stops at end of file, so on a skip it kept owning the screen (guest frames are
  * not presented while it is active) and played on. Hand the screen back here. */
-void sub_000F9A10(void)
+void sub_000FB8B0(void)
 {
-    extern void sub_000F9A10_gen(void);
+    extern void sub_000FB8B0_gen(void);
     extern void doa2u_movie_stop(void);
     doa2u_movie_stop();
-    sub_000F9A10_gen();
+    sub_000FB8B0_gen();
 }
 
 /* Modelled vblank: the game may wait on vblank during movies without calling Swap,
@@ -389,7 +722,7 @@ extern void xbox_fiber_destroy(int idx);
 extern void xbox_fiber_switch_direct(int idx);
 #define XFIBER_TAG  0xF1BE0000u
 
-void sub_002BB76A(void)   /* CreateFiber(stack_size, start_routine, param), stdcall ret 12 */
+void sub_002BEF18(void)   /* CreateFiber(stack_size, start_routine, param), stdcall ret 12 */
 {
     uint32_t stack_sz = MEM32(esp + 4);
     uint32_t routine  = MEM32(esp + 8);
@@ -399,7 +732,7 @@ void sub_002BB76A(void)   /* CreateFiber(stack_size, start_routine, param), stdc
     esp += 16;
 }
 
-void sub_002BB7F6(void)   /* DeleteFiber(handle), stdcall ret 4 */
+void sub_002BEFA4(void)   /* DeleteFiber(handle), stdcall ret 4 */
 {
     uint32_t h = MEM32(esp + 4);
     if ((h & 0xFFFF0000u) == XFIBER_TAG)
@@ -407,7 +740,7 @@ void sub_002BB7F6(void)   /* DeleteFiber(handle), stdcall ret 4 */
     esp += 8;
 }
 
-void sub_002BB809(void)   /* SwitchToFiber(handle), stdcall ret 4 */
+void sub_002BEFB7(void)   /* SwitchToFiber(handle), stdcall ret 4 */
 {
     uint32_t h = MEM32(esp + 4);
     esp += 8;                 /* finish the call first, then transfer */
@@ -419,9 +752,9 @@ void sub_002BB809(void)   /* SwitchToFiber(handle), stdcall ret 4 */
     }
 }
 
-/* ── CRT memcpy (0x00335A80) ────────────────────────────────────────── */
-/* memcpy/memmove (0x335A80): its jump-table tail can't be lifted; overlap-safe native copy. */
-void sub_00335A80(void)
+/* ── CRT memcpy (0x00339290) ────────────────────────────────────────── */
+/* memcpy/memmove (0x339290): its jump-table tail can't be lifted; overlap-safe native copy. */
+void sub_00339290(void)
 {
     uint32_t dst = MEM32(esp + 4), src = MEM32(esp + 8), n = MEM32(esp + 0xC);
     if (n)
@@ -483,7 +816,7 @@ static void pb_side_method(uint32_t method, uint32_t param)
     case 0x1D8C: g_pb_cb_arg[0] = param; break;
     case 0x1D90: g_pb_cb_arg[1] = param; break;
     case 0x0100:
-        /* NOP 5: GPU interrupt for the push-buffer space wait (sub_0034A1A8). */
+        /* NOP 5: GPU interrupt for the push-buffer space wait (sub_0034DB88). */
         if (param == 5) InterlockedExchange(&s_gpu_irq, 1);
         AcquireSRWLockExclusive(&g_pb_cb_lock);
         if ((param == 6 || param == 7) && g_pb_cb_arg[0] && g_pb_cbq_n < 64) {
@@ -748,7 +1081,7 @@ static void pb_translate_pending(uint32_t dev, uint32_t cursor)
     g_pb_parsed = cursor;
 }
 
-void sub_00349E80(void)   /* CDevice_KickOff(this = ecx), ret */
+void sub_0034D860(void)   /* CDevice_KickOff(this = ecx), ret */
 {
     uint32_t dev = ecx;
     extern int doa2u_movie_active(void);
@@ -803,18 +1136,18 @@ static void d3d_publish_vblank(uint32_t dev)
     }
 }
 
-/* D3DDevice_Swap (0x0034AF80): run the real Swap, present (or tick the movie),
+/* D3DDevice_Swap (0x0034E960): run the real Swap, present (or tick the movie),
  * then model the vblank (event + callback). */
-void sub_0034AF80(void)
+void sub_0034E960(void)
 {
-    extern void sub_0034AF80_gen(void);
+    extern void sub_0034E960_gen(void);
     extern void pgraph_d3d11_flush(void);
     extern void doa2u_present_frame(void);
     extern void doa2u_movie_tick(void);
     extern int  doa2u_movie_active(void);
     uint32_t sv_esi = esi, sv_edi = edi, sv_ebx = ebx;
     uint32_t dev;
-    sub_0034AF80_gen();
+    sub_0034E960_gen();
     {   /* 60 Hz pacing: wait for the next 1/60 s boundary; resync if a frame or more behind. */
         static LARGE_INTEGER s_freq, s_next;
         LARGE_INTEGER now;
@@ -836,7 +1169,7 @@ void sub_0034AF80(void)
         {   /* Host-EOF trigger: the guest Sofdec parks in PLAYING at a movie's end, so once
              * the presenter hits EOF set SFD state 6 / mwPly state 3 (PLAYEND). */
             extern int g_doa2u_host_movie_ended;
-            uint32_t mp = MEM32(0xA942D8);                 /* mwPly handle */
+            uint32_t mp = MEM32(0xA9A678);                 /* mwPly handle */
             if (g_doa2u_host_movie_ended && mp >= 0x1000 && mp < 0x8000000u &&
                 MEM32(mp + 8) == 2) {
                 uint32_t sfd = MEM32(mp + 0x40);
@@ -896,13 +1229,13 @@ void sub_0034AF80(void)
             }
         }
         {   /* Extras changed the profile: run the game's own save of the loaded
-             * profile (sub_00023D00, as after a settings change) on this thread. */
+             * profile (sub_00023FC0, as after a settings change) on this thread. */
             extern int doa2u_extras_take_save_request(void);
-            extern void sub_00023D00(void);
+            extern void sub_00023FC0(void);
             if (doa2u_extras_take_save_request()) {
                 uint32_t saved = esp, sv_seh = g_seh_ebp;
                 PUSH32(esp, 0);                     /* dummy return */
-                sub_00023D00();
+                sub_00023FC0();
                 fprintf(stderr, "[EXTRAS] profile save -> %d\n", (int)eax);
                 fflush(stderr);
                 esp = saved; g_seh_ebp = sv_seh;
@@ -913,7 +1246,7 @@ void sub_0034AF80(void)
     esi = sv_esi; edi = sv_edi; ebx = sv_ebx;
 }
 
-/* ── CRT _cinit (0x002BD44C) ────────────────────────────────────────── */
+/* ── CRT _cinit (0x002C0C2C) ────────────────────────────────────────── */
 /* _cinit: run _FPinit and the __xi/__xc initializer tables, restoring the callee-saved
  * registers after each (one initializer leaks esi). */
 static void cinit_call(uint32_t fn_va, uint32_t slot)
@@ -934,15 +1267,15 @@ static void cinit_call(uint32_t fn_va, uint32_t slot)
     esp = sv_esp; esi = sv_esi; edi = sv_edi; ebx = sv_ebx;
 }
 
-void sub_002BD44C(void)
+void sub_002C0C2C(void)
 {
     static const uint32_t tables[2][2] = {
-        { 0x004976B4u, 0x004976CCu },   /* C initializers */
-        { 0x00497590u, 0x004976B0u },   /* C++ constructors */
+        { 0x0049D638u, 0x0049D650u },   /* C initializers */
+        { 0x0049D510u, 0x0049D634u },   /* C++ constructors */
     };
-    uint32_t fp = MEM32(0x007C969Cu), p;
+    uint32_t fp = MEM32(0x007CFA1Cu), p;
     int t;
-    if (fp) cinit_call(fp, 0x007C969Cu);
+    if (fp) cinit_call(fp, 0x007CFA1Cu);
     for (t = 0; t < 2; t++)
         for (p = tables[t][0]; p < tables[t][1]; p += 4) {
             uint32_t fn = MEM32(p);
@@ -952,13 +1285,13 @@ void sub_002BD44C(void)
     esp += 4;   /* ret */
 }
 
-/* ADXF_GetPtStat (0x2FBAE0): the post-install mount spins on it
+/* ADXF_GetPtStat (0x2FF2C0): the post-install mount spins on it
  * without yielding; pulse vblank and yield to the CRI workers until it's done. */
-void sub_002FBAE0(void)
+void sub_002FF2C0(void)
 {
-    extern void sub_002FBAE0_gen(void);
+    extern void sub_002FF2C0_gen(void);
     extern uint32_t g_xbox_vblank_event_va;
-    sub_002FBAE0_gen();
+    sub_002FF2C0_gen();
     if (eax != 3) {
         if (g_xbox_vblank_event_va) {
             MEM32(g_xbox_vblank_event_va + 4) = 1;  /* vblank KEVENT.SignalState */
@@ -984,9 +1317,9 @@ void sub_002FBAE0(void)
  * The game's pad structs: base 0xA94838, stride 0x80. +0x00 caps blob
  * (XInputGetCapabilities), +0x19 XINPUT_STATE (XInputGetState), +0x2F
  * XINPUT_FEEDBACK (rumble motors at +0x71/+0x73), +0x78 XInputOpen handle.
- * Opened/polled by sub_000FA5D0 (boot) and sub_000FA6C0 (every frame).
- * Other device types (memory units, 0x3B83E0) keep the generated bodies. */
-#define XPP_TYPE_GAMEPAD  0x003B845Cu
+ * Opened/polled by sub_000FC550 (boot) and sub_000FC640 (every frame).
+ * Other device types (memory units, 0x3BBDC0) keep the generated bodies. */
+#define XPP_TYPE_GAMEPAD  0x003BBE3Cu
 #define XPP_HANDLE_BASE   0x0AD00001u   /* fake but consistent nonzero handles */
 
 static uint32_t s_xpp_prev_mask;   /* XGetDeviceChanges baseline (real XAPI PreviousConnected) */
@@ -996,11 +1329,11 @@ static int xpp_handle_port(uint32_t h)
     return (h >= XPP_HANDLE_BASE && h < XPP_HANDLE_BASE + 4) ? (int)(h - XPP_HANDLE_BASE) : -1;
 }
 
-void sub_003B9913_gen(void);
-void sub_003B9913(void)   /* XGetDevices(type) -> connected mask, stdcall ret 4 */
+void sub_003BD2F3_gen(void);
+void sub_003BD2F3(void)   /* XGetDevices(type) -> connected mask, stdcall ret 4 */
 {
     extern DWORD xbox_InputHostMask(void);
-    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003B9913_gen(); return; }
+    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003BD2F3_gen(); return; }
     /* Real XAPI semantics (cxbx Xapi.cpp): reporting the connected set also
      * resets the change baseline, so XGetDeviceChanges does not re-report
      * these pads as insertions. */
@@ -1009,12 +1342,12 @@ void sub_003B9913(void)   /* XGetDevices(type) -> connected mask, stdcall ret 4 
     esp += 8;
 }
 
-void sub_003B9935_gen(void);
-void sub_003B9935(void)   /* XGetDeviceChanges(type, &ins, &rem), stdcall ret 12 */
+void sub_003BD315_gen(void);
+void sub_003BD315(void)   /* XGetDeviceChanges(type, &ins, &rem), stdcall ret 12 */
 {
     extern DWORD xbox_InputHostMask(void);
     uint32_t p_ins, p_rem, cur, ins, rem;
-    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003B9935_gen(); return; }
+    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003BD315_gen(); return; }
     /* Both outputs are written on every call -- zero when nothing changed. */
     p_ins = MEM32(esp + 8);
     p_rem = MEM32(esp + 12);
@@ -1028,28 +1361,28 @@ void sub_003B9935(void)   /* XGetDeviceChanges(type, &ins, &rem), stdcall ret 12
     esp += 16;
 }
 
-void sub_003B9E12_gen(void);
-void sub_003B9E12(void)   /* XInputOpen(type, port, slot, params) -> handle, stdcall ret 16 */
+void sub_003BD7F2_gen(void);
+void sub_003BD7F2(void)   /* XInputOpen(type, port, slot, params) -> handle, stdcall ret 16 */
 {
     uint32_t port = MEM32(esp + 8);
-    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003B9E12_gen(); return; }
+    if (MEM32(esp + 4) != XPP_TYPE_GAMEPAD) { sub_003BD7F2_gen(); return; }
     eax = port < 4 ? XPP_HANDLE_BASE + port : 0;
     esp += 20;
 }
 
-void sub_003B9E68_gen(void);
-void sub_003B9E68(void)   /* XInputClose(handle), stdcall ret 4 */
+void sub_003BD848_gen(void);
+void sub_003BD848(void)   /* XInputClose(handle), stdcall ret 4 */
 {
-    if (xpp_handle_port(MEM32(esp + 4)) < 0) { sub_003B9E68_gen(); return; }
+    if (xpp_handle_port(MEM32(esp + 4)) < 0) { sub_003BD848_gen(); return; }
     eax = 0;
     esp += 8;
 }
 
-void sub_003B9E74_gen(void);
-void sub_003B9E74(void)   /* XInputGetCapabilities(handle, caps), stdcall ret 8 */
+void sub_003BD854_gen(void);
+void sub_003BD854(void)   /* XInputGetCapabilities(handle, caps), stdcall ret 8 */
 {
     uint32_t caps = MEM32(esp + 8), i;
-    if (xpp_handle_port(MEM32(esp + 4)) < 0) { sub_003B9E74_gen(); return; }
+    if (xpp_handle_port(MEM32(esp + 4)) < 0) { sub_003BD854_gen(); return; }
     if (caps) {
         for (i = 0; i < 0x19; i++) MEM8(caps + i) = 0;
         MEM8(caps) = 1;   /* XINPUT_DEVSUBTYPE_GC_GAMEPAD */
@@ -1058,15 +1391,15 @@ void sub_003B9E74(void)   /* XInputGetCapabilities(handle, caps), stdcall ret 8 
     esp += 12;
 }
 
-void sub_003BA04C_gen(void);
-void sub_003BA04C(void)   /* XInputGetState(handle, state), stdcall ret 8 */
+void sub_003BDA2C_gen(void);
+void sub_003BDA2C(void)   /* XInputGetState(handle, state), stdcall ret 8 */
 {
     extern DWORD xbox_InputGetState(DWORD, void *);
     static uint32_t s_packet = 0x1000;
     uint32_t st = MEM32(esp + 8);
     int port = xpp_handle_port(MEM32(esp + 4)), i;
     uint8_t raw[24] = {0};   /* XBOX_INPUT_STATE: packet, wButtons, 8 analog, 4 thumbs */
-    if (port < 0) { sub_003BA04C_gen(); return; }
+    if (port < 0) { sub_003BDA2C_gen(); return; }
     if (xbox_InputGetState((DWORD)port, raw) != 0) {
         eax = 0x48F;   /* ERROR_DEVICE_NOT_CONNECTED */
         esp += 12;
@@ -1080,13 +1413,13 @@ void sub_003BA04C(void)   /* XInputGetState(handle, state), stdcall ret 8 */
     esp += 12;
 }
 
-void sub_003BA0BF_gen(void);
-void sub_003BA0BF(void)   /* XInputSetState(handle, feedback), stdcall ret 8 */
+void sub_003BDA9F_gen(void);
+void sub_003BDA9F(void)   /* XInputSetState(handle, feedback), stdcall ret 8 */
 {
     extern DWORD xbox_InputSetState(DWORD, const void *);
     uint32_t fb = MEM32(esp + 8);
     int port = xpp_handle_port(MEM32(esp + 4));
-    if (port < 0) { sub_003BA0BF_gen(); return; }
+    if (port < 0) { sub_003BDA9F_gen(); return; }
     if (fb) {
         /* XINPUT_FEEDBACK: Status at +0, rumble motors after the 0x42-byte
          * header. The real call completes asynchronously (Status 0x3E5 until
@@ -1102,17 +1435,17 @@ void sub_003BA0BF(void)   /* XInputSetState(handle, feedback), stdcall ret 8 */
 }
 
 /* ── Startup hook (main.c, before the entry point) ──────────────────── */
-/* Legal screen (0xD92C0) stubbed. On a first boot, wait here a game frame at a time
+/* Legal screen (0xDB380) stubbed. On a first boot, wait here a game frame at a time
  * for the HDD cache copy (it pauses during movies), then go on to the Team Ninja FMV. */
-void sub_000D92C0(void)
+void sub_000DB380(void)
 {
     extern uint32_t g_xbox_cache_install_routine;
     extern int xbox_fiber_thread_alive(uint32_t ctx1);
-    while (MEM32(0x8A9908) && g_xbox_cache_install_routine &&
+    while (MEM32(0x8AFCA8) && g_xbox_cache_install_routine &&
            xbox_fiber_thread_alive(g_xbox_cache_install_routine)) {
         PUSH32(esp, 1);
         PUSH32(esp, 0);
-        sub_000FA3D0();
+        sub_000FC350();
         esp += 4;
     }
     esp += 4;   /* ret */
@@ -1120,12 +1453,12 @@ void sub_000D92C0(void)
 
 void doa2u_game_init(void)
 {
-    /* The device is the static 0x355500, so its vblank event is known before the first Swap. */
+    /* The device is the static 0x358EE0, so its vblank event is known before the first Swap. */
     extern uint32_t g_xbox_vblank_event_va;
     extern uint32_t g_xbox_cache_install_routine;
     extern volatile int g_fib_slice_due;
-    g_xbox_vblank_event_va = 0x00355500u + DEV_VBLANK_EVENT_OFS;
-    /* First-boot HDD cache copy worker, started by sub_000F7390. */
-    g_xbox_cache_install_routine = 0x000F70C0u;
+    g_xbox_vblank_event_va = 0x00358EE0u + DEV_VBLANK_EVENT_OFS;
+    /* First-boot HDD cache copy worker, started by sub_000F9240. */
+    g_xbox_cache_install_routine = 0x000F8F70u;
     g_fib_slice_due = 1;   /* first slice check starts the 4 ms slice timer */
 }

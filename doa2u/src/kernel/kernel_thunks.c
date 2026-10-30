@@ -88,7 +88,10 @@ void xbox_log(int level, const char* subsystem, const char* fmt, ...)
 void xbox_log_set_enabled(int on)
 {
     if (g_log_cs_init) EnterCriticalSection(&g_log_cs);
-    if (on && !g_log_file) g_log_file = fopen("xbox_kernel.log", "w");
+    if (on && !g_log_file) {
+        MoveFileExA("xbox_kernel.log", "xbox_kernel.prev.log", MOVEFILE_REPLACE_EXISTING);   /* keep the last run's log */
+        g_log_file = fopen("xbox_kernel.log", "w");
+    }
     if (!on && g_log_file) { fclose(g_log_file); g_log_file = NULL; }
     g_log_on = on && g_log_file;
     if (g_log_cs_init) LeaveCriticalSection(&g_log_cs);
@@ -303,7 +306,7 @@ ULONG_PTR xbox_resolve_ordinal(ULONG ordinal)
  * Ordinal List
  *
  * The 151 kernel ordinals imported by DOA2U (DOA2.xbe), in thunk table order.
- * Extracted from the XBE kernel thunk table at VA 0x003C14C0.
+ * Extracted from the XBE kernel thunk table at VA 0x003C4EA0.
  * ============================================================================ */
 
 static const ULONG g_thunk_ordinals[XBOX_KERNEL_THUNK_TABLE_SIZE] = {

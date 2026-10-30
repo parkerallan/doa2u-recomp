@@ -1,0 +1,152 @@
+{
+  "total_analyzed": 9168,
+  "frame_type": {
+    "fpo_leaf": 6988,
+    "fpo_stack": 1522,
+    "ebp_frame": 658
+  },
+  "calling_convention": {
+    "thiscall_cdecl": 739,
+    "cdecl": 7736,
+    "stdcall": 354,
+    "thiscall": 339
+  },
+  "return_hint": {
+    "int_or_void": 8459,
+    "int_zero": 606,
+    "float_sse": 100,
+    "float": 2,
+    "unknown": 1
+  },
+  "estimated_params": {
+    "0": 8788,
+    "1": 162,
+    "2": 82,
+    "3": 36,
+    "4": 27,
+    "5": 17,
+    "6": 12,
+    "7": 7,
+    "8": 8,
+    "9": 7,
+    "10": 6,
+    "12": 1,
+    "13": 2,
+    "14": 12,
+    "15": 1
+  },
+  "stack_size_distribution": {
+    "1-16": 542,
+    "17-64": 705,
+    "65-256": 259,
+    "257-1024": 110,
+    "1025-65536": 6
+  },
+  "thiscall_count": 1078,
+  "by_category": {
+    "unknown": {
+      "total": 8451,
+      "frame": {
+        "fpo_leaf": 6509,
+        "fpo_stack": 1370,
+        "ebp_frame": 572
+      },
+      "cc": {
+        "thiscall_cdecl": 650,
+        "cdecl": 7201,
+        "stdcall": 307,
+        "thiscall": 293
+      }
+    },
+    "game_render": {
+      "total": 345,
+      "frame": {
+        "fpo_leaf": 194,
+        "ebp_frame": 57,
+        "fpo_stack": 94
+      },
+      "cc": {
+        "cdecl": 299,
+        "thiscall_cdecl": 23,
+        "thiscall": 18,
+        "stdcall": 5
+      }
+    },
+    "game_vtable": {
+      "total": 207,
+      "frame": {
+        "fpo_leaf": 173,
+        "fpo_stack": 32,
+        "ebp_frame": 2
+      },
+      "cc": {
+        "cdecl": 106,
+        "thiscall_cdecl": 48,
+        "thiscall": 20,
+        "stdcall": 33
+      }
+    },
+    "game_network": {
+      "total": 71,
+      "frame": {
+        "fpo_stack": 18,
+        "fpo_leaf": 45,
+        "ebp_frame": 8
+      },
+      "cc": {
+        "cdecl": 62,
+        "thiscall_cdecl": 4,
+        "stdcall": 4,
+        "thiscall": 1
+      }
+    },
+    "game_audio": {
+      "total": 38,
+      "frame": {
+        "fpo_stack": 4,
+        "fpo_leaf": 23,
+        "ebp_frame": 11
+      },
+      "cc": {
+        "thiscall": 7,
+        "thiscall_cdecl": 7,
+        "cdecl": 22,
+        "stdcall": 2
+      }
+    },
+    "game_ui": {
+      "total": 33,
+      "frame": {
+        "fpo_leaf": 30,
+        "fpo_stack": 3
+      },
+      "cc": {
+        "cdecl": 29,
+        "thiscall_cdecl": 4
+      }
+    },
+    "game_input": {
+      "total": 11,
+      "frame": {
+        "fpo_leaf": 10,
+        "ebp_frame": 1
+      },
+      "cc": {
+        "cdecl": 9,
+        "thiscall_cdecl": 2
+      }
+    },
+    "game_io": {
+      "total": 10,
+      "frame": {
+        "fpo_stack": 1,
+        "fpo_leaf": 2,
+        "ebp_frame": 7
+      },
+      "cc": {
+        "cdecl": 8,
+        "stdcall": 2
+      }
+    }
+  }
+}

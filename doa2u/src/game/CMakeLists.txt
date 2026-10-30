@@ -25,9 +25,11 @@ set(GAME_SOURCES
     main.c
     movie_present.c
     xiso_extract.c           # first-run install of the game files from a disc image
+    xbe_patch.c              # first-run build of the v261 doa2.xbe from the disc xbe + patch
     ${CMAKE_SOURCE_DIR}/src/ui/video_settings.c
     ${CMAKE_SOURCE_DIR}/src/ui/log_settings.c
     ${CMAKE_SOURCE_DIR}/src/ui/profile_settings.c
+    ${CMAKE_SOURCE_DIR}/src/ui/insignia.c
     ${CMAKE_SOURCE_DIR}/src/ui/extras.c
     recomp/recomp_manual.c
     burnout_compat_stubs.c   # inert stubs for burnout-only symbols the nv2a srcs need
@@ -44,6 +46,7 @@ target_link_libraries(doa2u PRIVATE
     dsound_compat
     input_compat
     apu_emu
+    nic_emu
     doa2u_ui
     kernel32
     user32
@@ -95,3 +98,9 @@ set_target_properties(doa2u PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/release"
     PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/debug"
 )
+
+# libslirp and its glib runtime (src/nic) in online\ next to DOA2U.exe.
+add_custom_command(TARGET doa2u POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:doa2u>/online
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${NIC_RUNTIME_DLLS} $<TARGET_FILE_DIR:doa2u>/online
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/patch/doa2u_tu261.patch $<TARGET_FILE_DIR:doa2u>/online)

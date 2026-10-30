@@ -9,7 +9,7 @@
  *   Xbox data sections are mapped to their original VAs via
  *   VirtualAlloc (see xbox_memory_layout.c). Recompiled code
  *   accesses globals via pointer casts, e.g.:
- *     *(uint32_t*)0x003B2360
+ *     *(uint32_t*)0x003B5D40
  *
  * Register model:
  *   Volatile registers (eax, ecx, edx, esp) are global variables,
@@ -75,6 +75,17 @@ extern double  g_fp_stack[8];       /* GLOBAL x87 FPU stack (recomp bug #8: was 
                                      * locals, breaking every cross-function ST0 transfer) */
 extern int     g_fp_top;
 extern uint16_t g_x87_cw;          /* x87 control word (fnstcw/fldcw); default 0x007F */
+extern uint16_t g_x87_sw;          /* x87 status word as fxam leaves it (C0 0x100, C1 0x200, C2 0x400, C3 0x4000) */
+/* fxam: C3 C2 C0 = 000 unsupported, 001 NaN, 010 normal, 011 infinity, 100 zero, 110 denormal; C1 = sign */
+static inline uint16_t x87_fxam(double v)
+{
+    uint16_t c1 = signbit(v) ? 0x200 : 0;
+    if (isnan(v)) return c1 | 0x100;
+    if (isinf(v)) return c1 | 0x500;
+    if (v == 0.0) return c1 | 0x4000;
+    if (fabs(v) < 2.2250738585072014e-308) return c1 | 0x4400;
+    return c1 | 0x400;
+}
 /* x87 result rounded per the control word's precision bits (PC=00: 24-bit float) */
 static inline double x87_prec(double v) { return (g_x87_cw & 0x300) ? v : (double)(float)v; }
 /* rdtsc: Xbox time-stamp counter at 733.33 MHz (kernel_bridge.c) */
@@ -530,7 +541,7 @@ recomp_func_t recomp_lookup_manual(uint32_t xbox_va);
      * RW engine stores native heap pointers in Xbox memory; when code reads \
      * them back and uses as function addresses, they're native addresses \
      * pointing into our memory mirrors. Convert back to Xbox VA. */ \
-    if (_va >= 0x00400000 && _va < 0xFE000000) { \
+    if (_va >= 0x004039E0 && _va < 0xFE000000) { \
         uint32_t _off32 = (uint32_t)g_xbox_mem_offset; \
         int _resolved = 0; \
         /* Function pointers converted back must lie in the FIRST 64MB \
@@ -540,7 +551,7 @@ recomp_func_t recomp_lookup_manual(uint32_t xbox_va);
          * real function starts and get CALLED with junk registers. */ \
         if (_off32 != 0 && _va >= _off32 && (_va - _off32) < 0x04000000u) { \
             uint32_t _xva = _va - _off32; \
-            if (_xva >= 0x00011000 && _xva < 0x0106DAE0) { \
+            if (_xva >= 0x00011000 && _xva < 0x01073F20) { \
                 _va = _xva; _resolved = 1; \
             } \
         } \
@@ -581,7 +592,7 @@ void xbox_fiber_timeslice(void);
         g_esp += 4; eax = 0; break; \
       } \
     } \
-    if (_va >= 0x00400000 && _va < 0xFE000000) { \
+    if (_va >= 0x004039E0 && _va < 0xFE000000) { \
         uint32_t _off32 = (uint32_t)g_xbox_mem_offset; \
         int _resolved = 0; \
         /* Function pointers converted back must lie in the FIRST 64MB \
@@ -591,7 +602,7 @@ void xbox_fiber_timeslice(void);
          * real function starts and get CALLED with junk registers. */ \
         if (_off32 != 0 && _va >= _off32 && (_va - _off32) < 0x04000000u) { \
             uint32_t _xva = _va - _off32; \
-            if (_xva >= 0x00011000 && _xva < 0x0106DAE0) { \
+            if (_xva >= 0x00011000 && _xva < 0x01073F20) { \
                 _va = _xva; _resolved = 1; \
             } \
         } \

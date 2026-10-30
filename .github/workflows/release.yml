@@ -49,12 +49,22 @@ jobs:
           if (-not (Test-Path $exe)) {
               throw "DOA2U.exe is missing from doa2u/build/release -- refusing to publish an empty archive"
           }
-          # Only the exe ships. assets/ (the extracted game), the ini files and
-          # the logs are all created beside it on the player's machine.
+          # The exe and online/ (the title update patch, libslirp and its glib runtime)
+          # ship. assets/ (the extracted game), the ini files and the logs are created
+          # beside them on the player's machine.
           Copy-Item $exe $stage
+          $online = "doa2u/build/release/online"
+          $files = @('doa2u_tu261.patch', 'libslirp-0.dll', 'libglib-2.0-0.dll', 'libintl-8.dll', 'libiconv-2.dll', 'libpcre2-8-0.dll')
+          New-Item -ItemType Directory (Join-Path $stage 'online') | Out-Null
+          foreach ($name in $files) {
+              $src = Join-Path $online $name
+              if (-not (Test-Path $src)) { throw "$name is missing from $online" }
+              Copy-Item $src (Join-Path $stage 'online')
+          }
 
-          # Never publish game data: fail if anything other than the exe got staged.
-          $extra = Get-ChildItem $stage -Recurse | Where-Object { $_.Name -ne 'DOA2U.exe' }
+          # Never publish game data: fail if anything else got staged.
+          $allowed = @('DOA2U.exe', 'online') + $files
+          $extra = Get-ChildItem $stage -Recurse | Where-Object { $allowed -notcontains $_.Name }
           if ($extra) {
               throw "Unexpected files staged: $($extra.Name -join ', ')"
           }

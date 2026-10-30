@@ -6,10 +6,10 @@
 
 extern ptrdiff_t g_xbox_mem_offset;
 
-#define GAMEDATA_PTR_VA   0x87CFA8u   /* uint32_t: Xbox VA of the game-data block */
-#define PROFILE_LOADED_VA 0x801A1Cu   /* byte: 1 once a player profile is loaded  */
-#define SLOT_ID_TABLE     0x6959DCu   /* byte per slot: character id              */
-#define COSTUME_TOTALS    0x6E0F08u   /* byte per character id: costume total     */
+#define GAMEDATA_PTR_VA   0x883328u   /* uint32_t: Xbox VA of the game-data block */
+#define PROFILE_LOADED_VA 0x807D9Cu   /* byte: 1 once a player profile is loaded  */
+#define SLOT_ID_TABLE     0x69BD64u   /* byte per slot: character id              */
+#define COSTUME_TOTALS    0x6E7288u   /* byte per character id: costume total     */
 #define XBOX_RAM_LIMIT    0x04000000u /* 64 MB; anything above is not a block     */
 
 #define OFF_COSTUME_COUNTS 0x2ED8u
