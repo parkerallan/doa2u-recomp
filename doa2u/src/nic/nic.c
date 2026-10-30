@@ -31,7 +31,7 @@ static int      s_held_logged;   /* capped "RX held" warnings */
 
 /* Host-thread RX queue, moved into the guest ring on the game thread. */
 #define RXQ_MAX 64
-static struct { uint16_t len; uint8_t data[0x600]; } s_rxq[RXQ_MAX];
+static struct { uint16_t len; LONGLONG t; uint8_t data[0x600]; } s_rxq[RXQ_MAX];
 static int s_rxq_head, s_rxq_count;
 static SRWLOCK s_rxq_lock = SRWLOCK_INIT;
 
@@ -157,9 +157,14 @@ void nic_rx_enqueue(const uint8_t* frame, uint32_t len)
     AcquireSRWLockExclusive(&s_rxq_lock);
     if (s_rxq_count < RXQ_MAX) {
         int slot = (s_rxq_head + s_rxq_count) % RXQ_MAX;
+        extern void doa2u_netdiag_rx_arrive(LONGLONG);
+        LARGE_INTEGER t;
+        QueryPerformanceCounter(&t);
         s_rxq[slot].len = (uint16_t)len;
+        s_rxq[slot].t = t.QuadPart;
         memcpy(s_rxq[slot].data, frame, len);
         s_rxq_count++;
+        doa2u_netdiag_rx_arrive(t.QuadPart);
     }
     ReleaseSRWLockExclusive(&s_rxq_lock);
 }
@@ -168,10 +173,11 @@ void nic_rx_enqueue(const uint8_t* frame, uint32_t len)
  * the NIC writes 0x0001 (valid) | frame length, as the driver's RX loop reads it. */
 static void nic_deliver_rx(void)
 {
-    extern void doa2u_netdiag_rx(int, int);
+    extern void doa2u_netdiag_rx(int, int, LONGLONG);
     uint32_t ring = s_regs[REG_RX_RING / 4];
     uint32_t size = (s_regs[REG_RING_SIZES / 4] >> 16) + 1;
     int delivered = 0, held = 0;
+    LONGLONG oldest = 0;
 
     if (!ring)
         return;
@@ -189,6 +195,7 @@ static void nic_deliver_rx(void)
             held = s_rxq_count;
             break;
         }
+        if (!delivered) oldest = s_rxq[s_rxq_head].t;
         memcpy(NIC_PTR(buf), s_rxq[s_rxq_head].data, len);
         *(uint32_t*)(desc + 4) = 0x00010000u | len;
         s_rxq_head = (s_rxq_head + 1) % RXQ_MAX;
@@ -198,7 +205,7 @@ static void nic_deliver_rx(void)
         delivered++;
     }
     ReleaseSRWLockExclusive(&s_rxq_lock);
-    doa2u_netdiag_rx(delivered, held);
+    doa2u_netdiag_rx(delivered, held, oldest);
 }
 
 int nic_poll_irq(void)
