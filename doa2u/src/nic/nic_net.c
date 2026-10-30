@@ -295,14 +295,6 @@ static int net_start(void)
         xbox_log(XBOX_LOG_WARN, "NIC", "slirp_new failed");
         return 0;
     }
-    {   /* Xbox Live peer traffic is UDP 3074: bind that host port to the guest's so the
-         * security gateway and other players reach it (Insignia's NAT guide). */
-        struct in_addr any, guest;
-        any.s_addr = INADDR_ANY;
-        inet_pton(AF_INET, "10.0.2.15", &guest);
-        if (slirp_add_hostfwd(s_slirp, SLIRP_HOSTFWD_UDP, any, 3074, guest, 3074) < 0)
-            xbox_log(XBOX_LOG_WARN, "NIC", "UDP 3074 is in use on this PC: NAT will be strict");
-    }
     xbox_log(XBOX_LOG_INFO, "NIC", "slirp %s up: 10.0.2.15/24, gateway 10.0.2.2, DNS %s",
              slirp_version_string(), INSIGNIA_DNS);
     return 1;
