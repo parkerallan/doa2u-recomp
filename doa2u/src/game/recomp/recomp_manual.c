@@ -11,6 +11,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include "../../kernel/perf.h"
+#include "../../ui/video_settings.h"
 #pragma comment(lib, "winmm.lib")
 
 extern uint32_t xbox_HeapAlloc(uint32_t size, uint32_t alignment);
@@ -877,7 +878,9 @@ static DWORD WINAPI rt_main(LPVOID unused)
         s_rt_busy = 1;
         ReleaseSRWLockExclusive(&s_rt_lock);
         if (it->present) {
+            extern void d3d8_frame_pace(void);
             pgraph_d3d11_flush();
+            if (video_get_vsync()) d3d8_frame_pace();   /* VSync pacing, next to the present */
             doa2u_present_host();
             InterlockedIncrement(&s_rt_present_done);
         } else {
@@ -1148,7 +1151,7 @@ void sub_0034E960(void)
     uint32_t sv_esi = esi, sv_edi = edi, sv_ebx = ebx;
     uint32_t dev;
     sub_0034E960_gen();
-    {   /* 60 Hz pacing: wait for the next 1/60 s boundary; resync if a frame or more behind. */
+    if (!video_get_vsync()) {   /* 60 Hz pacing: wait for the next 1/60 s boundary; resync if a frame or more behind. */
         static LARGE_INTEGER s_freq, s_next;
         LARGE_INTEGER now;
         if (!s_freq.QuadPart) { QueryPerformanceFrequency(&s_freq); timeBeginPeriod(1); }
@@ -1161,6 +1164,12 @@ void sub_0034E960(void)
             QueryPerformanceCounter(&now);
         }
         s_next.QuadPart += s_freq.QuadPart / 60;
+    } else if (!rt_enabled() || doa2u_movie_active()) {
+        /* VSync: pace next to the present (d3d8_frame_pace); with the drawing thread presenting,
+         * it paces there instead (rt_main). */
+        extern void d3d8_frame_pace(void);
+        rt_sync();
+        d3d8_frame_pace();
     }
     {
         uint32_t ret_eax = eax, ret_esp = esp;

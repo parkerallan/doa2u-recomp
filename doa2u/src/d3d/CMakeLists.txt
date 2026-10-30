@@ -21,6 +21,7 @@ target_link_libraries(d3d8_compat
     dxgi
     dxguid
     d3dcompiler
+    winmm
 )
 
 if(MSVC)

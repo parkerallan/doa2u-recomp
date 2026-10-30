@@ -252,6 +252,7 @@ void DrawVideoSection()
         video_set_window_mode(VIDEO_BORDERLESS);
         video_set_aspect(VIDEO_ASPECT_16_9);
         video_set_scale(3);
+        video_set_vsync(0);
         SetStatus("Video settings reset to defaults");
         break;
     case 2:
@@ -275,6 +276,13 @@ void DrawVideoSection()
     if (ImGui::Combo("Internal resolution", &sc, kScale, IM_ARRAYSIZE(kScale)) &&
         sc + 1 != video_get_scale())
         video_set_scale(sc + 1);
+
+    bool vs = video_get_vsync() != 0;
+    if (ImGui::Checkbox("VSync", &vs))
+        video_set_vsync(vs ? 1 : 0);
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("Wait for the display's refresh before each frame (60/120/240 Hz displays).\n"
+                          "Off: a 60 Hz timer paces the game.");
 }
 
 /* ── Check for Updates ────────────────────────────────────────────────────

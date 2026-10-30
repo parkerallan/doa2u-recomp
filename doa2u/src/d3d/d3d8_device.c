@@ -25,6 +25,122 @@ static UINT          g_nv2aff_idx_off;
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <timeapi.h>
+#include "../ui/video_settings.h"
+HWND d3d8_GetHWND(void);
+
+/* Presentation: with VSync on, Present waits for a 60/120/240 Hz display, so the display is the
+ * clock (this blt chain honours vsync where flip-model chains were seen to ignore it). */
+static int    g_last_occluded;      /* the last Present reported the window occluded */
+static int    g_vsync_unblocked;    /* vsync Presents in a row that returned without waiting */
+static int    g_refresh_hz;         /* refresh of the window's monitor, 0 = unknown */
+
+static int window_refresh_hz(HWND hwnd)
+{
+    MONITORINFOEXW mi;
+    DEVMODEW dm;
+    HMONITOR mon = hwnd ? MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST) : NULL;
+    memset(&mi, 0, sizeof(mi));
+    mi.cbSize = sizeof(mi);
+    if (!mon || !GetMonitorInfoW(mon, (MONITORINFO *)&mi)) return 0;
+    memset(&dm, 0, sizeof(dm));
+    dm.dmSize = sizeof(dm);
+    if (!EnumDisplaySettingsW(mi.szDevice, ENUM_CURRENT_SETTINGS, &dm)) return 0;
+    return dm.dmDisplayFrequency > 1 ? (int)dm.dmDisplayFrequency : 0;   /* 0 and 1 mean "hardware default" */
+}
+
+/* How to present: with VSync on at 60/120/240 Hz (59/119 count) the display is the clock,
+ * presenting every 1st/2nd/4th refresh; otherwise a 60 Hz timer is. */
+typedef struct {
+    int    interval;      /* Present SyncInterval */
+    int    vsync_clock;   /* the display paces the game (Present waits for it) */
+    double cap_hz;        /* timer rate: the clock, or under vsync a runaway cap */
+} PacePlan;
+
+static PacePlan current_plan(void)
+{
+    PacePlan p = { 0, 0, 60.0 };
+    const int hz = g_refresh_hz, k = (hz + 30) / 60;
+    if (video_get_vsync() && hz > 0 && (k == 1 || k == 2 || k == 4) && hz - 60 * k <= k && 60 * k - hz <= k) {
+        p.interval = k;
+        p.vsync_clock = 1;
+        p.cap_hz = 61.0;                           /* only stops a runaway (occluded, minimised) */
+        if (g_vsync_unblocked >= 30) p.cap_hz = 60.0;   /* vsync not honoured: the timer is the clock */
+    }
+    return p;
+}
+
+/* Wait until a performance-counter time: a high-resolution waitable timer for
+ * the bulk, then a short spin for the last half millisecond. */
+static void wait_until(LONGLONG target, LONGLONG freq)
+{
+    static HANDLE timer;
+    static int timer_tried;
+    LARGE_INTEGER now;
+    if (!timer_tried) {
+        timer_tried = 1;
+        timer = CreateWaitableTimerExW(NULL, NULL, 0x00000002 /* CREATE_WAITABLE_TIMER_HIGH_RESOLUTION */, TIMER_ALL_ACCESS);
+        if (!timer) timeBeginPeriod(1);
+    }
+    for (;;) {
+        LONGLONG left;
+        QueryPerformanceCounter(&now);
+        left = target - now.QuadPart;
+        if (left <= 0) return;
+        if (left > freq / 2000) {                      /* more than 0.5 ms: sleep most of it */
+            LONGLONG sleep_100ns = (left - freq / 2000) * 10000000 / freq;
+            if (timer) {
+                LARGE_INTEGER due;
+                due.QuadPart = -sleep_100ns;
+                if (SetWaitableTimer(timer, &due, 0, NULL, NULL, FALSE))
+                    WaitForSingleObject(timer, INFINITE);
+            } else if (sleep_100ns >= 10000) {
+                Sleep((DWORD)(sleep_100ns / 10000));
+            }
+        } else {
+            YieldProcessor();
+        }
+    }
+}
+
+/* Once per frame, before its present: holds the game to 60 a second. Under vsync the display is
+ * the clock; the timer still caps it so an occluded or minimised window cannot race. */
+void d3d8_frame_pace(void)
+{
+    static LARGE_INTEGER freq;
+    static LONGLONG next;
+    static unsigned frames;
+    LARGE_INTEGER now;
+    PacePlan plan;
+    LONGLONG period;
+    if (!freq.QuadPart) { QueryPerformanceFrequency(&freq); timeBeginPeriod(1); }   /* as the old Swap pacing did */
+    if ((frames++ % 60u) == 0u) g_refresh_hz = window_refresh_hz(d3d8_GetHWND());
+    plan = current_plan();
+    QueryPerformanceCounter(&now);
+    /* Next boundary one period on from the last (not from now); a frame a period behind resyncs. */
+    period = (LONGLONG)((double)freq.QuadPart / plan.cap_hz + 0.5);
+    if (next == 0 || now.QuadPart - next > period) next = now.QuadPart;
+    if (now.QuadPart < next) wait_until(next, freq.QuadPart);
+    next += period;
+}
+
+/* Present the composed frame under the current plan. */
+static HRESULT paced_present(IDXGISwapChain *chain)
+{
+    const PacePlan plan = current_plan();
+    static LARGE_INTEGER freq;
+    LARGE_INTEGER t0, t1;
+    HRESULT hr;
+    if (!freq.QuadPart) QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&t0);
+    hr = IDXGISwapChain_Present(chain, (UINT)plan.interval, 0);
+    QueryPerformanceCounter(&t1);
+    g_last_occluded = (hr == DXGI_STATUS_OCCLUDED);
+    /* A driver can override vsync: 30 vsync Presents in a row under 1 ms hand pacing to the timer. */
+    if (plan.vsync_clock && !g_last_occluded)
+        g_vsync_unblocked = (t1.QuadPart - t0.QuadPart) * 1000 < freq.QuadPart ? g_vsync_unblocked + 1 : 0;
+    return hr;
+}
 
 /* ================================================================
  * Internal device state
@@ -883,7 +999,19 @@ static HRESULT d3d8_compose_and_present(void)
     }
 
     perf_begin(PERF_PRESENT);
-    hr = IDXGISwapChain_Present(s->swap_chain, 0, 0);
+    {   /* VSync queues one frame so Present waits for each refresh (with three queued it returns
+         * at once); off keeps DXGI's default of three. */
+        static int s_latency;
+        const int want = video_get_vsync() ? 1 : 3;
+        IDXGIDevice1 *dxgi_dev = NULL;
+        if (want != s_latency && SUCCEEDED(ID3D11Device_QueryInterface(s->d3d11_device, &IID_IDXGIDevice1,
+                                                                       (void **)&dxgi_dev))) {
+            IDXGIDevice1_SetMaximumFrameLatency(dxgi_dev, (UINT)want);
+            IDXGIDevice1_Release(dxgi_dev);
+            s_latency = want;
+        }
+    }
+    hr = paced_present(s->swap_chain);
     perf_end(PERF_PRESENT);
     d3d8_apply_target_size_change();
     perf_end(PERF_COMPOSE);

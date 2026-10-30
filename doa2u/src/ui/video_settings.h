@@ -45,6 +45,10 @@ void video_set_aspect(int aspect);
 int  video_get_scale(void);
 void video_set_scale(int scale);
 
+/* VSync (off by default): on a 60/120/240 Hz display, frames wait for the display's refresh. */
+int  video_get_vsync(void);
+void video_set_vsync(int on);
+
 /* Host size of the guest render target for an aspect at the current internal
  * resolution: 480 lines at 1x, 960 at 2x, 1440 at 3x. */
 void video_guest_target_size(int aspect, unsigned *w, unsigned *h);
