@@ -684,23 +684,77 @@ void sub_0031F380(void)
 }
 
 /* XNET sendto (0x00386BA8) and recvfrom (0x00386B67): the plaintext the game exchanges,
- * logged to doa2u_net.log around a silence, with the game routine that sent it. */
+ * logged to doa2u_net.log around a silence, with the game routine that sent it.
+ * In-match frame packets are 35 bytes: 21 00, 8-byte session id, u16 counter at 11,
+ * u16 flags at 13 (0x8000 = resend request). One lost packet stalls the game ~11 frames
+ * for its resend handshake, so the previous frame's packet is sent again with each new
+ * one and a counter already delivered is dropped on receive. */
+#define NET_FRAME_LEN 35
+static int net_is_frame(const uint8_t *b, uint32_t len)
+{
+    return len == NET_FRAME_LEN && b[0] == 0x21 && b[1] == 0 && b[13] == 0 && b[14] == 0;
+}
+
 void sub_00386BA8(void)
 {
     extern void sub_00386BA8_gen(void);
     extern void doa2u_netdiag_plain(char, uint32_t, const uint8_t *, uint32_t);
-    uint32_t buf = MEM32(esp + 8), len = MEM32(esp + 12);
-    if (buf && len && len < 0x800) doa2u_netdiag_plain('s', MEM32(esp), (const uint8_t *)XBOX_PTR(buf), len);
+    static uint8_t prev[NET_FRAME_LEN];
+    static int have_prev;
+    uint32_t a[7], buf = MEM32(esp + 8), len = MEM32(esp + 12), i, first_eax;
+    uint8_t *p = (buf && len && len < 0x800) ? (uint8_t *)XBOX_PTR(buf) : NULL;
+    if (p) doa2u_netdiag_plain('s', MEM32(esp), p, len);
+    for (i = 0; i < 7; i++) a[i] = MEM32(esp + 4 * i);
     sub_00386BA8_gen();
+    if (!p || !net_is_frame(p, len)) return;
+    first_eax = eax;
+    if (have_prev) {
+        uint8_t cur[NET_FRAME_LEN];
+        memcpy(cur, p, NET_FRAME_LEN);
+        memcpy(p, prev, NET_FRAME_LEN);          /* previous frame again, in the game's buffer */
+        for (i = 6; i >= 1; i--) PUSH32(esp, a[i]);
+        PUSH32(esp, a[0]);
+        sub_00386BA8_gen();
+        memcpy(p, cur, NET_FRAME_LEN);
+        memcpy(prev, cur, NET_FRAME_LEN);
+    } else {
+        memcpy(prev, p, NET_FRAME_LEN);
+        have_prev = 1;
+    }
+    eax = first_eax;
 }
 
 void sub_00386B67(void)
 {
     extern void sub_00386B67_gen(void);
     extern void doa2u_netdiag_plain(char, uint32_t, const uint8_t *, uint32_t);
-    uint32_t caller = MEM32(esp), buf = MEM32(esp + 8);
-    sub_00386B67_gen();
-    if (buf && (int32_t)eax > 0 && eax < 0x800) doa2u_netdiag_plain('r', caller, (const uint8_t *)XBOX_PTR(buf), eax);
+    static uint32_t seen[256];                   /* 0xFFFFFFFF = empty */
+    static unsigned seen_pos, seen_max, seen_init;
+    uint32_t a[7], caller = MEM32(esp), buf = MEM32(esp + 8), i;
+    for (i = 0; i < 7; i++) a[i] = MEM32(esp + 4 * i);
+    if (!seen_init) { memset(seen, 0xFF, sizeof seen); seen_init = 1; }
+    for (;;) {
+        uint8_t *p;
+        uint16_t c;
+        unsigned k, dup = 0;
+        sub_00386B67_gen();
+        if (!buf || (int32_t)eax <= 0 || eax >= 0x800) return;
+        p = (uint8_t *)XBOX_PTR(buf);
+        doa2u_netdiag_plain('r', caller, p, eax);
+        if (!net_is_frame(p, eax)) return;
+        c = (uint16_t)(p[11] | p[12] << 8);
+        if (seen_max && (uint16_t)(seen_max - c) > 4096 && (uint16_t)(c - seen_max) > 4096) {
+            memset(seen, 0xFF, sizeof seen); seen_max = 0;   /* new match: counters restart */
+        }
+        for (k = 0; k < 256; k++) if (seen[k] == c) { dup = 1; break; }
+        if (!dup) {
+            seen[seen_pos++ & 255] = c;
+            if ((uint16_t)(c - seen_max) < 4096) seen_max = c;
+            return;
+        }
+        for (i = 6; i >= 1; i--) PUSH32(esp, a[i]);   /* a copy already delivered: next packet */
+        PUSH32(esp, a[0]);
+    }
 }
 
 /* Movie teardown (0x000FB8B0): stops and destroys the mwPly handle at 0xA9A678, on
