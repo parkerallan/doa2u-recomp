@@ -17,7 +17,7 @@ static struct {
 
 /* Last packets either way, dumped when the game goes silent: shows what arrived just before. */
 #define RING_N 128
-struct netdiag_pkt { LONGLONG t; uint16_t len, sport, dport; char dir; };
+struct netdiag_pkt { LONGLONG t; uint16_t len, sport, dport; char dir; uint32_t caller; uint8_t pay[24]; };
 static struct netdiag_pkt s_ring[RING_N];
 static volatile LONG s_ring_pos;
 
@@ -30,6 +30,21 @@ static void ring_add(char dir, const uint8_t *frame, uint32_t len, LONGLONG t)
         dp = (uint16_t)(frame[36] << 8 | frame[37]);
     }
     s_ring[i].t = t; s_ring[i].len = (uint16_t)len; s_ring[i].sport = sp; s_ring[i].dport = dp; s_ring[i].dir = dir;
+    s_ring[i].caller = 0;
+}
+
+/* Game thread: the plaintext the game handed to XNET sendto ('s') or got from recvfrom ('r'). */
+void doa2u_netdiag_plain(char dir, uint32_t caller, const uint8_t *buf, uint32_t len)
+{
+    LARGE_INTEGER t;
+    LONG i;
+    if (!s_started) return;
+    QueryPerformanceCounter(&t);
+    i = (InterlockedIncrement(&s_ring_pos) - 1) % RING_N;
+    s_ring[i].t = t.QuadPart; s_ring[i].len = (uint16_t)len; s_ring[i].sport = s_ring[i].dport = 0;
+    s_ring[i].dir = dir; s_ring[i].caller = caller;
+    memset(s_ring[i].pay, 0, sizeof s_ring[i].pay);
+    memcpy(s_ring[i].pay, buf, len < sizeof s_ring[i].pay ? len : sizeof s_ring[i].pay);
 }
 
 static void ring_dump(int n)

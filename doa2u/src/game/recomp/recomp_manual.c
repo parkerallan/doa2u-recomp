@@ -683,6 +683,26 @@ void sub_0031F380(void)
     sub_0031F380_gen();
 }
 
+/* XNET sendto (0x00386BA8) and recvfrom (0x00386B67): the plaintext the game exchanges,
+ * logged to doa2u_net.log around a silence, with the game routine that sent it. */
+void sub_00386BA8(void)
+{
+    extern void sub_00386BA8_gen(void);
+    extern void doa2u_netdiag_plain(char, uint32_t, const uint8_t *, uint32_t);
+    uint32_t buf = MEM32(esp + 8), len = MEM32(esp + 12);
+    if (buf && len && len < 0x800) doa2u_netdiag_plain('s', MEM32(esp), (const uint8_t *)XBOX_PTR(buf), len);
+    sub_00386BA8_gen();
+}
+
+void sub_00386B67(void)
+{
+    extern void sub_00386B67_gen(void);
+    extern void doa2u_netdiag_plain(char, uint32_t, const uint8_t *, uint32_t);
+    uint32_t caller = MEM32(esp), buf = MEM32(esp + 8);
+    sub_00386B67_gen();
+    if (buf && (int32_t)eax > 0 && eax < 0x800) doa2u_netdiag_plain('r', caller, (const uint8_t *)XBOX_PTR(buf), eax);
+}
+
 /* Movie teardown (0x000FB8B0): stops and destroys the mwPly handle at 0xA9A678, on
  * both end of stream and START pressed. The host presenter runs on its own clock and
  * only stops at end of file, so on a skip it kept owning the screen (guest frames are

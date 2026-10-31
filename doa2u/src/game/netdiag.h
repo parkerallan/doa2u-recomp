@@ -9,3 +9,4 @@ void doa2u_netdiag_wait(uint32_t obj, uint32_t caller, double ms, int timed_out)
 void doa2u_netdiag_tx(const uint8_t *frame, uint32_t len);
 void doa2u_netdiag_rx(int delivered, int held, LONGLONG oldest_arrival);
 void doa2u_netdiag_rx_arrive(const uint8_t *frame, uint32_t len, LONGLONG qpc);
+void doa2u_netdiag_plain(char dir, uint32_t caller, const uint8_t *buf, uint32_t len);
