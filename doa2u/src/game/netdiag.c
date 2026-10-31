@@ -55,8 +55,14 @@ static void ring_dump(int n)
     for (i = end - n; i < end; i++) {
         const struct netdiag_pkt *e = &s_ring[((i % RING_N) + RING_N) % RING_N];
         if (i < 0 || !e->t) continue;
-        fprintf(s_f, "    %9.3f %c %4u %5u->%-5u +%.1f\n", (double)(e->t - s_t0.QuadPart) / (double)s_freq.QuadPart,
+        fprintf(s_f, "    %9.3f %c %4u %5u->%-5u +%.1f", (double)(e->t - s_t0.QuadPart) / (double)s_freq.QuadPart,
                 e->dir, e->len, e->sport, e->dport, prev ? (double)(e->t - prev) * 1000.0 / (double)s_freq.QuadPart : 0.0);
+        if (e->dir == 's' || e->dir == 'r') {
+            unsigned k, m = e->len < sizeof e->pay ? e->len : (unsigned)sizeof e->pay;
+            fprintf(s_f, "  from %08X :", e->caller);
+            for (k = 0; k < m; k++) fprintf(s_f, " %02X", e->pay[k]);
+        }
+        fputc('\n', s_f);
         prev = e->t;
     }
 }
