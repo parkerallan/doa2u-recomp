@@ -49785,7 +49785,7 @@ loc_0017385A: ;
     eax = (int32_t)(xmm0.f[0]); /* cvttss2si */
     SET_LO8(ecx, LO8(ecx) - LO8(eax));
     MEM8(esi + 0x2A) = LO8(ecx);
-    if (((int32_t)LO8(ecx) >= 0)) goto loc_00173874; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ecx) >= 0)) goto loc_00173874; /* jns: not sign (positive) */
 
 loc_00173870: ;
     MEM8(esi + 0x2A) = 0;
@@ -50346,7 +50346,7 @@ loc_00173E9B: ;
     edx = (int32_t)(xmm0.f[0]); /* cvttss2si */
     SET_LO8(ecx, LO8(ecx) - LO8(edx));
     MEM8(eax + 0xC) = LO8(ecx);
-    if (((int32_t)LO8(ecx) >= 0)) goto loc_00173EAE; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ecx) >= 0)) goto loc_00173EAE; /* jns: not sign (positive) */
 
 loc_00173EAA: ;
     MEM8(eax + 0xC) = 0xFF;
@@ -52109,7 +52109,7 @@ loc_001750EA: ;
     eax = (int32_t)(xmm0.f[0]); /* cvttss2si */
     SET_LO8(ecx, LO8(ecx) - LO8(eax));
     MEM8(ebx + 0x2A) = LO8(ecx);
-    if (((int32_t)LO8(ecx) >= 0)) goto loc_00175104; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ecx) >= 0)) goto loc_00175104; /* jns: not sign (positive) */
 
 loc_00175100: ;
     MEM8(ebx + 0x2A) = 0;
@@ -52382,7 +52382,7 @@ loc_001753A2: ;
     edx = (int32_t)(xmm0.f[0]); /* cvttss2si */
     SET_LO8(ecx, LO8(ecx) - LO8(edx));
     MEM8(eax + 0xC) = LO8(ecx);
-    if (((int32_t)LO8(ecx) >= 0)) goto loc_001753B9; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ecx) >= 0)) goto loc_001753B9; /* jns: not sign (positive) */
 
 loc_001753B5: ;
     MEM8(eax + 0xC) = 0xFF;
@@ -103718,7 +103718,7 @@ loc_00193329: ;
     eax = (int32_t)(xmm1.f[0]); /* cvttss2si */
     SET_LO8(ecx, LO8(ecx) - LO8(eax));
     MEM8(0xE29C69) = LO8(ecx);
-    if (((int32_t)LO8(ecx) >= 0)) goto loc_00193348; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ecx) >= 0)) goto loc_00193348; /* jns: not sign (positive) */
 
 loc_00193341: ;
     MEM8(0xE29C69) = 0;

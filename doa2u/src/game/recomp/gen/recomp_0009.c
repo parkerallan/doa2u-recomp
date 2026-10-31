@@ -15050,7 +15050,7 @@ loc_002ABC62: ;
 
 loc_002ABC6A: ;
     SET_LO8(edx, LO8(edx) - 1);
-    if (((int32_t)LO8(edx) >= 0)) { RECOMP_SLICE_POINT(); goto loc_002ABC62; } /* jns: not sign (positive) */
+    if (((int8_t)LO8(edx) >= 0)) { RECOMP_SLICE_POINT(); goto loc_002ABC62; } /* jns: not sign (positive) */
 
 loc_002ABC6E: ;
     POP32(esp, edi);
@@ -21168,7 +21168,7 @@ loc_002AE59A: ;
 
 loc_002AE5A4: ;
     SET_LO8(eax, LO8(eax) - 1);
-    if (((int32_t)LO8(eax) < 0)) goto loc_002AE5C0; /* js: sign (negative) */
+    if (((int8_t)LO8(eax) < 0)) goto loc_002AE5C0; /* js: sign (negative) */
 
 loc_002AE5A8: ;
     goto loc_002AE5B0;
@@ -21181,7 +21181,7 @@ loc_002AE5B0: ;
 
 loc_002AE5BC: ;
     SET_LO8(eax, LO8(eax) - 1);
-    if (((int32_t)LO8(eax) >= 0)) { RECOMP_SLICE_POINT(); goto loc_002AE5B0; } /* jns: not sign (positive) */
+    if (((int8_t)LO8(eax) >= 0)) { RECOMP_SLICE_POINT(); goto loc_002AE5B0; } /* jns: not sign (positive) */
 
 loc_002AE5C0: ;
     MEM32(edx) = ecx;

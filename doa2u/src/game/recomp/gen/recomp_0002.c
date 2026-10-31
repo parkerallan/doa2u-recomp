@@ -76934,7 +76934,7 @@ loc_000C7227: ;
 
 loc_000C722B: ;
     SET_LO8(ebx, LO8(ebx) - 1);
-    if (((int32_t)LO8(ebx) < 0)) goto loc_000C723D; /* js: sign (negative) */
+    if (((int8_t)LO8(ebx) < 0)) goto loc_000C723D; /* js: sign (negative) */
 
 loc_000C722F: ;
     SET_LO8(eax, MEM8(ecx + 4));
@@ -78064,7 +78064,7 @@ loc_000C79A4: ;
 loc_000C79AC: ;
     SET_LO8(edx, LO8(edx) - 1);
     MEM8(0x8A9B3A) = LO8(edx);
-    if (((int32_t)LO8(edx) >= 0)) goto loc_000C79BE; /* jns: not sign (positive) */
+    if (((int8_t)LO8(edx) >= 0)) goto loc_000C79BE; /* jns: not sign (positive) */
 
 loc_000C79B6: ;
     SET_LO8(edx, 2);

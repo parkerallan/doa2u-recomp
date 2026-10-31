@@ -148423,7 +148423,7 @@ loc_0005CE00: ;
     memcpy((void*)XBOX_PTR(edi), (void*)XBOX_PTR(esi), ecx * 4);
     esi += ecx * 4; edi += ecx * 4; ecx = 0; /* rep movsd */
     SET_LO8(ecx, LO8(eax));
-    if (((int32_t)LO8(eax) < 0)) goto loc_0005CEC0; /* js: sign (negative) */
+    if (((int8_t)LO8(eax) < 0)) goto loc_0005CEC0; /* js: sign (negative) */
 
 loc_0005CE34: ;
     esi = MEM32(ebp + 0x10);

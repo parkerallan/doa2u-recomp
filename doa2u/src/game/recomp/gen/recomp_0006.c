@@ -34336,7 +34336,7 @@ loc_001C30A5: ;
     eax = (int32_t)(xmm0.f[0]); /* cvttss2si */
     SET_LO8(ecx, LO8(ecx) - LO8(eax));
     MEM8(esi + 0x1C) = LO8(ecx);
-    if (((int32_t)LO8(ecx) >= 0)) goto loc_001C30BF; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ecx) >= 0)) goto loc_001C30BF; /* jns: not sign (positive) */
 
 loc_001C30BB: ;
     MEM8(esi + 0x1C) = 0;
@@ -142491,7 +142491,7 @@ loc_002038E5: ;
     eax = (int32_t)(xmm0.f[0]); /* cvttss2si */
     SET_LO8(ecx, LO8(ecx) - LO8(eax));
     MEM8(esi + 0x1A) = LO8(ecx);
-    if (((int32_t)LO8(ecx) >= 0)) goto loc_002038FF; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ecx) >= 0)) goto loc_002038FF; /* jns: not sign (positive) */
 
 loc_002038FB: ;
     MEM8(esi + 0x1A) = 0xFF;

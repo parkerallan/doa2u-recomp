@@ -9769,7 +9769,7 @@ loc_000DD6E4: ;
 loc_000DD6EC: ;
     SET_LO8(ebx, LO8(ebx) - 1);
     MEM8(0x8AC52E) = LO8(ebx);
-    if (((int32_t)LO8(ebx) >= 0)) goto loc_000DD728; /* jns: not sign (positive) */
+    if (((int8_t)LO8(ebx) >= 0)) goto loc_000DD728; /* jns: not sign (positive) */
 
 loc_000DD6F6: ;
     MEM8(0x8AC52E) = 4;
@@ -17831,7 +17831,7 @@ loc_000E2C89: ;
     SET_LO16(ecx, MEM16(ebx * 2 + 0x8AD764));
     SET_LO16(eax, LO16(ecx));
     SET_LO16(eax, LO16(eax) - MEM16(ebx * 2 + 0x8AD07C));
-    _rcc0 = (((int32_t)LO16(eax) >= 0)); /* latched */
+    _rcc0 = (((int16_t)LO16(eax) >= 0)); /* latched */
     MEM16(ebx * 2 + 0x8AD90C) = LO16(eax);
     if (_rcc0) goto loc_000E2CB0; /* jns: not sign (positive) */
 
