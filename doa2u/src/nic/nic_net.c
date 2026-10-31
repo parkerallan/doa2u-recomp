@@ -4,6 +4,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <winhttp.h>
+#include <wlanapi.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -270,6 +271,37 @@ static int dns_answer_local(const uint8_t* f, uint32_t len)
     return 1;
 }
 
+/* Windows scans for other networks every minute or so while connected; the radio leaves the
+ * channel and holds outgoing frames (2 s silences, then a burst). Media streaming mode stops it. */
+static HANDLE s_wlan;
+static void wlan_no_background_scans(void)
+{
+    HMODULE m = LoadLibraryW(L"wlanapi.dll");
+    DWORD (WINAPI *open)(DWORD, PVOID, PDWORD, PHANDLE);
+    DWORD (WINAPI *enumi)(HANDLE, PVOID, PWLAN_INTERFACE_INFO_LIST*);
+    DWORD (WINAPI *seti)(HANDLE, const GUID*, WLAN_INTF_OPCODE, DWORD, const VOID*, PVOID);
+    VOID (WINAPI *freem)(PVOID);
+    PWLAN_INTERFACE_INFO_LIST list = NULL;
+    DWORD ver = 0, i;
+    BOOL on = TRUE;
+    if (!m) return;
+    open = (void*)GetProcAddress(m, "WlanOpenHandle");
+    enumi = (void*)GetProcAddress(m, "WlanEnumInterfaces");
+    seti = (void*)GetProcAddress(m, "WlanSetInterface");
+    freem = (void*)GetProcAddress(m, "WlanFreeMemory");
+    if (!open || !enumi || !seti || !freem) return;
+    if (open(2, NULL, &ver, &s_wlan) != ERROR_SUCCESS) return;
+    if (enumi(s_wlan, NULL, &list) != ERROR_SUCCESS || !list) return;
+    for (i = 0; i < list->dwNumberOfItems; i++) {
+        if (list->InterfaceInfo[i].isState != wlan_interface_state_connected) continue;
+        if (seti(s_wlan, &list->InterfaceInfo[i].InterfaceGuid, wlan_intf_opcode_media_streaming_mode,
+                 sizeof on, &on, NULL) == ERROR_SUCCESS)
+            xbox_log(XBOX_LOG_INFO, "NIC", "Wi-Fi %ls: background scans off while the game runs",
+                     list->InterfaceInfo[i].strInterfaceDescription);
+    }
+    freem(list);
+}
+
 static int net_start(void)
 {
     static const SlirpCb cb = {
@@ -314,6 +346,7 @@ static int net_start(void)
     inet_pton(AF_INET, INSIGNIA_DNS, &cfg.vnameserver);
     inet_pton(AF_INET, INSIGNIA_DNS, &s_dns_ip);
     cfg.disable_dns = true;
+    wlan_no_background_scans();
     zones_load();
     s_slirp = slirp_new(&cfg, &cb, NULL);
     if (!s_slirp) {
