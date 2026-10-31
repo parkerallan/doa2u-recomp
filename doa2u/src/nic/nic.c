@@ -57,9 +57,9 @@ static void nic_kick_tx(void)
         }
         *(uint32_t*)(desc + 4) = ctl & ~0x80000000u;
         if (ctl & 0x00010000u) {
-            extern void doa2u_netdiag_tx(void);
+            extern void doa2u_netdiag_tx(const uint8_t*, uint32_t);
             nic_net_send(s_tx_frame, s_tx_len);
-            doa2u_netdiag_tx();
+            doa2u_netdiag_tx(s_tx_frame, s_tx_len);
             s_tx_len = 0;
         }
         s_tx_idx = (s_tx_idx + 1) % size;
@@ -157,14 +157,14 @@ void nic_rx_enqueue(const uint8_t* frame, uint32_t len)
     AcquireSRWLockExclusive(&s_rxq_lock);
     if (s_rxq_count < RXQ_MAX) {
         int slot = (s_rxq_head + s_rxq_count) % RXQ_MAX;
-        extern void doa2u_netdiag_rx_arrive(LONGLONG);
+        extern void doa2u_netdiag_rx_arrive(const uint8_t*, uint32_t, LONGLONG);
         LARGE_INTEGER t;
         QueryPerformanceCounter(&t);
         s_rxq[slot].len = (uint16_t)len;
         s_rxq[slot].t = t.QuadPart;
         memcpy(s_rxq[slot].data, frame, len);
         s_rxq_count++;
-        doa2u_netdiag_rx_arrive(t.QuadPart);
+        doa2u_netdiag_rx_arrive(frame, len, t.QuadPart);
     }
     ReleaseSRWLockExclusive(&s_rxq_lock);
 }

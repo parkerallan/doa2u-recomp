@@ -15,6 +15,37 @@ static struct {
     uint32_t max_wait_caller, max_wait_obj;
 } s;
 
+/* Last packets either way, dumped when the game goes silent: shows what arrived just before. */
+#define RING_N 128
+struct netdiag_pkt { LONGLONG t; uint16_t len, sport, dport; char dir; };
+static struct netdiag_pkt s_ring[RING_N];
+static volatile LONG s_ring_pos;
+
+static void ring_add(char dir, const uint8_t *frame, uint32_t len, LONGLONG t)
+{
+    LONG i = (InterlockedIncrement(&s_ring_pos) - 1) % RING_N;
+    uint16_t sp = 0, dp = 0;
+    if (len >= 42 && frame[12] == 8 && frame[13] == 0 && frame[23] == 17) {
+        sp = (uint16_t)(frame[34] << 8 | frame[35]);
+        dp = (uint16_t)(frame[36] << 8 | frame[37]);
+    }
+    s_ring[i].t = t; s_ring[i].len = (uint16_t)len; s_ring[i].sport = sp; s_ring[i].dport = dp; s_ring[i].dir = dir;
+}
+
+static void ring_dump(int n)
+{
+    LONG end = s_ring_pos, i;
+    LONGLONG prev = 0;
+    if (n > RING_N) n = RING_N;
+    for (i = end - n; i < end; i++) {
+        const struct netdiag_pkt *e = &s_ring[((i % RING_N) + RING_N) % RING_N];
+        if (i < 0 || !e->t) continue;
+        fprintf(s_f, "    %9.3f %c %4u %5u->%-5u +%.1f\n", (double)(e->t - s_t0.QuadPart) / (double)s_freq.QuadPart,
+                e->dir, e->len, e->sport, e->dport, prev ? (double)(e->t - prev) * 1000.0 / (double)s_freq.QuadPart : 0.0);
+        prev = e->t;
+    }
+}
+
 static double since_ms(LARGE_INTEGER a, LARGE_INTEGER b) { return (double)(b.QuadPart - a.QuadPart) * 1000.0 / (double)s_freq.QuadPart; }
 
 static double now_s(LARGE_INTEGER *out)
@@ -34,7 +65,7 @@ static void open_log(void)
     if (s_f) fprintf(s_f, "# t(s) | frames maxframe_ms | waits timeouts wait_ms max_wait_ms (obj caller) | tx rx held lat_ms\n");
 }
 
-void doa2u_netdiag_tx(void)
+void doa2u_netdiag_tx(const uint8_t *frame, uint32_t len)
 {
     LARGE_INTEGER t;
     double ts, gap;
@@ -43,15 +74,20 @@ void doa2u_netdiag_tx(void)
     ts = now_s(&t);
     gap = s_last_tx.QuadPart ? since_ms(s_last_tx, t) : 0.0;
     s_last_tx = t;
-    if (gap > SLOW_MS && s_f) fprintf(s_f, "%9.3f tx silence %.1f ms (game sent nothing)\n", ts, gap);
+    ring_add('T', frame, len, t.QuadPart);
+    if (gap > SLOW_MS && s_f) {
+        fprintf(s_f, "%9.3f tx silence %.1f ms (game sent nothing)\n", ts, gap);
+        if (gap >= 100.0 && gap < 1000.0) ring_dump(40);
+    }
 }
 
 /* Host NIC thread: a frame arrived from the socket. Only the gap is noted; the log line
  * is written on the game thread in doa2u_netdiag_rx. */
-void doa2u_netdiag_rx_arrive(LONGLONG qpc)
+void doa2u_netdiag_rx_arrive(const uint8_t *frame, uint32_t len, LONGLONG qpc)
 {
     LONGLONG prev = s_last_rx;
     s_last_rx = qpc;
+    ring_add('R', frame, len, qpc);
     if (prev && s_f && (double)(qpc - prev) * 1000.0 / (double)s_freq.QuadPart > SLOW_MS)
         s_rx_gap_qpc = prev;
 }
